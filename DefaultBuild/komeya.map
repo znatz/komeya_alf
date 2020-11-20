@@ -1,0 +1,84 @@
+Optimizing Linkage Editor (W.10.02.00.000)        20-Nov-2020 17:35:20
+
+*** Options ***
+
+-subcommand=DefaultBuild\komeya.clnk
+-library=DefaultBuild\komeya.lib
+-input=DefaultBuild\main.obj
+-input=DefaultBuild\sbrk.obj
+-input=DefaultBuild\apl_start.obj
+-input=DefaultBuild\dbsct.obj
+-input=DefaultBuild\ALFSEND.obj
+-input=DefaultBuild\INPUT.obj
+-input=DefaultBuild\MENU.obj
+-input=DefaultBuild\RAM_IO.obj
+-input=DefaultBuild\SUB.obj
+-input=DefaultBuild\TSCAN.obj
+-input=DefaultBuild\WORKSUB.obj
+-input=DefaultBuild\SSCAN.obj
+-input=DefaultBuild\ISCAN.obj
+-input=DefaultBuild\NSCAN.obj
+-input=DefaultBuild\ALFRECV.obj
+-input=DefaultBuild\KSCAN.obj
+-library=LIB\A7000X_P.lib
+-library=LIB\ark7000x.lib
+-library=LIB\capture.lib
+-noprelink
+-rom=D=R,D_1=R_1,D_2=R_2
+-output=DefaultBuild\komeya.abs
+-list=DefaultBuild\komeya.map
+-optimize=safe
+-start=PAplProgStart,C_1,C_2,C,C$*,D_1,D_2,D,P,W*,L/08300000,BAplProgEnd/083FFFF8,B_1,R_1,B_2,R_2,B,R/08400000,BAplWorkEnd/08500000
+-nologo
+-end
+
+*** Error information ***
+
+*** Mapping List ***
+
+SECTION                            START      END         SIZE   ALIGN
+
+PAplProgStart
+                                  08300000  08300007         8   4
+C_1
+                                  08300008  08300339       332   4
+C_2
+                                  0830033a  0830055b       222   2
+C
+                                  0830055c  083005eb        90   4
+C$DSEC
+                                  083005ec  0830060f        24   4
+C$BSEC
+                                  08300610  08300627        18   4
+D_1
+                                  08300628  08300753       12c   1
+D_2
+                                  08300754  08300987       234   2
+D
+                                  08300988  08300c57       2d0   4
+P
+                                  08300c58  0830e60b      d9b4   4
+W_1
+                                  0830e60c  0830e616         b   4
+W_2
+                                  0830e618  0830e618         0   2
+W
+                                  0830e618  0830e618         0   4
+L
+                                  0830e618  0830f40c       df5   4
+BAplProgEnd
+                                  083ffff8  083ffffb         4   4
+B_1
+                                  08400000  08405745      5746   1
+R_1
+                                  08405746  08405871       12c   1
+B_2
+                                  08405872  0840590f        9e   2
+R_2
+                                  08405910  08405b43       234   2
+B
+                                  08405b44  08406013       4d0   4
+R
+                                  08406014  084062e3       2d0   4
+BAplWorkEnd
+                                  08500000  08500003         4   4
