@@ -13,6 +13,7 @@
 #define	VER	"Ver1.00"
 #define	VER2	"POSCO  Ver1.00"
 #define DEBUG   1
+#define MAXLEN 10
 
 enum JobsOfTypes{
 	JOB_MIN = 0,
@@ -34,6 +35,8 @@ enum ColorsOfTypes {
 	CLR_TE_TITLE,
 	CLR_DE_TITLE,
 	CLR_KP_TITLE,
+	CLR_UR_TITLE,
+	CLR_PR_TITLE,
 	CLR_LABEL,
 	CLR_MSGBOX,
 	CLR_MAX
@@ -88,13 +91,19 @@ typedef struct CONTROL_BUFF{
 	short	SDataCnt;		/*  38	仕入データ件数		*/
 	short	TDataCnt;		/*  42	棚卸データ件数		*/
 	short	IDataCnt;		/*  44	移動データ件数		*/
-	short	NDataCnt;		/*  46	売上データ件数		*/
+	short	NDataCnt;		/*  46	値下データ件数		*/
 	char	Cursor;			/*  48	カーソルタイプ 		*/
 	char	Beep;			/*  49	音設定 			*/
 	char	Bright;			/*  50	画面輝度設定		*/
 	short	BUMSTCnt;		/*  54	部門マスタ件数   	*/
-	short	HIMSTCnt;		/*  58	品種マスタ件数		*/	
-	char	filler[69];		/*  59	予備			*/
+	short	HIMSTCnt;		/*  58	品種マスタ件数		*/
+	short	URDataCnt;		/*  62	売上データ件数		*/
+	short	InfoUrCnt;		/*  66	売上データ件数		*/
+	long	RecNo;			/*  74	レシートNO		*/
+	char	RejiNo[2];		/*  76	レジNO			*/
+	char	RecPrint[1];		/*  77	レシート印字		*/
+	char	TaxRate[2];		/*  79	システム税率		*/	
+	char	filler[50];		/*  59	予備			*/
 } CONTROLDATA;				/* 128バイト			*/
 
 
@@ -180,6 +189,82 @@ typedef struct NDATA_TAG {
 	char	Num[5];				/*  52	数量		*/
 } NDATA;/* 	57バイト		*/
 
+/****************************************************************************/
+/* 各種情報
+/****************************************************************************/
+typedef struct INFO_DATA{
+	char	Date[8];			//   0	日付		
+	char	Time[6];
+	char	tenpo1[2];			//  出荷店コード	
+	char	tenpo2[2];			//  受入店コード
+	char	Bumon[2];
+	char	Hinsyu[4];
+	char	Code1[13];			//  JANコード
+	char 	Joudai[10];
+	char	Gedai[10];
+	char	tanto[2];
+	char	Code2[13];
+	char	Code3[13];			//  値下
+	char	Num[4];
+	int	flag;
+} INFO;
+	
+/*****************************************************************************/
+/* 売上データ																 */
+/*****************************************************************************/
+typedef struct URDATA_TAG {
+	char	Date[8];			//   0	日付		
+	char	Time[6];
+	char	Shop[2];			//  14	出荷店コード	
+	char	RejiNo[2];
+	char	Tanto[2];
+	char	Code1[13];			//  18	上段コード	
+	char	Code2[13];			//  31	下段コード	
+	char	Code3[8];			//  44	値下コード	
+	char	Name[20];
+	char	Baika[10];
+	char	Num[5];				//  52	数量		
+	char 	Genkin[6];
+	char	Credit[6];
+	char 	Kinken[6];
+	char	Coupon[6];
+	char 	RecNo[6];
+	char 	KyakuNo[1];
+	char  	SyouhiFlg[1];
+	char 	Reason[2];
+	long	lngOturi;
+} URDATA;
+
+/*****************************************************************************/
+/* 一時売上データ																 */
+/*****************************************************************************/
+typedef struct INFOUR_TAG {	
+	char	Date[8];			//   0	日付		
+	char	Time[6];
+	char	Code1[13];			//  18	上段コード	
+	char	Code2[13];			//  18	上段コード	
+	char	Code3[13];			//  44	値下コード	
+	char	Name[20];
+	char	Baika[10];
+	char	Num[4];				//  52	数量	
+
+} INFOUR;
+
+/*****************************************************************************/
+/* 一時売上データ																 */
+/*****************************************************************************/
+typedef struct INFOUR_TAG2 {	
+	char	Date[8];			//   0	日付		
+	char	Time[6];
+	char 	Genkin[6];
+	char	Credit[6];
+	char 	Kinken[6];
+	char	Coupon[6];
+	long 	Goukei;
+	long	Oturi;
+	long	Tensuu;
+} INFOUR2;
+
 typedef struct TENPO_DATA{
 	char	tenpo1[2];			/*  14	出荷店コード	*/
 	char	tenpo2[2];
@@ -210,5 +295,12 @@ extern  void 	AlfRecvMst( void );
 extern  void 	displayMsg( long );
 extern  void 	displayStringMsg( char* );
 extern	long 	getJyoudai(char *);
-
-
+extern	int	ctoi(char c);
+extern	long	powOfTen(int exp);
+extern	void	insComma( long, char[] );
+extern	void	printNumberWithComma( long num, int col, int row ) ;
+// 売上
+extern	URDATA		urdata;	
+extern  INFO		info;
+extern  INFOUR		infour;
+extern  INFOUR2		infour2;

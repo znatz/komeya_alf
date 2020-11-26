@@ -49,7 +49,7 @@ static void Display( short item , short Func )
 				ckputss( 0,  8, "▽              ", False, CLR_BASE );
 				ckputss( 0, 11, "                ", False, CLR_BASE );
 				ckputss( 0, 13, "                ", False, CLR_BASE );	
-				ckputss( 0, 15, "F1:戻る         ", False, CLR_BASE );
+				ckputss( 0, 16, "F1:戻る         ", False, CLR_BASE );
 			}
 			/* 上段コード */
 			if( tdata.Code1[0] ){
@@ -66,10 +66,9 @@ static void Display( short item , short Func )
 				ckputss( 0,  8, "▼              ", False, CLR_BASE );
 				ckputss( 0, 11, "                ", False, CLR_BASE );
 				ckputss( 0, 13, "                ", False, CLR_BASE );	
-				ckputss( 0, 15, "F1:戻る         ", False, CLR_BASE );
+				ckputss( 0, 16, "F1:戻る         ", False, CLR_BASE );
 			}
-			/* 件数 */
-			ckprintf( 10, 0, False, CLR_KP_TITLE, "%4d件", ctrl.TDataCnt );
+
 			/* 上段コード */
 			if( tdata.Code1[0] ){
 				ckputsn( 3,  6, tdata.Code1, 13, False, CLR_BASE );
@@ -90,20 +89,23 @@ static void Display( short item , short Func )
 				ckputss( 0,  0, "<検品入力>      ", False, CLR_KP_TITLE );
 				ckputss( 0,  6, "△              ", False, CLR_BASE );
 				ckputss( 0,  8, "▽              ", False, CLR_BASE );
-				ckputss( 0, 11, "                ", False, CLR_BASE );
-				ckputss( 0, 13, "                ", False, CLR_BASE );	
-				ckputss( 0, 15, "F1:戻る         ", False, CLR_BASE );			
+				ckputss( 0, 11, "上代:           ", False, CLR_BASE );
+				ckputss( 0, 13, "下代:           ", False, CLR_BASE );	
+				ckputss( 0, 16, "F1:戻る         ", False, CLR_BASE );			
 			}
 			/* 上段コード */
 			if( tdata.Code1[0] ){
-				displayMsg(getJyoudai(&tdata.Code1));
+				//displayMsg(getJyoudai(&tdata.Code1));			
 				ckputsn( 3, 6, tdata.Code1, 13, False, CLR_BASE );
+				printNumberWithComma( getJyoudai(&tdata.Code1), 6, 11);
 			}
 			/* 下段コード */
 			if( tdata.Code2[0] ){
+				//displayMsg(getGedai(&tdata.Code2));			
 				ckputsn( 3, 8, tdata.Code2, 13, False, CLR_BASE );
+				printNumberWithComma( getGedai(&tdata.Code2), 6, 13);
 			}
-			ckprintf( 5, 11, False, CLR_BASE, "%ld", 99999 ); //TODO
+
 			break;
 	}
 	SaveItem = item;
@@ -138,13 +140,10 @@ void Kscan( void )
 				//item = CODE1;
 				//continue;
 				ret = getch();
-				displayMsg(ret);
-				if( ret == 97 ){			/* 画面ｸﾘｱ */
-					meisaiclr();
-					item = CODE1;
-					break;
-				}
-				continue;
+				//displayMsg(ret);
+				meisaiclr();
+				item = CODE1;
+				break;
 		}
 		if( ret == ENTRY || ret == SENTRY || ret == SKIP || ret == BARENT ){
 			if( item == CODE1 || item == DENTRY ){
@@ -188,21 +187,6 @@ void Kscan( void )
 				}
 				continue;
 			}
-		}else if( ret == F4KEY ){
-			if( item == CODE1 ){
-				/* 店舗マスタ検索 */
-				if( Func == 1 ){
-					Func = 2;
-					ckputss( 0, 11, "数量:           ", False, CLR_BASE );
-					ckputss( 0, 13, "F1:戻る F4:1点  ", False, CLR_BASE );
-				}
-				else if( Func == 2){
-					Func = 1;
-					ckputss( 0, 11, "                ", False, CLR_BASE );
-					ckputss( 0, 13, "F1:戻る F4:複数 ", False, CLR_BASE );
-				}
-			}
-			continue;
 		}else if( ret == F1KEY ){
 			if( item == CODE2 || item == DENTRY ){
 				meisaiclr();

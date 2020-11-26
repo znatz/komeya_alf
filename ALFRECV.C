@@ -68,9 +68,9 @@ void AlfRecvMst( void )
 	sprintf( dspBuf, "%0*d", sizeof( _PrefixRec.RecordCount ), 0 );
 	memcpy( _PrefixRec.RecordCount, dspBuf, strlen( dspBuf ) );
 	
-	#if DEBUG
-		displayMsg(_AlfInf.recvLen);
-	#endif	
+	// #if DEBUG
+	// 	displayMsg(_AlfInf.recvLen);
+	// #endif	
 	/* 受信電文を送信 */
 	ret = alfOpen_Rev_Next_PrefixSendEx( &_AlfInf, &_PrefixRec );
 	if( ret != COM_OK ){
@@ -87,9 +87,9 @@ void AlfRecvMst( void )
 		memcpy( &bumst, _RecvBuf, sizeof( bumst ) );
 		ram_write( BUMSTCnt, &bumst, BUMSTF );
 		++BUMSTCnt;
-		#if DEBUG
-			msgbox( LCD_MSGBOX_WARNING, 0x00, "", &bumst, "確認", 0x00 );
-		#endif		
+		// #if DEBUG
+		// 	msgbox( LCD_MSGBOX_WARNING, 0x00, "", &bumst, "確認", 0x00 );
+		// #endif		
 		ckprintf( 5, 9, False, CLR_BASE, "%2ld", BUMSTCnt );
 	}
 	
@@ -101,9 +101,9 @@ void AlfRecvMst( void )
 	/***ファイル名***/
 	memcpy( _PrefixRec.FileName, "FILE2", 5 );
 	_AlfInf.recvLen	 = sizeof(HIMST)+2;
-	#if DEBUG
-		displayMsg(_AlfInf.recvLen);
-	#endif
+	// #if DEBUG
+	// 	displayMsg(_AlfInf.recvLen);
+	// #endif
 	sprintf( dspBuf, "%0*d", sizeof( _PrefixRec.BlockLen ), _AlfInf.recvLen );
 	memcpy( _PrefixRec.BlockLen, dspBuf, strlen( dspBuf ) );	
 	/* 受信電文を送信 */
@@ -121,10 +121,10 @@ void AlfRecvMst( void )
 		memcpy( &himst, _RecvBuf, sizeof( himst ) );
 		ram_write( HIMSTCnt, &himst, HIMSTF );
 		++HIMSTCnt;
-		#if DEBUG
-			msgbox( LCD_MSGBOX_WARNING, 0x00, "", &himst, "確認", 0x00 );
-		#endif
-		ckprintf( 12, 9, False, CLR_BASE, "%2ld", HIMSTCnt );
+		// #if DEBUG
+		// 	msgbox( LCD_MSGBOX_WARNING, 0x00, "", &himst, "確認", 0x00 );
+		// #endif
+		ckprintf( 11, 9, False, CLR_BASE, "%2ld", HIMSTCnt );
 	}
 		
 // TODO

@@ -73,7 +73,11 @@ void	ReDrowDisplay( short clr )
 		case CLR_DE_TITLE:
 				setcolor( CLR_TITLE_TEXT, CLR_LIGHTYELLOW );		break;
 		case CLR_KP_TITLE:
-				setcolor( CLR_TITLE_TEXT, CLR_LIME );    		break;				
+				setcolor( CLR_TITLE_TEXT, CLR_LIME );    		break;
+		case CLR_UR_TITLE:
+				setcolor( CLR_TITLE_TEXT, CLR_CYAN );			break;
+		case CLR_PR_TITLE:
+				setcolor( CLR_TITLE_TEXT, CLR_SILVER );			break;				
 		case CLR_LABEL:
 				setcolor( CLR_LABEL_TEXT, CLR_LABEL_BACK );		break;
 		case CLR_MSGBOX:
@@ -531,5 +535,75 @@ short datechk( char *date, char *now, short check )
 	}
 	return False;
 }
+//****************************************************************************
+/* Z.N
+    char -> int
+*/
+//****************************************************************************
+int ctoi(char c) {
+	switch (c) {
+		case '0': return 0;
+		case '1': return 1;
+		case '2': return 2;
+		case '3': return 3;
+		case '4': return 4;
+		case '5': return 5;
+		case '6': return 6;
+		case '7': return 7;
+		case '8': return 8;
+		case '9': return 9;
+		default: return 0;
+	}
+}
+//****************************************************************************
+/* Z.N
+    通常のpow関数のdouble制限があるから、
+    自作
+*/
+//****************************************************************************
+long powOfTen(int exp) {
+    long base = 1;
+    for (int i=0;i<exp;i++){
+        base *= 10;
+    }
+    return base;
+}
 
+//****************************************************************************
+//* 	三桁区切り														 */
+//****************************************************************************
+void insComma( long num, char str[MAXLEN] ){
+	int i, j, keta, temp;
+	int minus = 0;
+
+	// 下位から順に数字を取り出し3桁の区切りに,を入れる 
+	i = keta = 0;
+	if( num < 0 ) {
+		num = -num;
+		minus = 1;
+	}
+	do {
+		str[i++] = num % 10 + '0';  
+		keta++;
+		num /= 10;
+		if( keta % 3 == 0 && num != 0 ) str[i++] = ',';
+	} while( num != 0 && i < MAXLEN );
+	
+	if( minus ) str[i++] = '-';
+	str[i] = '\0';
+
+	// 逆順にコピーする
+	j = i-1;
+	for( i = 0; j > i; i++, j-- ) {
+		temp = str[i];
+		str[i] = str[j];
+		str[j] = temp;
+	}
+}
+
+void printNumberWithComma( long num, int col, int row ) {
+	char strKingaku[7];
+    	insComma( num,strKingaku );
+	ckprintf(col, row, False, CLR_BASE, "%7s", strKingaku );
+}
 

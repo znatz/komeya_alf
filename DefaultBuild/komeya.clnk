@@ -15,6 +15,8 @@
 -input=DefaultBuild\NSCAN.obj
 -input=DefaultBuild\ALFRECV.obj
 -input=DefaultBuild\KSCAN.obj
+-input=DefaultBuild\URIAGE.obj
+-input=DefaultBuild\PRINT.obj
 -library=LIB\A7000X_P.lib
 -library=LIB\ark7000x.lib
 -library=LIB\capture.lib

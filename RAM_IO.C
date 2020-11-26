@@ -24,7 +24,10 @@ static struct {
 	{ sizeof( IDATA )		, IDATA_MAX,	True },		/* 移動データ		 */
 	{ sizeof( NDATA )		, NDATA_MAX,	True },		/* 値引データ		 */
 	{ sizeof( BUMST )		, BUMST_MAX,	True },		/* 部門マスタ		 */
-	{ sizeof( HIMST )		, HIMST_MAX,	True }		/* 品種マスタ		 */
+	{ sizeof( HIMST )		, HIMST_MAX,	True },		/* 品種マスタ		 */
+	{ sizeof( URDATA )		, URDATA_MAX,	True },		/* 売上データ		 */
+	{ sizeof( INFOUR )		, INFOUR_MAX,	True },		/* 売上一時データ	 */
+	{ sizeof( INFOUR2 )		, 1,		True }		/* 売上一時データ	 */
 };
 
 static long	ram_adressget( short fno );

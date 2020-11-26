@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "ark7000x.h"
 #include "ctrl.h"
 #include "ram_io.h"
@@ -18,11 +19,15 @@ IDATA		idata;  /* 移動データ			*/
 SDATA		sdata;  /* 仕入データ			*/
 NDATA		ndata;  /* 値引データ			*/
 TENPO		tenpo;  /* 値引データ			*/
+INFOUR		infour; /* 売上データ			*/
+INFOUR2		infour2;/* 売上データ			*/
+INFO		info;	/* 売上データ			*/
+URDATA		urdata; /* 売上データ			*/
 
 char		scanBuf[30];
 char		dt[32], dspBuf[50];
 
-static void StartLoading( void );
+static void 	StartLoading( void );
 static void	Wakeup( void );
 static void	InitScaner( void );
 /****************************************************************/
@@ -111,11 +116,27 @@ void 	displayStringMsg( char* msg )
 	return;
 }
 
-long 	getJyoudai(char *barcode)
-{	
-	char	wk[10];
-	
-	strncpy( wk, barcode+8, 4 );
-	wk[4] = 0x00;
-	return	atol( wk );	
+/* Hybrid 二段上代 */
+long getJyoudai(const char *barcode) {
+    char wk[10];
+    strncpy( wk, barcode+8, 4 );
+    wk[4]=0x00;
+    long chkpoint = ctoi(wk[3]);
+    if( chkpoint < 5) {
+        wk[3]=0x00;
+        return atol(wk)*(powOfTen(chkpoint));
+    }
+    return atol(wk);
+}
+
+/* Hybrid 二段下代 */
+long getGedai(const char *barcode) {
+    char wk[10];
+    // * : 1...8,9,10,11(下代4桁), 12(桁数)
+    strncpy( wk, barcode+7, 5 );
+    // * : 12桁目
+    long chkpoint = ctoi(wk[4]);
+    // * : 0,1,2,3,4 set to null terminated
+    wk[4]=0x00;
+    return atol(wk)*(powOfTen(chkpoint))/2;
 }

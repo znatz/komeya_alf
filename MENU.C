@@ -183,6 +183,9 @@ void menu( void )
 			} else if( ret == '4' ){	/* ˆÚ“® */
 				Iscan();
 				break;
+			} else if( ret == '5' ){	/* ”„ã */
+				uriage(0, 0);
+				break;			
 			} else if( ret == '6' ){	/* óM */
 				AlfRecvMst();
 				break;				

@@ -4,7 +4,7 @@
 #define Error		-1
 #define Normal		0
 /*******************************************************/
-/* ファイル数とファイル番号							   */
+/* ファイル数とファイル				       */
 /*******************************************************/
 #define	SDATA_MAX		5000	/* 仕入ＭＡＸ件数	  		*/
 #define	TDATA_MAX		5000	/* 棚卸ＭＡＸ件数	  		*/
@@ -12,6 +12,8 @@
 #define	NDATA_MAX		5000	/* 移動ＭＡＸ件数	  		*/
 #define	BUMST_MAX		 100	/* 部門ＭＡＸ件数	  		*/
 #define	HIMST_MAX		10000	/* 品種ＭＡＸ件数	  		*/
+#define	URDATA_MAX		2900	/* 売上ＭＡＸ件数	  		*/
+#define	INFOUR_MAX		20	/* 売上一時ＭＡＸ件数	  		*/
 
 enum{
 	CTRLF = 0,
@@ -21,6 +23,9 @@ enum{
 	NDATAF,		/* 値下データ			*/
 	BUMSTF,		/* 部門マスタ			*/
 	HIMSTF,		/* 品種マスタ			*/	
+	URDATAF,	/* 売上データ			*/
+	INFOURF,	/* 売上データ			*/	
+	INFOURF2,	/* 売上データ			*/	
 	FILEMAX
 };
 
