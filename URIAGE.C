@@ -37,7 +37,7 @@ enum {
 	RYOUSYU
 };
 
-static short		SaveItem;
+static short	SaveItem;
 static char		Code[13];
 static char		Name[13];
 static char		Year[4];
@@ -178,9 +178,10 @@ static void Display( short item )
 			if( SaveItem != YEAR ){
 				ClsColor();
 				ckputss( 0,  0, "<売上入力>      ", False, CLR_UR_TITLE );
-				ckputss( 0,  3, " 日付:    /  /  ", False, CLR_BASE );
-				ckputsn(11,  3, Month, 2, False, CLR_BASE );
-				ckputsn(14,  3, Day, 2, False, CLR_BASE );
+				// 元日付元々行は3
+				ckputss( 0,  6, "日付:    /  /  ", False, CLR_BASE );
+				ckputsn(10,  6, Month, 2, False, CLR_BASE );
+				ckputsn(13,  6, Day, 2, False, CLR_BASE );
 				// ckputss( 0,  6, " 店舗:          ", False, CLR_BASE );
 				// ckputss( 0, 10, " 担当:          ", False, CLR_BASE );
 				ckputss( 0, 14, "F1:ﾒﾆｭｰ ENT:確定", False, CLR_BASE );	
@@ -191,9 +192,10 @@ static void Display( short item )
 			if( SaveItem != MONTH ){
 				ClsColor();
 				ckputss( 0,  0, "<売上入力>      ", False, CLR_UR_TITLE );
-				ckputss( 0,  3, " 日付:    /  /  ", False, CLR_BASE );
-				ckputsn( 6,  3, Year, 4, False, CLR_BASE );
-				ckputsn( 14, 3, Day,  2, False, CLR_BASE );
+				// 元日付元々行は3
+				ckputss( 0,  6, "日付:    /  /  ", False, CLR_BASE );
+				ckputsn( 5,  6, Year, 4, False, CLR_BASE );
+				ckputsn( 13, 6, Day,  2, False, CLR_BASE );
 				// ckputss( 0,  6, " 店舗:          ", False, CLR_BASE );
 				// ckputss( 0, 10, " 担当:          ", False, CLR_BASE );
 				ckputss( 0, 14, "F1:ﾒﾆｭｰ ENT:確定", False, CLR_BASE );	
@@ -204,9 +206,10 @@ static void Display( short item )
 			if( SaveItem != DAY ){
 				ClsColor();
 				ckputss( 0,  0, "<売上入力>      ", False, CLR_UR_TITLE );
-				ckputss( 0,  3, " 日付:    /  /   ", False, CLR_BASE );
-				ckputsn( 6,  3, Year,  4, False, CLR_BASE );
-				ckputsn( 11, 3, Month, 2, False, CLR_BASE );
+				// 元日付元々行は3
+				ckputss( 0,  6, "日付:    /  /   ", False, CLR_BASE );
+				ckputsn( 5,  6, Year,  4, False, CLR_BASE );
+				ckputsn( 10, 6, Month, 2, False, CLR_BASE );
 				// ckputss( 0,  6, " 店舗:          ", False, CLR_BASE );
 				// ckputss( 0, 10, " 担当:          ", False, CLR_BASE );
 				ckputss( 0, 14, "F1:ﾒﾆｭｰ ENT:確定", False, CLR_BASE );	
@@ -857,18 +860,18 @@ void uriage( int flag, int firsttime )
 		Display( item );
 		switch( item ){
 			case YEAR:
-				ret = NumInput( 6, 3, Year, sizeof( Year ), 0, 9999L, 
+				ret = NumInput( 5, 6, Year, sizeof( Year ), 0, 9999L, 
 							KEY_FIX | IN_NUMERIC | KEY_FUNC, TYPE_CHAR, NO_CHECK );
 				break;
 			case MONTH:
-				ret = NumInput( 11, 3, Month, sizeof( Month ), 0, 99L, 
+				ret = NumInput(10, 6, Month, sizeof( Month ), 0, 99L, 
 							KEY_FIX | IN_NUMERIC | KEY_FUNC, TYPE_CHAR, NO_CHECK );
 				break;
 			case DAY:
 				ctrl.InfoUrCnt = 0;
 				lngGoukei = 0;
 				lngTensuu = 0;
-				ret = NumInput( 14,3, Day, sizeof( Day ), 0, 99L, 
+				ret = NumInput(13, 6, Day, sizeof( Day ), 0, 99L, 
 							KEY_FIX | IN_NUMERIC | KEY_FUNC, TYPE_CHAR, NO_CHECK );
 				break;
 			case SHOP:
@@ -1083,10 +1086,19 @@ void uriage( int flag, int firsttime )
 					//3桁が501～999の場合
 					if( atoin( info.Code1, 3 ) > 500 && atoin( info.Code1, 3 ) < 999 ){
 						item = CODE2;
+						displayMsg(BumonTaxFind("33"));
 						// TODO
 		//						memcpy( info.Joudai, btsmas.Joudai, sizeof( info.Joudai ) );
 		//						memcpy( Name, btsmas.Name ,sizeof( Name ) );
 						item = CODE2;
+						continue;
+					} else if( ctrl.URDataCnt > 0 && !memcmp( info.Code1, "30", 2 ) && info.Code1[8] == ' ' ){
+						/* 登録済みデータが存在するかつ上段コードの先頭から２桁が３０、かつ８桁の場合 */
+						/* 割引率または値下金額を最後の登録データへセットしデータ修正を行う			*/
+						memcpy( Code, info.Code1, sizeof( Code ) );
+						ram_read( ctrl.URDataCnt-1, &urdata, URDATAF );
+						memcpy( urdata.Code3, Code, sizeof( urdata.Code3 ) );
+						item = DENTRY;
 						continue;
 					} else {
 						/* 上記に該当しない場合はエラー */

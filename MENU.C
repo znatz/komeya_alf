@@ -23,20 +23,26 @@ static void SndMenu( void )
 		kputspc( 0, 5, 16, CLR_BASE );
 		kputspc( 0, 8, 16, CLR_BASE );
 		kputspc( 0, 11, 16, CLR_BASE );
-		ckputss( 0,  4, " 1:d“ü  2:’I‰µ ", False, CLR_BASE );
-		ckputss( 0,  6, " 3:ˆÚ“®  9:’†~ ", False, CLR_BASE );
-		ckputss( 0,  8, "                ", False, CLR_BASE );
+		ckputss( 0,  4, " 1:”„ã  2:d“ü ", False, CLR_BASE );
+		ckputss( 0,  6, " 3:’I‰µ  4:ˆÚ“® ", False, CLR_BASE );
+		ckputss( 0,  8, "   @@  9:’†~ ", False, CLR_BASE );
+		ckputss( 0, 10, "                ", False, CLR_BASE );
 		while( 2 ){
+
 			ret = getch();
-			if( ret == '1' ){
-				if( ctrl.SDataCnt )	cnt = ctrl.SDataCnt;
+			if ( ret == '1') {
+				if( ctrl.URDataCnt ) cnt = ctrl.URDataCnt;
 				else				cnt = 0;
 				break;
 			} else if( ret == '2' ){
-				if( ctrl.TDataCnt )	cnt = ctrl.TDataCnt;
+				if( ctrl.SDataCnt )	cnt = ctrl.SDataCnt;
 				else				cnt = 0;
 				break;
 			} else if( ret == '3' ){
+				if( ctrl.TDataCnt )	cnt = ctrl.TDataCnt;
+				else				cnt = 0;
+				break;
+			} else if( ret == '4' ){
 				if( ctrl.IDataCnt )	cnt = ctrl.IDataCnt;
 				else				cnt = 0;
 				break;
@@ -148,6 +154,75 @@ static char JobStr[5][5] = { "", "d“ü", "’I‰µ", "ˆÚ“®", "’l‰º" };
 	}
 }
 
+
+/************************************************************************/
+/*	Šeíİ’è														*/
+/************************************************************************/
+void Setting( void ){
+	short ret,Flag = 0;
+	ClsColor();
+	ckputss( 0,  0, "   <<İ  ’è>>   ", False, CLR_SE_TITLE );
+	
+	ckputss( 0,  2, "1.ƒŒƒWNO: ", False, CLR_BASE );
+	// drawLineCrossScreen(2);
+	
+	ckputss( 0,  4, "2.Á”ïÅ—¦:  “ ", False, CLR_BASE );
+	ckputsn( 11, 4, ctrl.TaxRate,  2, False, CLR_BASE );
+	// drawLineCrossScreen(4);
+	
+	ckputss( 0, 6, "3.ÅŒvZ:     ", False, CLR_BASE );
+	ckputsn( 11,6, ctrl.TaxType, 1, False, CLR_BASE );
+	ckputss( 0, 8, "1lÌŒÜ“ü 2ØÌ‚Ä", False, CLR_BASE );
+	// drawLineCrossScreen(8);
+	
+	
+	ckputss( 0, 10, "4.Ú¼°Ä”­s:     ", False, CLR_BASE );
+	ckputsn( 11,10, ctrl.RecPrint, 1, False, CLR_BASE );
+	ckputss( 0, 12, " 1.‚·‚é 2.‚µ‚È‚¢", False, CLR_BASE );
+	// drawLineCrossScreen(12);
+
+	ckputss( 0, 15, "F1:–ß‚é ENT:İ’è", False, CLR_BASE );
+	while( 1 ){
+		if( Flag == 0 ){
+			ret = NumInput( 9,  2, ctrl.RejiNo, sizeof( ctrl.RejiNo ), 0, 99L, 
+						KEY_FIX | IN_NUMERIC | KEY_FUNC, TYPE_CHAR, NO_CHECK );
+		}else if( Flag == 1 ){
+			ret = NumInput( 11, 4, ctrl.TaxRate, sizeof( ctrl.TaxRate ), 0, 99L, 
+						KEY_FIX | IN_NUMERIC | KEY_FUNC, TYPE_CHAR, NO_CHECK );
+		}else if( Flag == 2 ){
+			ret = NumInput( 11, 6, ctrl.TaxType, sizeof( ctrl.TaxType ), 0, 9L, 
+						KEY_FIX | IN_NUMERIC | KEY_FUNC, TYPE_CHAR, NO_CHECK );				
+		}else{	
+			ret = NumInput( 11, 10, ctrl.RecPrint, sizeof( ctrl.RecPrint ), 0, 9L, 
+						KEY_FIX | IN_NUMERIC | KEY_FUNC, TYPE_CHAR, NO_CHECK );
+		}
+		if( ret  == ENTRY || ret == SENTRY ){
+			if( Flag == 0 ){
+				ram_write( 0, &ctrl, CTRLF );
+				Flag = 1;
+				continue;
+			}else if( Flag == 1 ){
+				ram_write( 0, &ctrl, CTRLF );
+				Flag = 2;
+				continue;
+			}else if( Flag == 2 ){
+				ram_write( 0, &ctrl, CTRLF );
+				Flag = 3;
+				continue;
+			}else{
+				if( memcmp( ctrl.RecPrint,"1",1 ) == 0 || memcmp( ctrl.RecPrint,"2",1 ) == 0 ){
+					ram_write( 0, &ctrl, CTRLF );
+					beep( 10, 2 );
+					menu();
+				}else{
+					beep( 50, 1 );
+				}
+			}
+		}else if( ret == F1KEY ){
+			menu();
+		}
+	}
+}	
 /************************************************************************/
 /*																		*/
 /************************************************************************/
@@ -166,7 +241,7 @@ void menu( void )
 		ckputss(  0,  6, " 3:’I‰µ  4:ˆÚ“® ", False, CLR_BASE );
 		ckputss(  0,  8, " 5:”„ã  6:óM ", False, CLR_BASE );
 		ckputss(  0, 10, " 7:“]‘—  8:ŒŸ•i ", False, CLR_BASE );
-		ckputss(  0, 12, " 9:íœ         ", False, CLR_BASE );
+		ckputss(  0, 12, " 9:íœ  0:İ’è ", False, CLR_BASE );
 		ckputsn(  1, 16, VER2, sizeof( VER2 ), False, CLR_BASE );
 		//ckputss(  0,  8, " 5:“]‘—  9:íœ ", False, CLR_BASE );
 		while( 2 ){
@@ -198,7 +273,11 @@ void menu( void )
 			} else if( ret == '9' ){	/* íœ */
 				DelDat();
 				break;
+			} else if( ret == '0' ){	/* íœ */
+				Setting();
+				break;
 			}
+
 		}
 	}
 }

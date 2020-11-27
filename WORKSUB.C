@@ -351,6 +351,94 @@ short	MaxCheck( short cnt, short max )
 }
 
 /**************************************************/
+/*  部門マスタ検索	                              */
+/**************************************************/
+short	BumonFind( char *key )
+{
+	long	adrs;
+
+	//memset( &mmst, 0x00, sizeof( mmst ) );
+#if 0	/* ２分法 */
+	//adrs = binarySearch( key, sizeof( mmst.Code ), MMSTF, ctrl.MMstCnt, 0 );
+#else	/* 先頭から検索 */
+	adrs = beginSearch( key, 1, 0, sizeof( bumst.Code ), 0, ctrl.BUMSTCnt, BUMSTF );
+#endif
+	if( adrs != -1 ){
+		ram_read( adrs, &bumst, BUMSTF );
+	}
+	return adrs;
+}
+
+/**************************************************/
+/*  部門税率検索	                              */
+/**************************************************/
+long	BumonTaxFind( char *key )
+{
+	long	adrs;
+
+	//memset( &mmst, 0x00, sizeof( mmst ) );
+#if 0	/* ２分法 */
+	//adrs = binarySearch( key, sizeof( mmst.Code ), MMSTF, ctrl.MMstCnt, 0 );
+#else	/* 先頭から検索 */
+	adrs = beginSearch( key, 1, 0, sizeof( bumst.Code ), 0, ctrl.BUMSTCnt, BUMSTF );
+#endif
+	if( adrs != -1 ){
+		ram_read( adrs, &bumst, BUMSTF );
+		return atoln(bumst.Zeiritu, sizeof(bumst.Zeiritu));
+	}
+	return 10;
+}
+
+
+/**************************************************/
+/*  部門税率検索	                                */
+/*  呼び出し例: 　	                                */
+/* displayMsg(BumonTaxFindByCode1(&tdata.Code1)); */
+/**************************************************/
+long	BumonTaxFindByCode1( char *code1 )
+{
+	long	adrs;
+
+	//memset( &mmst, 0x00, sizeof( mmst ) );
+#if 0	/* ２分法 */
+	//adrs = binarySearch( key, sizeof( mmst.Code ), MMSTF, ctrl.MMstCnt, 0 );
+#else	/* 先頭から検索 */
+	adrs = beginSearch( code1+3, 1, 0, sizeof( bumst.Code ), 0, ctrl.BUMSTCnt, BUMSTF );
+#endif
+	if( adrs != -1 ){
+		ram_read( adrs, &bumst, BUMSTF );
+		return atoln(bumst.Zeiritu, sizeof(bumst.Zeiritu));
+	}
+	return 10;
+}
+
+/*****************************************************/
+/*  品種税区検索	                                   */
+/*  呼び出し例: 　	                                   */
+/* displayMsg(HinsyuZeikuFindByCode1(&tdata.Code1)); */
+/*****************************************************/
+long	HinsyuZeikuFindByCode1( char *code1 )
+{
+	long	adrs;
+
+	//memset( &mmst, 0x00, sizeof( mmst ) );
+#if 0	/* ２分法 */
+	//adrs = binarySearch( key, sizeof( mmst.Code ), MMSTF, ctrl.MMstCnt, 0 );
+#else	/* 先頭から検索 */
+	adrs = beginSearch( code1+3, 1, 0, sizeof( himst.Code ), 0, ctrl.HIMSTCnt, HIMSTF );
+#endif
+	if( adrs != -1 ){
+		ram_read( adrs, &himst, HIMSTF );
+		return atoln(himst.Zeiku, sizeof(himst.Zeiku));
+	}
+	return 0;
+}
+
+
+
+
+
+/**************************************************/
 /*  店舗マスタ検索	                              */
 /**************************************************/
 short	ShopFind( char *key )

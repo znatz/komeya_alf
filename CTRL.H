@@ -17,10 +17,10 @@
 
 enum JobsOfTypes{
 	JOB_MIN = 0,
+	JOB_URI,
 	JOB_SIIRE,
 	JOB_TANA,
 	JOB_IDO,
-	JOB_URI,
 	JOB_MAX
 };
 
@@ -37,193 +37,195 @@ enum ColorsOfTypes {
 	CLR_KP_TITLE,
 	CLR_UR_TITLE,
 	CLR_PR_TITLE,
+	CLR_SE_TITLE,
 	CLR_LABEL,
 	CLR_MSGBOX,
 	CLR_MAX
 };
 
-/* カラーサンプル */
-#define CLR_BASE_BACK 	RGB( 200, 255, 200 )		// 基本背景色	RGB(204, 255, 204)			RGB( 173, 216, 230 )
-#define CLR_BASE_TEXT 	RGB(   0,   0,   0 )		// 基本文字色				( 黒 )
-#define CLR_MSGBOX_BACK RGB( 255, 180, 255 )		// メッセージボックス背景色
-#define CLR_MSGBOX_TEXT RGB(   0,   0,   0 )		// メッセージボックス文字色
-#define CLR_SCREEN    	RGB( 204, 255, 204 )		// メッセージダイアログ背景色
-#define CLR_TITLE_TEXT 	RGB(   0,   0,   0 )		// タイトル文字色			( 黒 )
-#define CLR_TITLE_BACK 	RGB( 255, 180,   0 )		// タイトル背景色			255, 213,   0
-#define CLR_LABEL_TEXT 	RGB( 255, 255, 255 )		// ラベル文字色				( 黒 )
-#define CLR_LABEL_BACK 	RGB(   0,  84, 227 )		// ラベル背景色				( 青 )
-#define CLR_REF_TEXT 	RGB(   0,   0,   0 )		// 参照項目文字色			( 黒 )
-#define CLR_REF_BACK 	RGB( 255, 255, 128 )		// 参照項目背景色			( 黄 )
-#define CLR_NO_TEXT 	RGB( 255, 255, 255 )		// ナンバー文字色			( 白 )
-#define CLR_NO_BACK 	RGB(   0,   0,   0 )		// ナンバー背景色			( 黒 )
-#define CLR_FUNC_TEXT 	RGB(   0,   0,   0 )		// ファンクション文字色		( 黒 )
-#define CLR_FUNC_BACK 	RGB( 255, 255, 255 )		// ファンクション背景色		( 白 )
+/* ?ｿｽJ?ｿｽ?ｿｽ?ｿｽ[?ｿｽT?ｿｽ?ｿｽ?ｿｽv?ｿｽ?ｿｽ */
+#define CLR_BASE_BACK 	RGB( 200, 255, 200 )		// ?ｿｽ?ｿｽ{?ｿｽw?ｿｽi?ｿｽF	RGB(204, 255, 204)			RGB( 173, 216, 230 )
+#define CLR_BASE_TEXT 	RGB(   0,   0,   0 )		// ?ｿｽ?ｿｽ{?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽF				( ?ｿｽ?ｿｽ )
+#define CLR_MSGBOX_BACK RGB( 255, 180, 255 )		// ?ｿｽ?ｿｽ?ｿｽb?ｿｽZ?ｿｽ[?ｿｽW?ｿｽ{?ｿｽb?ｿｽN?ｿｽX?ｿｽw?ｿｽi?ｿｽF
+#define CLR_MSGBOX_TEXT RGB(   0,   0,   0 )		// ?ｿｽ?ｿｽ?ｿｽb?ｿｽZ?ｿｽ[?ｿｽW?ｿｽ{?ｿｽb?ｿｽN?ｿｽX?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽF
+#define CLR_SCREEN    	RGB( 204, 255, 204 )		// ?ｿｽ?ｿｽ?ｿｽb?ｿｽZ?ｿｽ[?ｿｽW?ｿｽ_?ｿｽC?ｿｽA?ｿｽ?ｿｽ?ｿｽO?ｿｽw?ｿｽi?ｿｽF
+#define CLR_TITLE_TEXT 	RGB(   0,   0,   0 )		// ?ｿｽ^?ｿｽC?ｿｽg?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽF			( ?ｿｽ?ｿｽ )
+#define CLR_TITLE_BACK 	RGB( 255, 180,   0 )		// ?ｿｽ^?ｿｽC?ｿｽg?ｿｽ?ｿｽ?ｿｽw?ｿｽi?ｿｽF			255, 213,   0
+#define CLR_LABEL_TEXT 	RGB( 255, 255, 255 )		// ?ｿｽ?ｿｽ?ｿｽx?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽF				( ?ｿｽ?ｿｽ )
+#define CLR_LABEL_BACK 	RGB(   0,  84, 227 )		// ?ｿｽ?ｿｽ?ｿｽx?ｿｽ?ｿｽ?ｿｽw?ｿｽi?ｿｽF				( ?ｿｽ?ｿｽ )
+#define CLR_REF_TEXT 	RGB(   0,   0,   0 )		// ?ｿｽQ?ｿｽﾆ搾ｿｽ?ｿｽﾚ包ｿｽ?ｿｽ?ｿｽ?ｿｽF			( ?ｿｽ?ｿｽ )
+#define CLR_REF_BACK 	RGB( 255, 255, 128 )		// ?ｿｽQ?ｿｽﾆ搾ｿｽ?ｿｽﾚ背?ｿｽi?ｿｽF			( ?ｿｽ?ｿｽ )
+#define CLR_NO_TEXT 	RGB( 255, 255, 255 )		// ?ｿｽi?ｿｽ?ｿｽ?ｿｽo?ｿｽ[?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽF			( ?ｿｽ?ｿｽ )
+#define CLR_NO_BACK 	RGB(   0,   0,   0 )		// ?ｿｽi?ｿｽ?ｿｽ?ｿｽo?ｿｽ[?ｿｽw?ｿｽi?ｿｽF			( ?ｿｽ?ｿｽ )
+#define CLR_FUNC_TEXT 	RGB(   0,   0,   0 )		// ?ｿｽt?ｿｽ@?ｿｽ?ｿｽ?ｿｽN?ｿｽV?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽF		( ?ｿｽ?ｿｽ )
+#define CLR_FUNC_BACK 	RGB( 255, 255, 255 )		// ?ｿｽt?ｿｽ@?ｿｽ?ｿｽ?ｿｽN?ｿｽV?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽw?ｿｽi?ｿｽF		( ?ｿｽ?ｿｽ )
 
-#define CLR_FUNC_GREEN 	RGB(   0, 255,   0 )		// 緑
-#define CLR_FUNC_GREEN1 RGB(   0, 150,   0 )		// 濃い緑
-#define CLR_FUNC_GREEN2 RGB( 128, 255, 128 )		// 薄い緑
-#define CLR_FUNC_GREEN3 RGB( 200, 255, 200 )		// もっと薄い緑
-#define CLR_FUNC_BLUE 	RGB(   0,   0, 255 )		// 青
-#define CLR_FUNC_BLUE1 	RGB(   0,  84, 227 )		// 濃い青
-#define	CLR_SILVER		RGB( 192, 192, 192 )		// 銀色
-#define	CLR_GLAY		RGB(  48,  48,  48 )		// 灰色
-#define CLR_YELLOW		RGB( 255, 255,   0 )		// 黄色
-#define CLR_LIGHTYELLOW		RGB( 255, 255, 128 )		// 薄黄色
-#define CLR_PINK    		RGB( 247, 171, 166 )	// ﾋﾟﾝｸ
-#define CLR_ORANGE		RGB( 255, 165,   0 )		// オレンジ色
-#define CLR_RED			RGB( 255,   0,   0 )		// 赤
-#define CLR_BROWN		RGB( 165,  42,  42 )		// 茶色
-#define CLR_LIME		RGB(   0, 255,   0 )		// ライム
-#define CLR_GREEN		RGB( 190, 209,  45 )		// 緑色
-#define CLR_OLIVE		RGB( 128, 128,   0 )		// オリーブ
-#define CLR_CYAN		RGB(   0, 255, 255 )		// シアン
-#define CLR_BLUE		RGB(   0,   0, 255 )		// 青色
-#define CLR_DARKBLUE	RGB(   0,   0, 160 )		// 濃い青
-#define CLR_LIGHTBLUE	RGB( 173, 216, 230 )		// 薄い青
-#define CLR_PURPLE		RGB( 167,  87, 168 )		// 紫
+#define CLR_FUNC_GREEN 	RGB(   0, 255,   0 )		// ?ｿｽ?ｿｽ
+#define CLR_FUNC_GREEN1 RGB(   0, 150,   0 )		// ?ｿｽZ?ｿｽ?ｿｽ?ｿｽ?ｿｽ
+#define CLR_FUNC_GREEN2 RGB( 128, 255, 128 )		// ?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽ
+#define CLR_FUNC_GREEN3 RGB( 200, 255, 200 )		// ?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽﾆ費ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽ
+#define CLR_FUNC_BLUE 	RGB(   0,   0, 255 )		// ?ｿｽ?ｿｽ
+#define CLR_FUNC_BLUE1 	RGB(   0,  84, 227 )		// ?ｿｽZ?ｿｽ?ｿｽ?ｿｽ?ｿｽ
+#define	CLR_SILVER		RGB( 192, 192, 192 )		// ?ｿｽ?ｿｽF
+#define	CLR_GLAY		RGB(  48,  48,  48 )		// ?ｿｽD?ｿｽF
+#define CLR_YELLOW		RGB( 255, 255,   0 )		// ?ｿｽ?ｿｽ?ｿｽF
+#define CLR_LIGHTYELLOW		RGB( 255, 255, 128 )		// ?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽF
+#define CLR_PINK    		RGB( 247, 171, 166 )	// ?ｿｽ?ｿｽﾝｸ
+#define CLR_ORANGE		RGB( 255, 165,   0 )		// ?ｿｽI?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽW?ｿｽF
+#define CLR_RED			RGB( 255,   0,   0 )		// ?ｿｽ?ｿｽ
+#define CLR_BROWN		RGB( 165,  42,  42 )		// ?ｿｽ?ｿｽ?ｿｽF
+#define CLR_LIME		RGB(   0, 255,   0 )		// ?ｿｽ?ｿｽ?ｿｽC?ｿｽ?ｿｽ
+#define CLR_GREEN		RGB( 190, 209,  45 )		// ?ｿｽﾎ色
+#define CLR_OLIVE		RGB( 128, 128,   0 )		// ?ｿｽI?ｿｽ?ｿｽ?ｿｽ[?ｿｽu
+#define CLR_CYAN		RGB(   0, 255, 255 )		// ?ｿｽV?ｿｽA?ｿｽ?ｿｽ
+#define CLR_BLUE		RGB(   0,   0, 255 )		// ?ｿｽﾂ色
+#define CLR_DARKBLUE	RGB(   0,   0, 160 )		// ?ｿｽZ?ｿｽ?ｿｽ?ｿｽ?ｿｽ
+#define CLR_LIGHTBLUE	RGB( 173, 216, 230 )		// ?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽ
+#define CLR_PURPLE		RGB( 167,  87, 168 )		// ?ｿｽ?ｿｽ
 #define CLR_FUCHSIA		RGB( 255,   0, 255 )
 
 /*************************************************/
-/*  コントロールファイル                         */
+/*  ?ｿｽR?ｿｽ?ｿｽ?ｿｽg?ｿｽ?ｿｽ?ｿｽ[?ｿｽ?ｿｽ?ｿｽt?ｿｽ@?ｿｽC?ｿｽ?ｿｽ                         */
 /*************************************************/
 typedef struct CONTROL_BUFF{
-	char	LoadFlag[30];		/*   0	ローディング情報	*/
-	short	SDataCnt;		/*  38	仕入データ件数		*/
-	short	TDataCnt;		/*  42	棚卸データ件数		*/
-	short	IDataCnt;		/*  44	移動データ件数		*/
-	short	NDataCnt;		/*  46	値下データ件数		*/
-	char	Cursor;			/*  48	カーソルタイプ 		*/
-	char	Beep;			/*  49	音設定 			*/
-	char	Bright;			/*  50	画面輝度設定		*/
-	short	BUMSTCnt;		/*  54	部門マスタ件数   	*/
-	short	HIMSTCnt;		/*  58	品種マスタ件数		*/
-	short	URDataCnt;		/*  62	売上データ件数		*/
-	short	InfoUrCnt;		/*  66	売上データ件数		*/
-	long	RecNo;			/*  74	レシートNO		*/
-	char	RejiNo[2];		/*  76	レジNO			*/
-	char	RecPrint[1];		/*  77	レシート印字		*/
-	char	TaxRate[2];		/*  79	システム税率		*/	
-	char	filler[50];		/*  59	予備			*/
-} CONTROLDATA;				/* 128バイト			*/
+	char	LoadFlag[30];		/*   0	?ｿｽ?ｿｽ?ｿｽ[?ｿｽf?ｿｽB?ｿｽ?ｿｽ?ｿｽO?ｿｽ?ｿｽ?ｿｽ	*/
+	short	SDataCnt;		/*  38	?ｿｽd?ｿｽ?ｿｽ?ｿｽf?ｿｽ[?ｿｽ^?ｿｽ?ｿｽ?ｿｽ?ｿｽ		*/
+	short	TDataCnt;		/*  42	?ｿｽI?ｿｽ?ｿｽ?ｿｽf?ｿｽ[?ｿｽ^?ｿｽ?ｿｽ?ｿｽ?ｿｽ		*/
+	short	IDataCnt;		/*  44	?ｿｽﾚ難ｿｽ?ｿｽf?ｿｽ[?ｿｽ^?ｿｽ?ｿｽ?ｿｽ?ｿｽ		*/
+	short	NDataCnt;		/*  46	?ｿｽl?ｿｽ?ｿｽ?ｿｽf?ｿｽ[?ｿｽ^?ｿｽ?ｿｽ?ｿｽ?ｿｽ		*/
+	char	Cursor;			/*  48	?ｿｽJ?ｿｽ[?ｿｽ\?ｿｽ?ｿｽ?ｿｽ^?ｿｽC?ｿｽv 		*/
+	char	Beep;			/*  49	?ｿｽ?ｿｽ?ｿｽﾝ抵ｿｽ 			*/
+	char	Bright;			/*  50	?ｿｽ?ｿｽﾊ輝?ｿｽx?ｿｽﾝ抵ｿｽ		*/
+	short	BUMSTCnt;		/*  54	?ｿｽ?ｿｽ?ｿｽ?ｿｽ}?ｿｽX?ｿｽ^?ｿｽ?ｿｽ?ｿｽ?ｿｽ   	*/
+	short	HIMSTCnt;		/*  58	?ｿｽi?ｿｽ?ｿｽ}?ｿｽX?ｿｽ^?ｿｽ?ｿｽ?ｿｽ?ｿｽ		*/
+	short	URDataCnt;		/*  62	?ｿｽ?ｿｽ?ｿｽ?ｿｽf?ｿｽ[?ｿｽ^?ｿｽ?ｿｽ?ｿｽ?ｿｽ		*/
+	short	InfoUrCnt;		/*  66	?ｿｽ?ｿｽ?ｿｽ?ｿｽf?ｿｽ[?ｿｽ^?ｿｽ?ｿｽ?ｿｽ?ｿｽ		*/
+	long	RecNo;			/*  74	?ｿｽ?ｿｽ?ｿｽV?ｿｽ[?ｿｽgNO		*/
+	char	RejiNo[2];		/*  76	?ｿｽ?ｿｽ?ｿｽWNO			*/
+	char	RecPrint[1];		/*  77	?ｿｽ?ｿｽ?ｿｽV?ｿｽ[?ｿｽg?ｿｽ?ｿｽ		*/
+	char	TaxRate[2];		/*  79	?ｿｽV?ｿｽX?ｿｽe?ｿｽ?ｿｽ?ｿｽﾅ暦ｿｽ		*/	
+	char    TaxType[1];		/*  80	?ｿｽV?ｿｽX?ｿｽe?ｿｽ?ｿｽ?ｿｽﾅ具ｿｽ		*/	
+	char	filler[49];		/*  49	?ｿｽ\?ｿｽ?ｿｽ			*/
+} CONTROLDATA;				/* 128?ｿｽo?ｿｽC?ｿｽg			*/
 
 
 /*****************************************************************************/
-/* 部門マスタ	2+1+20+1+10+1+2 = 37															 */
+/* ?ｿｽ?ｿｽ?ｿｽ?ｿｽ}?ｿｽX?ｿｽ^	2+1+20+1+10+1+2 = 37															 */
 /*****************************************************************************/
 typedef struct BUMST_TAG {
-	char	Code[2];			//   コード	 2
-	char	FillerA;			//   カンマ 	 1		
-	char	Name[20];			//   部門名	20		
-	char	FillerB;			//   カンマ 	 1		
-	char	Ryaku[10];			//   略称	10
-	char	FillerC;			//   カンマ 	 1		
-	char	Zeiritu[2];			//   税率	 2		
+	char	Code[2];			//   ?ｿｽR?ｿｽ[?ｿｽh	 2
+	char	FillerA;			//   ?ｿｽJ?ｿｽ?ｿｽ?ｿｽ} 	 1		
+	char	Name[20];			//   ?ｿｽ?ｿｽ?ｿｽ蝟ｼ	20		
+	char	FillerB;			//   ?ｿｽJ?ｿｽ?ｿｽ?ｿｽ} 	 1		
+	char	Ryaku[10];			//   ?ｿｽ?ｿｽ?ｿｽ?ｿｽ	10
+	char	FillerC;			//   ?ｿｽJ?ｿｽ?ｿｽ?ｿｽ} 	 1		
+	char	Zeiritu[2];			//   ?ｿｽﾅ暦ｿｽ	 2		
 } BUMST;
 
 /*****************************************************************************/
-/* 品種マスタ	4+1+20+1+10+1+2+1+2+1+2=45															 */
+/* ?ｿｽi?ｿｽ?ｿｽ}?ｿｽX?ｿｽ^	4+1+20+1+10+1+2+1+2+1+2=45															 */
 /*****************************************************************************/
 typedef struct HIMST_TAG {
-	char	Code[4];			//   コード	 4
-	char	FillerA;			//   カンマ 	 1		
-	char	Name[20];			//   品種名	20		
-	char	FillerB;			//   カンマ 	 1		
-	char	Ryaku[10];			//   略称	10
-	char	FillerC;			//   カンマ 	 1		
-	char	Wari[2];			//   割引率	 2	
-	char	FillerD;			//   カンマ 	 1		
-	char	Zeiku[2];			//   税区	 2		
-	char	Filler5;			//   カンマ 	 1		
-	char	Tenku[2];			//   点区	 2		
+	char	Code[4];			//   ?ｿｽR?ｿｽ[?ｿｽh	 4
+	char	FillerA;			//   ?ｿｽJ?ｿｽ?ｿｽ?ｿｽ} 	 1		
+	char	Name[20];			//   ?ｿｽi?ｿｽ嵂ｼ	20		
+	char	FillerB;			//   ?ｿｽJ?ｿｽ?ｿｽ?ｿｽ} 	 1		
+	char	Ryaku[10];			//   ?ｿｽ?ｿｽ?ｿｽ?ｿｽ	10
+	char	FillerC;			//   ?ｿｽJ?ｿｽ?ｿｽ?ｿｽ} 	 1		
+	char	Wari[2];			//   ?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽ?ｿｽ	 2	
+	char	FillerD;			//   ?ｿｽJ?ｿｽ?ｿｽ?ｿｽ} 	 1		
+	char	Zeiku[2];			//   ?ｿｽﾅ具ｿｽ	 2		
+	char	Filler5;			//   ?ｿｽJ?ｿｽ?ｿｽ?ｿｽ} 	 1		
+	char	Tenku[2];			//   ?ｿｽ_?ｿｽ?ｿｽ	 2		
 } HIMST;
 
 /*****************************************************************************/
-/* 棚卸データ																 */
+/* ?ｿｽI?ｿｽ?ｿｽ?ｿｽf?ｿｽ[?ｿｽ^																 */
 /*****************************************************************************/
 typedef struct TDATA_TAG {
-	char	Date[8];			/*   0	日付		*/
-	char	Shop[2];			/*  14	店舗コード	*/
-	char	Code1[13];			/*  18	上段コード	*/
-	char	Code2[13];			/*  31	下段コード	*/
-	char	Code3[8];			/*  44	値下コード	*/
-	char	Num[5];				/*  52	数量		*/
+	char	Date[8];			/*   0	?ｿｽ?ｿｽ?ｿｽt		*/
+	char	Shop[2];			/*  14	?ｿｽX?ｿｽﾜコ?ｿｽ[?ｿｽh	*/
+	char	Code1[13];			/*  18	?ｿｽ?ｿｽi?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Code2[13];			/*  31	?ｿｽ?ｿｽ?ｿｽi?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Code3[8];			/*  44	?ｿｽl?ｿｽ?ｿｽ?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Num[5];				/*  52	?ｿｽ?ｿｽ?ｿｽ?ｿｽ		*/
 } TDATA;
 
 /*****************************************************************************/
-/* 移動データ																 */
+/* ?ｿｽﾚ難ｿｽ?ｿｽf?ｿｽ[?ｿｽ^																 */
 /*****************************************************************************/
 typedef struct IDATA_TAG {
-	char	Date[8];			/*   0	日付		*/
-	char	Shop[2];			/*  14	出荷店コード	*/
-	char	Shop2[2];			/*  16	受入店コード	*/
-	char	Code1[13];			/*  18	上段コード	*/
-	char	Code2[13];			/*  31	下段コード	*/
-	char	Code3[8];			/*  44	値下コード	*/
-	char	Num[5];				/*  52	数量		*/
+	char	Date[8];			/*   0	?ｿｽ?ｿｽ?ｿｽt		*/
+	char	Shop[2];			/*  14	?ｿｽo?ｿｽﾗ店?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Shop2[2];			/*  16	?ｿｽ?ｿｽ?ｿｽ?ｿｽX?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Code1[13];			/*  18	?ｿｽ?ｿｽi?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Code2[13];			/*  31	?ｿｽ?ｿｽ?ｿｽi?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Code3[8];			/*  44	?ｿｽl?ｿｽ?ｿｽ?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Num[5];				/*  52	?ｿｽ?ｿｽ?ｿｽ?ｿｽ		*/
 } IDATA;
-	/* 	57バイト		*/
+	/* 	57?ｿｽo?ｿｽC?ｿｽg		*/
 
 /*****************************************************************************/
-/* 仕入データ																 */
+/* ?ｿｽd?ｿｽ?ｿｽ?ｿｽf?ｿｽ[?ｿｽ^																 */
 /*****************************************************************************/
 typedef struct SDATA_TAG {
-	char	Date[8];			/*   0	日付		*/
-	char	DenNo[8];			/*   0	伝票No		*/
-	char	Shop[2];			/*  14	出荷店コード	*/
-	char	Code1[13];			/*  18	上段コード	*/
-	char	Code2[13];			/*  31	下段コード	*/
-	char	Code3[8];			/*  44	値下コード	*/
-	char	Num[5];				/*  52	数量		*/
+	char	Date[8];			/*   0	?ｿｽ?ｿｽ?ｿｽt		*/
+	char	DenNo[8];			/*   0	?ｿｽ`?ｿｽ[No		*/
+	char	Shop[2];			/*  14	?ｿｽo?ｿｽﾗ店?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Code1[13];			/*  18	?ｿｽ?ｿｽi?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Code2[13];			/*  31	?ｿｽ?ｿｽ?ｿｽi?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Code3[8];			/*  44	?ｿｽl?ｿｽ?ｿｽ?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Num[5];				/*  52	?ｿｽ?ｿｽ?ｿｽ?ｿｽ		*/
 } SDATA;
-	/* 	57バイト		*/
+	/* 	57?ｿｽo?ｿｽC?ｿｽg		*/
 /*****************************************************************************/
-/* 値下データ																 */
+/* ?ｿｽl?ｿｽ?ｿｽ?ｿｽf?ｿｽ[?ｿｽ^																 */
 /*****************************************************************************/
 typedef struct NDATA_TAG {
-	char	Date[8];			/*   0	日付		*/
-	char	Shop[1];			/*  14	出荷店コード	*/
-	char	Code1[13];			/*  18	上段コード	*/
-	char	Code2[13];			/*  31	下段コード	*/
-	char	Code3[8];			/*  44	値下コード	*/
-	char	Code4[13];			/*  44	値下コード	*/
-	char	Num[5];				/*  52	数量		*/
-} NDATA;/* 	57バイト		*/
+	char	Date[8];			/*   0	?ｿｽ?ｿｽ?ｿｽt		*/
+	char	Shop[1];			/*  14	?ｿｽo?ｿｽﾗ店?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Code1[13];			/*  18	?ｿｽ?ｿｽi?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Code2[13];			/*  31	?ｿｽ?ｿｽ?ｿｽi?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Code3[8];			/*  44	?ｿｽl?ｿｽ?ｿｽ?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Code4[13];			/*  44	?ｿｽl?ｿｽ?ｿｽ?ｿｽR?ｿｽ[?ｿｽh	*/
+	char	Num[5];				/*  52	?ｿｽ?ｿｽ?ｿｽ?ｿｽ		*/
+} NDATA;/* 	57?ｿｽo?ｿｽC?ｿｽg		*/
 
 /****************************************************************************/
-/* 各種情報
+/* ?ｿｽe?ｿｽ?ｿｽ?ｿｽ?ｿｽ
 /****************************************************************************/
 typedef struct INFO_DATA{
-	char	Date[8];			//   0	日付		
+	char	Date[8];			//   0	?ｿｽ?ｿｽ?ｿｽt		
 	char	Time[6];
-	char	tenpo1[2];			//  出荷店コード	
-	char	tenpo2[2];			//  受入店コード
+	char	tenpo1[2];			//  ?ｿｽo?ｿｽﾗ店?ｿｽR?ｿｽ[?ｿｽh	
+	char	tenpo2[2];			//  ?ｿｽ?ｿｽ?ｿｽ?ｿｽX?ｿｽR?ｿｽ[?ｿｽh
 	char	Bumon[2];
 	char	Hinsyu[4];
-	char	Code1[13];			//  JANコード
+	char	Code1[13];			//  JAN?ｿｽR?ｿｽ[?ｿｽh
 	char 	Joudai[10];
 	char	Gedai[10];
 	char	tanto[2];
 	char	Code2[13];
-	char	Code3[13];			//  値下
+	char	Code3[13];			//  ?ｿｽl?ｿｽ?ｿｽ
 	char	Num[4];
 	int	flag;
 } INFO;
 	
 /*****************************************************************************/
-/* 売上データ																 */
+/* ?ｿｽ?ｿｽ?ｿｽ?ｿｽf?ｿｽ[?ｿｽ^																 */
 /*****************************************************************************/
 typedef struct URDATA_TAG {
-	char	Date[8];			//   0	日付		
+	char	Date[8];			//   0	?ｿｽ?ｿｽ?ｿｽt		
 	char	Time[6];
-	char	Shop[2];			//  14	出荷店コード	
+	char	Shop[2];			//  14	?ｿｽo?ｿｽﾗ店?ｿｽR?ｿｽ[?ｿｽh	
 	char	RejiNo[2];
 	char	Tanto[2];
-	char	Code1[13];			//  18	上段コード	
-	char	Code2[13];			//  31	下段コード	
-	char	Code3[8];			//  44	値下コード	
+	char	Code1[13];			//  18	?ｿｽ?ｿｽi?ｿｽR?ｿｽ[?ｿｽh	
+	char	Code2[13];			//  31	?ｿｽ?ｿｽ?ｿｽi?ｿｽR?ｿｽ[?ｿｽh	
+	char	Code3[8];			//  44	?ｿｽl?ｿｽ?ｿｽ?ｿｽR?ｿｽ[?ｿｽh	
 	char	Name[20];
 	char	Baika[10];
-	char	Num[5];				//  52	数量		
+	char	Num[5];				//  52	?ｿｽ?ｿｽ?ｿｽ?ｿｽ		
 	char 	Genkin[6];
 	char	Credit[6];
 	char 	Kinken[6];
@@ -233,28 +235,31 @@ typedef struct URDATA_TAG {
 	char  	SyouhiFlg[1];
 	char 	Reason[2];
 	long	lngOturi;
+	long    BumonTaxRate;
+	long    lngSystemTaxRateTax;
+	long    lngBumonTaxRateTax;
 } URDATA;
 
 /*****************************************************************************/
-/* 一時売上データ																 */
+/* ?ｿｽ齊橸ｿｽ?ｿｽ?ｿｽ?ｿｽf?ｿｽ[?ｿｽ^																 */
 /*****************************************************************************/
 typedef struct INFOUR_TAG {	
-	char	Date[8];			//   0	日付		
+	char	Date[8];			//   0	?ｿｽ?ｿｽ?ｿｽt		
 	char	Time[6];
-	char	Code1[13];			//  18	上段コード	
-	char	Code2[13];			//  18	上段コード	
-	char	Code3[13];			//  44	値下コード	
+	char	Code1[13];			//  18	?ｿｽ?ｿｽi?ｿｽR?ｿｽ[?ｿｽh	
+	char	Code2[13];			//  18	?ｿｽ?ｿｽi?ｿｽR?ｿｽ[?ｿｽh	
+	char	Code3[13];			//  44	?ｿｽl?ｿｽ?ｿｽ?ｿｽR?ｿｽ[?ｿｽh	
 	char	Name[20];
 	char	Baika[10];
-	char	Num[4];				//  52	数量	
+	char	Num[4];				//  52	?ｿｽ?ｿｽ?ｿｽ?ｿｽ	
 
 } INFOUR;
 
 /*****************************************************************************/
-/* 一時売上データ																 */
+/* ?ｿｽ齊橸ｿｽ?ｿｽ?ｿｽ?ｿｽf?ｿｽ[?ｿｽ^																 */
 /*****************************************************************************/
 typedef struct INFOUR_TAG2 {	
-	char	Date[8];			//   0	日付		
+	char	Date[8];			//   0	?ｿｽ?ｿｽ?ｿｽt		
 	char	Time[6];
 	char 	Genkin[6];
 	char	Credit[6];
@@ -266,18 +271,18 @@ typedef struct INFOUR_TAG2 {
 } INFOUR2;
 
 typedef struct TENPO_DATA{
-	char	tenpo1[2];			/*  14	出荷店コード	*/
+	char	tenpo1[2];			/*  14	?ｿｽo?ｿｽﾗ店?ｿｽR?ｿｽ[?ｿｽh	*/
 	char	tenpo2[2];
 	int	flag;
-} TENPO;/* 	5バイト		*/
+} TENPO;/* 	5?ｿｽo?ｿｽC?ｿｽg		*/
 
 extern	CONTROLDATA	ctrl;
-extern	TDATA		tdata;		/* 棚卸データ		*/
-extern	IDATA		idata;		/* 移動データ		*/
-extern	NDATA		ndata;		/* 値引データ		*/
-extern	SDATA		sdata;		/* 仕入データ		*/
-extern	BUMST		bumst;		/* 担当データ		*/
-extern	HIMST		himst;		/* 部門データ		*/
+extern	TDATA		tdata;		/* ?ｿｽI?ｿｽ?ｿｽ?ｿｽf?ｿｽ[?ｿｽ^		*/
+extern	IDATA		idata;		/* ?ｿｽﾚ難ｿｽ?ｿｽf?ｿｽ[?ｿｽ^		*/
+extern	NDATA		ndata;		/* ?ｿｽl?ｿｽ?ｿｽ?ｿｽf?ｿｽ[?ｿｽ^		*/
+extern	SDATA		sdata;		/* ?ｿｽd?ｿｽ?ｿｽ?ｿｽf?ｿｽ[?ｿｽ^		*/
+extern	BUMST		bumst;		/* ?ｿｽS?ｿｽ?ｿｽ?ｿｽf?ｿｽ[?ｿｽ^		*/
+extern	HIMST		himst;		/* ?ｿｽ?ｿｽ?ｿｽ?ｿｽf?ｿｽ[?ｿｽ^		*/
 extern  TENPO		tenpo;
 extern	char		scanBuf[30],dt[32], dspBuf[50];
 
@@ -294,13 +299,20 @@ extern  void 	AlfDataSend( short job );
 extern  void 	AlfRecvMst( void );
 extern  void 	displayMsg( long );
 extern  void 	displayStringMsg( char* );
-extern	long 	getJyoudai(char *);
+extern	long 	getJyoudai(char *barcode);
+extern	long	getGedai(const char *barcode);
 extern	int	ctoi(char c);
 extern	long	powOfTen(int exp);
 extern	void	insComma( long, char[] );
 extern	void	printNumberWithComma( long num, int col, int row ) ;
-// 売上
+// ?ｿｽ?ｿｽ?ｿｽ?ｿｽ
 extern	URDATA		urdata;	
 extern  INFO		info;
 extern  INFOUR		infour;
 extern  INFOUR2		infour2;
+
+extern	short	BumonFind( char *key );
+extern	long	BumonTaxFind( char *key );
+extern	long	BumonTaxFindByCode1( char *code1 );
+extern	long	HinsyuZeikuFindByCode1( char *code1 );
+extern	void	drawLineCrossScreen(long y);

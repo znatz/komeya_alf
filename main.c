@@ -132,7 +132,7 @@ long getJyoudai(const char *barcode) {
 /* Hybrid “ñ’i‰º‘ã */
 long getGedai(const char *barcode) {
     char wk[10];
-    // * : 1...8,9,10,11(‰º‘ã4Œ…), 12(Œ…”)
+    // * : 1...8,9,10,11(‰º‘ã4Œ…), 12(Œ…”), CD
     strncpy( wk, barcode+7, 5 );
     // * : 12Œ…–Ú
     long chkpoint = ctoi(wk[4]);

@@ -466,9 +466,11 @@
 -endian=big
 -dbl_size=8
 -signed_char
--include=..\ALF_ARK7000\ARK7000\INCLUDE
+-include=INCLUDE
 -output=obj=%BuildModeName%\%FileLeaf%.obj
 -debug
+-optimize=max
+-map=%BuildModeName%\1st\%ProjectName%.bls
 -nologo
 </COptionCommandLine-DefaultValue>
       <COptionDefine-DefaultValue />
@@ -516,12 +518,12 @@
       <COptionFpu-DefaultValue>Auto</COptionFpu-DefaultValue>
       <COptionAlias-DefaultValue>False</COptionAlias-DefaultValue>
       <COptionFloatOrder-DefaultValue>False</COptionFloatOrder-DefaultValue>
-      <TimeTagModified--0>-8585964427066351698</TimeTagModified--0>
+      <TimeTagModified--0>-8585951602464876900</TimeTagModified--0>
       <COptionLangC-0>C99</COptionLangC-0>
       <COptionListfile-0>False</COptionListfile-0>
       <COptionLogo-0>False</COptionLogo-0>
       <COptionMisra2004-0>None</COptionMisra2004-0>
-      <COptionOptimize-0>Level2</COptionOptimize-0>
+      <COptionOptimize-0>LevelMax</COptionOptimize-0>
       <COptionOutput-0>Object</COptionOutput-0>
       <COptionGoptimize-0>False</COptionGoptimize-0>
       <COptionLangCpp-0>Cpp</COptionLangCpp-0>
@@ -552,9 +554,11 @@
 -endian=big
 -dbl_size=8
 -signed_char
--include=..\ALF_ARK7000\ARK7000\INCLUDE
+-include=INCLUDE
 -output=obj=%BuildModeName%\%FileLeaf%.obj
 -debug
+-optimize=max
+-map=%BuildModeName%\1st\%ProjectName%.bls
 -nologo
 </COptionCommandLine-0>
       <COptionDefine-0 />
@@ -591,7 +595,7 @@
       <COptionNouseDiv-0>True</COptionNouseDiv-0>
       <COptionSchedule-0>Auto</COptionSchedule-0>
       <COptionFileInlinePath-0 />
-      <COptionMap-0>NoMap</COptionMap-0>
+      <COptionMap-0>Map</COptionMap-0>
       <COptionOutcode-0>Sjis</COptionOutcode-0>
       <COptionApproxdiv-0>False</COptionApproxdiv-0>
       <COptionComment-0>False</COptionComment-0>
@@ -753,7 +757,7 @@ D_2=R_2
 -s9
 -exit
 </LinkOptionCommandLine-DefaultValue>
-      <TimeTagModified--0>-8585964423828657190</TimeTagModified--0>
+      <TimeTagModified--0>-8585951602464257475</TimeTagModified--0>
       <LinkOptionCpu-0>False</LinkOptionCpu-0>
       <LinkOptionForm-0>Absolute</LinkOptionForm-0>
       <LinkOptionFormConvert-0>Stype</LinkOptionFormConvert-0>
@@ -809,7 +813,7 @@ D_2=R_2
       <LinkOptionMultiOutputFileName-0 />
       <LinkOptionSymbolForbid-0 />
       <LinkOptionChangeMessageError-0>None</LinkOptionChangeMessageError-0>
-      <LinkOptionMap-0>False</LinkOptionMap-0>
+      <LinkOptionMap-0>True</LinkOptionMap-0>
       <LinkOptionNoPrelink-0>Auto</LinkOptionNoPrelink-0>
       <LinkOptionSameCodeForbid-0 />
       <LinkOptionSpace-0>None</LinkOptionSpace-0>

@@ -61,27 +61,29 @@ void	ReDrowDisplay( short clr )
 		case CLR_TITLE:
 				setcolor( CLR_TITLE_TEXT, CLR_TITLE_BACK );		break;
 		case CLR_SI_TITLE:
-				setcolor( CLR_TITLE_TEXT, CLR_FUNC_GREEN2 );		break;
+				setcolor( CLR_TITLE_TEXT, CLR_FUNC_GREEN2 );	break;
 		case CLR_ZA_TITLE:
-				setcolor( CLR_TITLE_TEXT, CLR_PURPLE );		        break;
+				setcolor( CLR_TITLE_TEXT, CLR_PURPLE );		  	break;
 		case CLR_NE_TITLE:
-				setcolor( CLR_TITLE_TEXT, CLR_PINK );		        break;
+				setcolor( CLR_TITLE_TEXT, CLR_PINK );		    break;
 		case CLR_ID_TITLE:
 				setcolor( CLR_TITLE_TEXT, CLR_LIGHTBLUE );		break;
 		case CLR_TE_TITLE:
-				setcolor( CLR_TITLE_TEXT, CLR_GREEN );		        break;
+				setcolor( CLR_TITLE_TEXT, CLR_GREEN );		    break;
 		case CLR_DE_TITLE:
-				setcolor( CLR_TITLE_TEXT, CLR_LIGHTYELLOW );		break;
+				setcolor( CLR_TITLE_TEXT, CLR_LIGHTYELLOW );	break;
 		case CLR_KP_TITLE:
 				setcolor( CLR_TITLE_TEXT, CLR_LIME );    		break;
 		case CLR_UR_TITLE:
 				setcolor( CLR_TITLE_TEXT, CLR_CYAN );			break;
+		case CLR_SE_TITLE:
+				setcolor( CLR_TITLE_TEXT, CLR_LIME );			break;
 		case CLR_PR_TITLE:
 				setcolor( CLR_TITLE_TEXT, CLR_SILVER );			break;				
 		case CLR_LABEL:
 				setcolor( CLR_LABEL_TEXT, CLR_LABEL_BACK );		break;
 		case CLR_MSGBOX:
-				setcolor( CLR_MSGBOX_TEXT, CLR_MSGBOX_BACK );	        break;
+				setcolor( CLR_MSGBOX_TEXT, CLR_MSGBOX_BACK );	break;
 	}
 }
 
@@ -605,5 +607,9 @@ void printNumberWithComma( long num, int col, int row ) {
 	char strKingaku[7];
     	insComma( num,strKingaku );
 	ckprintf(col, row, False, CLR_BASE, "%7s", strKingaku );
+}
+
+void drawLineCrossScreen(long y) {
+	gline(0, y*8+16, 127, y*8+16, 1);
 }
 

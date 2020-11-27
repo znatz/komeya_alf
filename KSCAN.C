@@ -8,6 +8,7 @@
 #include "sub.h"
 #include "worksub.h"
 
+
 enum {
 	CODE1=1,
 	CODE2,
@@ -16,7 +17,7 @@ enum {
 	DELETE
 };
 
-static short		SaveItem;
+static short	SaveItem;
 static char		Code[13];
 
 static void		meisaiclr( void );
@@ -45,41 +46,41 @@ static void Display( short item , short Func )
 			{
 				ClsColor();	/*   0123456789012345*/
 				ckputss( 0,  0, "<検品入力>      ", False, CLR_KP_TITLE );
-				ckputss( 0,  6, "▲              ", False, CLR_BASE );
-				ckputss( 0,  8, "▽              ", False, CLR_BASE );
-				ckputss( 0, 11, "                ", False, CLR_BASE );
-				ckputss( 0, 13, "                ", False, CLR_BASE );	
-				ckputss( 0, 16, "F1:戻る         ", False, CLR_BASE );
+				ckputss( 0,  4, "▲              ", False, CLR_BASE );
+				ckputss( 0,  6, "▽              ", False, CLR_BASE );
+				ckputss( 0,  9, "                ", False, CLR_BASE );
+				ckputss( 0, 11, "                ", False, CLR_BASE );	
+				ckputss( 0, 14, "F1:戻る         ", False, CLR_BASE );
 			}
 			/* 上段コード */
 			if( tdata.Code1[0] ){
-				ckputsn( 3, 6, tdata.Code1, 13, False, CLR_BASE );
+				ckputsn( 3, 4, tdata.Code1, 13, False, CLR_BASE );
 			} else {
-				ckputss( 0, 6, "▲              ", False, CLR_BASE );
+				ckputss( 0, 4, "▲              ", False, CLR_BASE );
 			}
 			break;
 		case CODE2:
 			if( SaveItem != CODE2){
 				ClsColor();	/*   0123456789012345*/
 				ckputss( 0,  0, "<検品入力>      ", False, CLR_KP_TITLE );
-				ckputss( 0,  6, "△              ", False, CLR_BASE );
-				ckputss( 0,  8, "▼              ", False, CLR_BASE );
-				ckputss( 0, 11, "                ", False, CLR_BASE );
-				ckputss( 0, 13, "                ", False, CLR_BASE );	
-				ckputss( 0, 16, "F1:戻る         ", False, CLR_BASE );
+				ckputss( 0,  4, "△              ", False, CLR_BASE );
+				ckputss( 0,  6, "▼              ", False, CLR_BASE );
+				ckputss( 0,  9, "                ", False, CLR_BASE );
+				ckputss( 0, 11, "                ", False, CLR_BASE );	
+				ckputss( 0, 14, "F1:戻る         ", False, CLR_BASE );
 			}
 
 			/* 上段コード */
 			if( tdata.Code1[0] ){
-				ckputsn( 3,  6, tdata.Code1, 13, False, CLR_BASE );
+				ckputsn( 3,  4, tdata.Code1, 13, False, CLR_BASE );
 			} else {
-				ckputss( 0,  6, "△              ", False, CLR_BASE );
+				ckputss( 0,  4, "△              ", False, CLR_BASE );
 			}
 			/* 下段コード */
 			if( tdata.Code2[0] ){
-				ckputsn( 3,  8, tdata.Code2, 13, False, CLR_BASE );
+				ckputsn( 3,  6, tdata.Code2, 13, False, CLR_BASE );
 			} else {
-				ckputss( 0,  8, "▼              ", False, CLR_BASE );
+				ckputss( 0,  6, "▼              ", False, CLR_BASE );
 			}
 			break;
 		case DENTRY:
@@ -87,23 +88,28 @@ static void Display( short item , short Func )
 			{
 				ClsColor();	/*   0123456789012345*/
 				ckputss( 0,  0, "<検品入力>      ", False, CLR_KP_TITLE );
-				ckputss( 0,  6, "△              ", False, CLR_BASE );
-				ckputss( 0,  8, "▽              ", False, CLR_BASE );
-				ckputss( 0, 11, "上代:           ", False, CLR_BASE );
-				ckputss( 0, 13, "下代:           ", False, CLR_BASE );	
-				ckputss( 0, 16, "F1:戻る         ", False, CLR_BASE );			
+				ckputss( 0,  4, "△              ", False, CLR_BASE );
+				ckputss( 0,  6, "▽              ", False, CLR_BASE );
+				ckputss( 0,  9, "上代:           ", False, CLR_BASE );
+				ckputss( 0, 11, "下代:           ", False, CLR_BASE );	
+				ckputss( 0, 14, "F1:戻る         ", False, CLR_BASE );			
 			}
 			/* 上段コード */
 			if( tdata.Code1[0] ){
 				//displayMsg(getJyoudai(&tdata.Code1));			
-				ckputsn( 3, 6, tdata.Code1, 13, False, CLR_BASE );
-				printNumberWithComma( getJyoudai(&tdata.Code1), 6, 11);
+				ckputsn( 3, 4, tdata.Code1, 13, False, CLR_BASE );
+				printNumberWithComma( getJyoudai(&tdata.Code1), 6, 9);
 			}
 			/* 下段コード */
 			if( tdata.Code2[0] ){
 				//displayMsg(getGedai(&tdata.Code2));			
-				ckputsn( 3, 8, tdata.Code2, 13, False, CLR_BASE );
-				printNumberWithComma( getGedai(&tdata.Code2), 6, 13);
+				ckputsn( 3, 6, tdata.Code2, 13, False, CLR_BASE );
+				printNumberWithComma( getGedai(&tdata.Code2), 6, 11);
+
+			/* TEST用 
+				displayMsg(BumonTaxFindByCode1(&tdata.Code1));
+				displayMsg(HinsyuZeikuFindByCode1(&tdata.Code1));
+			*/
 			}
 
 			break;
@@ -128,11 +134,11 @@ void Kscan( void )
 		Display( item,Func );
 		switch( item ){
 			case CODE1:
-				ret = CodeInput( 3, 6, tdata.Code1, sizeof( tdata.Code1 ), 
+				ret = CodeInput( 3, 4, tdata.Code1, sizeof( tdata.Code1 ), 
 								 BCR_NOTDRW | BCR_WPC | KEY_FUNC );
 				break;
 			case CODE2:
-				ret = CodeInput( 3, 8, tdata.Code2, sizeof( tdata.Code2 ), 
+				ret = CodeInput( 3, 6, tdata.Code2, sizeof( tdata.Code2 ), 
 								 BCR_NOTDRW | BCR_WPC | KEY_FUNC );
 				break;
 			case DENTRY:
