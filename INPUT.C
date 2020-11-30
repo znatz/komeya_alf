@@ -363,7 +363,7 @@ short	input( short x, short y, char *buf, short len, long prm )
 						cputspc( x+pos, y, ank, 0, len-pos );
 						//cputchar( x+pos, y, 0, 0, alphaStr[ch-'0'][InNum] );	
 						cputchar( (x+pos)%16,  y+((x+pos)/16)*2, 0, 0, alphaStr[ch-'0'][InNum] );	/* ÇPÇUï∂éöà»è„ÇÃì¸óÕÇÃç€ÇÃï\é¶ëŒâû */
-//ckprintf( 0, 0, True, CLR_BASE, "x=%d y=%d c=%c", (x+pos)%16,  y+((x+pos)/16)*2, alphaStr[ch-'0'][InNum] );
+						//ckprintf( 0, 0, True, CLR_BASE, "x=%d y=%d c=%c", (x+pos)%16,  y+((x+pos)/16)*2, alphaStr[ch-'0'][InNum] );
 						SaveCh = ch;
 					} else {
 						if( mode & IN_ALPHA ) break;

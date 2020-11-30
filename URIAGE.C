@@ -61,8 +61,34 @@ static void		entryUriage();
 // ZNATZ
 static int		reprint;
 static int		teisei;
-static long 		calculateTax(long lngPrice, short rate);
+static long 	calculateTax(long lngPrice, short rate);
 
+static long calculateTax(long lngPrice, short rate)
+{
+	// ZZZZ
+	long result = lngPrice;
+	return result;
+}
+
+// * 税額取得
+static long calculateTax2(long lngPrice, short rate)
+{
+	// ZZZZ
+	float t = (float) rate;
+	// 1:四捨五入
+	float result = round(lngPrice * rate / 100.0);
+	// 2:切捨て
+	if ( ctrl.TaxType[0] == '2') result = lngPrice * rate / 100.0;
+	return (long) result;
+}
+
+// * 上段バーコードから税込金額計算
+static long getZeikomiKingaku(char *barcode, short count) { 
+	displayMsg(BumonTaxFindByCode1(barcode));
+	long jyoudai = getJyoudai(barcode);
+	long bumon_tax = calculateTax2(jyoudai, BumonTaxFindByCode1(barcode));
+	return (jyoudai + bumon_tax) * count;
+}
 
 //****************************************************************************
 //* 	明細データ初期化														 */
@@ -128,33 +154,6 @@ static void infoclrExceptTenpoTanto( void ){
 	memset( Name,	0x00, sizeof( Name ) );
 	
 }
-
-static long calculateTax(long lngPrice, short rate)
-{
-	// ZZZZ
-	long result = lngPrice;
-	return result;
-}
-
-static long calculateTax2(long lngPrice, short rate)
-{
-	// ZZZZ
-	float t = (float) rate;
-	float result = round(lngPrice * rate / 100.0);
-	// TODO
-	//if ( ctrl.TaxType[0] == '2') result = lngPrice * rate / 100.0;
-	return (long) result;
-}
-
-
-static long calculateTaxNoRoundUp(long lngPrice, short rate)
-{
-	float t = (float) rate;
-	float result;
-	result = lngPrice * rate / 100;
-	return (long) result;
-}
-
 /*****************************************************************************/
 /* 			     															 */
 /*****************************************************************************/
@@ -317,7 +316,7 @@ static void Display( short item )
 				ckputss( 0,  7, "▽              ", False, CLR_BASE );
 				ckputsn( 3,  5, info.Code1, 13, False, CLR_BASE );
 				ckputsn( 3,  7, info.Code2, 13, False, CLR_BASE );
-//				ckputsn( 0,  7, btsmas.Name, 16, False, CLR_BASE ); 
+				//ckputsn( 0,  7, btsmas.Name, 16, False, CLR_BASE ); 
 				
 				//ZNATZ SHOW_TAX_INCLUDED
 				jyoudaiWithTax = calculateTax2(atoln( info.Joudai, sizeof( info.Joudai )), taxrate);
@@ -789,7 +788,7 @@ int print( short Flag ){
 		memcpy( infour2.Coupon, Coupon , sizeof( infour2.Coupon ));
 		
 		memcpy( infour2.Date, Year , 4);		// ZNATZ INSERT Year
-		memcpy( &infour2.Date[4], Month , 2);		// ZNATZ INSERT MONTH
+		memcpy( &infour2.Date[4], Month , 2);	// ZNATZ INSERT MONTH
 		memcpy( &infour2.Date[6], Day , 2);		// ZNATZ INSERT Day
 		
 		infour2.Oturi = lngOturi;
@@ -1073,23 +1072,36 @@ void uriage( int flag, int firsttime )
 				
 				lngGoukei = 0;
 				
-			}else if( item == CODE1 ){
+			} else if( item == CODE1 ){
 				if( MaxCheck( ctrl.URDataCnt, URDATA_MAX ) ) return;//@01
 
-				if( info.Code1[0] != 0x00 ){
+				// if ( info.Code1[13] != ' ') {
+				// 	beeb(10,2, 1);
+				// 	displayMsg(info.Code1[12]);
+				// 	displayMsg(info.Code1[13]);
+				// 	meisaiclr();
+				// 	continue; // }
+
+				if( info.Code1[0] ){
 
 					if( ctrl.InfoUrCnt == INFOUR_MAX ){//件数を超える場合は登録不可
 						beeb(10,2, 1);
 						memset( info.Code1, 0x00, sizeof( info.Code1 ) );
 						continue;
 					}
+
 					//3桁が501～999の場合
 					if( atoin( info.Code1, 3 ) > 500 && atoin( info.Code1, 3 ) < 999 ){
-						item = CODE2;
-						displayMsg(BumonTaxFind("33"));
 						// TODO
-		//						memcpy( info.Joudai, btsmas.Joudai, sizeof( info.Joudai ) );
-		//						memcpy( Name, btsmas.Name ,sizeof( Name ) );
+						char _buf[10];
+						sprintf(_buf, "%010d", getJyoudai(info.Code1));
+						memcpy(info.Joudai, _buf, sizeof(info.Joudai));
+						// ckputsn( 0, 0, info.Joudai, 10, False, CLR_BASE );
+						// getch();
+
+						// displayStringMsg(&info.Joudai);
+						//memcpy( info.Joudai, btsmas.Joudai, sizeof( info.Joudai ) );
+						//memcpy( Name, btsmas.Name ,sizeof( Name ) );
 						item = CODE2;
 						continue;
 					} else if( ctrl.URDataCnt > 0 && !memcmp( info.Code1, "30", 2 ) && info.Code1[8] == ' ' ){
@@ -1120,8 +1132,8 @@ void uriage( int flag, int firsttime )
 				/* 上段コードの先頭から３桁が501～999の場合、０９９９、１、３から始まるコード以外不可 */
 				if( atoin( info.Code1, 3 ) > 500 && atoin( info.Code1, 3 ) < 999 ){
 					if( (info.Code2[0] == '0' || info.Code2[0] == '1' || info.Code2[0] == '2' || info.Code2[0] == '3') && sdata.Code2[12] != ' ' ){
-						long bk = getJyoudai(info.Code1);
-						lngGoukei = lngGoukei + calculateTax2(bk, taxrate);
+						// TODO
+						lngGoukei = lngGoukei + getZeikomiKingaku(info.Code1, 1);
 						lngTensuu = lngTensuu + 1; 
 						item = NUM;
 						continue;
@@ -1139,44 +1151,48 @@ void uriage( int flag, int firsttime )
 				}
 				
  			} else if( item == NUM ){
+
+				 long current_input_num = atoln(info.Num, sizeof(info.Num));
 				//0は弾く
-				if( atoln( info.Num, sizeof( info.Num ) ) == 0 ){
+				if( current_input_num == 0 ){
 					beeb(10,2, 1);
 					continue;
 				}
 				// マイナスを含まない場合、入力値が９９９を超えたらエラーとする 
-				if( atoln( info.Num, sizeof( info.Num ) ) >= 0 && atoln( info.Num, sizeof( info.Num ) ) > 999 ){
+				if( current_input_num >= 0 && current_input_num > 999 ){
 					beeb(10,2, 1);
 					continue;
 				}
 				// マイナスを含む場合、入力値が-９９９を超えたらエラーとする 
-				if( atoln( info.Num, sizeof( info.Num ) ) < 0 && atoln( info.Num, sizeof( info.Num ) ) <= -1000 ){
+				if( current_input_num < 0 && current_input_num <= -1000 ){
 					beeb(10,2, 1);
 					continue;
 				}
+
 				lngCheck = lngGoukei;
 				//lngGoukei = lngGoukei + ( atoln( info.Joudai, sizeof( info.Joudai )) * ( atoln( info.Num, sizeof( info.Num )) - 1 ) );
 				
 				// ZZZZ
-//				long temp = atoln( info.Joudai, sizeof( info.Joudai ));
-//				temp =  calculateTax(temp, taxrate) - calculateTaxNoRoundUp(temp, taxrate);
-//				
-//				long tempTotal = ( atoln( info.Joudai, sizeof( info.Joudai )) * ( atoln( info.Num, sizeof( info.Num )) ) ) ;
-//				tempTotal =  calculateTax(tempTotal, taxrate) - calculateTaxNoRoundUp(tempTotal, taxrate);
-//				
-//				// if ( temp <= 0.4 && tempTotal > 0.4 ) {--lngGoukei;}
+				//long temp = atoln( info.Joudai, sizeof( info.Joudai ));
+				//temp =  calculateTax(temp, taxrate) - calculateTaxNoRoundUp(temp, taxrate);
+				//				
+				//long tempTotal = ( atoln( info.Joudai, sizeof( info.Joudai )) * ( atoln( info.Num, sizeof( info.Num )) ) ) ;
+				//tempTotal =  calculateTax(tempTotal, taxrate) - calculateTaxNoRoundUp(tempTotal, taxrate);
+				//
+				//// if ( temp <= 0.4 && tempTotal > 0.4 ) {--lngGoukei;}
 
 				long price = atoln( info.Joudai, sizeof( info.Joudai ));
-				lngGoukei = lngGoukei + calculateTax2(price, taxrate) * (atoln( info.Num, sizeof( info.Num )) - 1 ) ;
-				
+				lngGoukei = lngGoukei + calculateTax2(price, BumonTaxFindByCode1(info.Code1)) * (current_input_num - 1 ) ;
 				
 				if( lngGoukei > 999999 || lngGoukei < -99999 ){
 					lngGoukei = lngCheck;
 					beep( 50 , 1 );
 					continue;
 				}
+
 				lngCheck2 = lngTensuu;
-				lngTensuu = lngTensuu + atoln( info.Num, sizeof( info.Num )) - 1; 
+				lngTensuu = lngTensuu + current_input_num - 1; 
+
 				if( lngTensuu > 999 || lngTensuu < -99 ){
 					lngGoukei = lngCheck;
 					lngTensuu = lngCheck2;
@@ -1186,6 +1202,7 @@ void uriage( int flag, int firsttime )
 				// 登録 
 				item = DENTRY;
 				continue;
+
 			} else if( item == BAIHEN ){
 				if( atoln( Baika, sizeof( Baika )) > atoln( info.Joudai, sizeof( info.Joudai )) || atoln( Baika, sizeof( Baika )) <= 0 ){
 					memcpy( Baika , info.Joudai, sizeof( Baika ) );
