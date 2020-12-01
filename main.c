@@ -93,9 +93,10 @@ static void	InitScaner( void )
 	// トリガ優先モードにするとトリガー押下中は発光を続けてタイムアウトしない。
 	// トリガ押下に連動させて発光したい場合は、トリガ優先モードにする。
 	
+	// * by Z.N 2桁目 0x48 : ITFも読む   0x40: JANのみ
 	// if( bmode( ( unsigned char * )"\x10\x48\x00\x50\x05\x0C\x00\x0E\x10\x00\x27\x43\x00\x00\x00\x00\x00\x00\x00\x00\x05\x05\x00\x04\x37\x0E\x00x06xB7x04x37x00" ) ){
 	bmd_clr();					/* 1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28 29 30 31 32 */
-	if( bmode( ( unsigned char * )"\x10\x48\x00\x50\x05\x0C\x00\x0E\x10\x00\x27\x43\x00\x00\x00\x00\x00\x00\x00\x00\x05\x05\x00\x04\x37\x0E\x00x06xB7x04x37x00" ) ){
+	if( bmode( ( unsigned char * )"\x10\x40\x00\x50\x05\x0C\x00\x0E\x10\x00\x27\x43\x00\x00\x00\x00\x00\x00\x00\x00\x05\x05\x00\x04\x37\x0E\x00x06xB7x04x37x00" ) ){
 		ckputss( 0, 4, "  ｽｷｬﾅ設定失敗  ", False, CLR_BASE );
 		beep( 50, 1 );
 		getch();
