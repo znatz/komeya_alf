@@ -43,189 +43,194 @@ enum ColorsOfTypes {
 	CLR_MAX
 };
 
-/* ?¿½J?¿½?¿½?¿½[?¿½T?¿½?¿½?¿½v?¿½?¿½ */
-#define CLR_BASE_BACK 	RGB( 200, 255, 200 )		// ?¿½?¿½{?¿½w?¿½i?¿½F	RGB(204, 255, 204)			RGB( 173, 216, 230 )
-#define CLR_BASE_TEXT 	RGB(   0,   0,   0 )		// ?¿½?¿½{?¿½?¿½?¿½?¿½?¿½F				( ?¿½?¿½ )
-#define CLR_MSGBOX_BACK RGB( 255, 180, 255 )		// ?¿½?¿½?¿½b?¿½Z?¿½[?¿½W?¿½{?¿½b?¿½N?¿½X?¿½w?¿½i?¿½F
-#define CLR_MSGBOX_TEXT RGB(   0,   0,   0 )		// ?¿½?¿½?¿½b?¿½Z?¿½[?¿½W?¿½{?¿½b?¿½N?¿½X?¿½?¿½?¿½?¿½?¿½F
-#define CLR_SCREEN    	RGB( 204, 255, 204 )		// ?¿½?¿½?¿½b?¿½Z?¿½[?¿½W?¿½_?¿½C?¿½A?¿½?¿½?¿½O?¿½w?¿½i?¿½F
-#define CLR_TITLE_TEXT 	RGB(   0,   0,   0 )		// ?¿½^?¿½C?¿½g?¿½?¿½?¿½?¿½?¿½?¿½?¿½F			( ?¿½?¿½ )
-#define CLR_TITLE_BACK 	RGB( 255, 180,   0 )		// ?¿½^?¿½C?¿½g?¿½?¿½?¿½w?¿½i?¿½F			255, 213,   0
-#define CLR_LABEL_TEXT 	RGB( 255, 255, 255 )		// ?¿½?¿½?¿½x?¿½?¿½?¿½?¿½?¿½?¿½?¿½F				( ?¿½?¿½ )
-#define CLR_LABEL_BACK 	RGB(   0,  84, 227 )		// ?¿½?¿½?¿½x?¿½?¿½?¿½w?¿½i?¿½F				( ?¿½?¿½ )
-#define CLR_REF_TEXT 	RGB(   0,   0,   0 )		// ?¿½Q?¿½Æï¿½?¿½Ú•ï¿½?¿½?¿½?¿½F			( ?¿½?¿½ )
-#define CLR_REF_BACK 	RGB( 255, 255, 128 )		// ?¿½Q?¿½Æï¿½?¿½Ú”w?¿½i?¿½F			( ?¿½?¿½ )
-#define CLR_NO_TEXT 	RGB( 255, 255, 255 )		// ?¿½i?¿½?¿½?¿½o?¿½[?¿½?¿½?¿½?¿½?¿½F			( ?¿½?¿½ )
-#define CLR_NO_BACK 	RGB(   0,   0,   0 )		// ?¿½i?¿½?¿½?¿½o?¿½[?¿½w?¿½i?¿½F			( ?¿½?¿½ )
-#define CLR_FUNC_TEXT 	RGB(   0,   0,   0 )		// ?¿½t?¿½@?¿½?¿½?¿½N?¿½V?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½F		( ?¿½?¿½ )
-#define CLR_FUNC_BACK 	RGB( 255, 255, 255 )		// ?¿½t?¿½@?¿½?¿½?¿½N?¿½V?¿½?¿½?¿½?¿½?¿½w?¿½i?¿½F		( ?¿½?¿½ )
+/* ?ï¿½ï¿½J?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½[?ï¿½ï¿½T?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½v?ï¿½ï¿½?ï¿½ï¿½ */
+#define CLR_BASE_BACK 	RGB( 200, 255, 200 )		// ?ï¿½ï¿½?ï¿½ï¿½{?ï¿½ï¿½w?ï¿½ï¿½i?ï¿½ï¿½F	RGB(204, 255, 204)			RGB( 173, 216, 230 )
+#define CLR_BASE_TEXT 	RGB(   0,   0,   0 )		// ?ï¿½ï¿½?ï¿½ï¿½{?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½F				( ?ï¿½ï¿½?ï¿½ï¿½ )
+#define CLR_MSGBOX_BACK RGB( 255, 180, 255 )		// ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½b?ï¿½ï¿½Z?ï¿½ï¿½[?ï¿½ï¿½W?ï¿½ï¿½{?ï¿½ï¿½b?ï¿½ï¿½N?ï¿½ï¿½X?ï¿½ï¿½w?ï¿½ï¿½i?ï¿½ï¿½F
+#define CLR_MSGBOX_TEXT RGB(   0,   0,   0 )		// ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½b?ï¿½ï¿½Z?ï¿½ï¿½[?ï¿½ï¿½W?ï¿½ï¿½{?ï¿½ï¿½b?ï¿½ï¿½N?ï¿½ï¿½X?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½F
+#define CLR_SCREEN    	RGB( 204, 255, 204 )		// ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½b?ï¿½ï¿½Z?ï¿½ï¿½[?ï¿½ï¿½W?ï¿½ï¿½_?ï¿½ï¿½C?ï¿½ï¿½A?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½O?ï¿½ï¿½w?ï¿½ï¿½i?ï¿½ï¿½F
+#define CLR_TITLE_TEXT 	RGB(   0,   0,   0 )		// ?ï¿½ï¿½^?ï¿½ï¿½C?ï¿½ï¿½g?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½F			( ?ï¿½ï¿½?ï¿½ï¿½ )
+#define CLR_TITLE_BACK 	RGB( 255, 180,   0 )		// ?ï¿½ï¿½^?ï¿½ï¿½C?ï¿½ï¿½g?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½w?ï¿½ï¿½i?ï¿½ï¿½F			255, 213,   0
+#define CLR_LABEL_TEXT 	RGB( 255, 255, 255 )		// ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½x?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½F				( ?ï¿½ï¿½?ï¿½ï¿½ )
+#define CLR_LABEL_BACK 	RGB(   0,  84, 227 )		// ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½x?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½w?ï¿½ï¿½i?ï¿½ï¿½F				( ?ï¿½ï¿½?ï¿½ï¿½ )
+#define CLR_REF_TEXT 	RGB(   0,   0,   0 )		// ?ï¿½ï¿½Q?ï¿½ï¿½Æï¿½?ï¿½ï¿½Ú•ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½F			( ?ï¿½ï¿½?ï¿½ï¿½ )
+#define CLR_REF_BACK 	RGB( 255, 255, 128 )		// ?ï¿½ï¿½Q?ï¿½ï¿½Æï¿½?ï¿½ï¿½Ú”w?ï¿½ï¿½i?ï¿½ï¿½F			( ?ï¿½ï¿½?ï¿½ï¿½ )
+#define CLR_NO_TEXT 	RGB( 255, 255, 255 )		// ?ï¿½ï¿½i?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½o?ï¿½ï¿½[?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½F			( ?ï¿½ï¿½?ï¿½ï¿½ )
+#define CLR_NO_BACK 	RGB(   0,   0,   0 )		// ?ï¿½ï¿½i?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½o?ï¿½ï¿½[?ï¿½ï¿½w?ï¿½ï¿½i?ï¿½ï¿½F			( ?ï¿½ï¿½?ï¿½ï¿½ )
+#define CLR_FUNC_TEXT 	RGB(   0,   0,   0 )		// ?ï¿½ï¿½t?ï¿½ï¿½@?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½N?ï¿½ï¿½V?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½F		( ?ï¿½ï¿½?ï¿½ï¿½ )
+#define CLR_FUNC_BACK 	RGB( 255, 255, 255 )		// ?ï¿½ï¿½t?ï¿½ï¿½@?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½N?ï¿½ï¿½V?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½w?ï¿½ï¿½i?ï¿½ï¿½F		( ?ï¿½ï¿½?ï¿½ï¿½ )
 
-#define CLR_FUNC_GREEN 	RGB(   0, 255,   0 )		// ?¿½?¿½
-#define CLR_FUNC_GREEN1 RGB(   0, 150,   0 )		// ?¿½Z?¿½?¿½?¿½?¿½
-#define CLR_FUNC_GREEN2 RGB( 128, 255, 128 )		// ?¿½?¿½?¿½?¿½?¿½?¿½
-#define CLR_FUNC_GREEN3 RGB( 200, 255, 200 )		// ?¿½?¿½?¿½?¿½?¿½Æ”ï¿½?¿½?¿½?¿½?¿½
-#define CLR_FUNC_BLUE 	RGB(   0,   0, 255 )		// ?¿½?¿½
-#define CLR_FUNC_BLUE1 	RGB(   0,  84, 227 )		// ?¿½Z?¿½?¿½?¿½?¿½
-#define	CLR_SILVER		RGB( 192, 192, 192 )		// ?¿½?¿½F
-#define	CLR_GLAY		RGB(  48,  48,  48 )		// ?¿½D?¿½F
-#define CLR_YELLOW		RGB( 255, 255,   0 )		// ?¿½?¿½?¿½F
-#define CLR_LIGHTYELLOW		RGB( 255, 255, 128 )		// ?¿½?¿½?¿½?¿½?¿½F
-#define CLR_PINK    		RGB( 247, 171, 166 )	// ?¿½?¿½Ý¸
-#define CLR_ORANGE		RGB( 255, 165,   0 )		// ?¿½I?¿½?¿½?¿½?¿½?¿½W?¿½F
-#define CLR_RED			RGB( 255,   0,   0 )		// ?¿½?¿½
-#define CLR_BROWN		RGB( 165,  42,  42 )		// ?¿½?¿½?¿½F
-#define CLR_LIME		RGB(   0, 255,   0 )		// ?¿½?¿½?¿½C?¿½?¿½
-#define CLR_GREEN		RGB( 190, 209,  45 )		// ?¿½ÎF
-#define CLR_OLIVE		RGB( 128, 128,   0 )		// ?¿½I?¿½?¿½?¿½[?¿½u
-#define CLR_CYAN		RGB(   0, 255, 255 )		// ?¿½V?¿½A?¿½?¿½
-#define CLR_BLUE		RGB(   0,   0, 255 )		// ?¿½ÂF
-#define CLR_DARKBLUE	RGB(   0,   0, 160 )		// ?¿½Z?¿½?¿½?¿½?¿½
-#define CLR_LIGHTBLUE	RGB( 173, 216, 230 )		// ?¿½?¿½?¿½?¿½?¿½?¿½
-#define CLR_PURPLE		RGB( 167,  87, 168 )		// ?¿½?¿½
+#define CLR_FUNC_GREEN 	RGB(   0, 255,   0 )		// ?ï¿½ï¿½?ï¿½ï¿½
+#define CLR_FUNC_GREEN1 RGB(   0, 150,   0 )		// ?ï¿½ï¿½Z?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½
+#define CLR_FUNC_GREEN2 RGB( 128, 255, 128 )		// ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½
+#define CLR_FUNC_GREEN3 RGB( 200, 255, 200 )		// ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½Æ”ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½
+#define CLR_FUNC_BLUE 	RGB(   0,   0, 255 )		// ?ï¿½ï¿½?ï¿½ï¿½
+#define CLR_FUNC_BLUE1 	RGB(   0,  84, 227 )		// ?ï¿½ï¿½Z?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½
+#define	CLR_SILVER		RGB( 192, 192, 192 )		// ?ï¿½ï¿½?ï¿½ï¿½F
+#define	CLR_GLAY		RGB(  48,  48,  48 )		// ?ï¿½ï¿½D?ï¿½ï¿½F
+#define CLR_YELLOW		RGB( 255, 255,   0 )		// ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½F
+#define CLR_LIGHTYELLOW		RGB( 255, 255, 128 )		// ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½F
+#define CLR_PINK    		RGB( 247, 171, 166 )	// ?ï¿½ï¿½?ï¿½ï¿½Ý¸
+#define CLR_ORANGE		RGB( 255, 165,   0 )		// ?ï¿½ï¿½I?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½W?ï¿½ï¿½F
+#define CLR_RED			RGB( 255,   0,   0 )		// ?ï¿½ï¿½?ï¿½ï¿½
+#define CLR_BROWN		RGB( 165,  42,  42 )		// ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½F
+#define CLR_LIME		RGB(   0, 255,   0 )		// ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½C?ï¿½ï¿½?ï¿½ï¿½
+#define CLR_GREEN		RGB( 190, 209,  45 )		// ?ï¿½ï¿½ÎF
+#define CLR_OLIVE		RGB( 128, 128,   0 )		// ?ï¿½ï¿½I?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½[?ï¿½ï¿½u
+#define CLR_CYAN		RGB(   0, 255, 255 )		// ?ï¿½ï¿½V?ï¿½ï¿½A?ï¿½ï¿½?ï¿½ï¿½
+#define CLR_BLUE		RGB(   0,   0, 255 )		// ?ï¿½ï¿½ÂF
+#define CLR_DARKBLUE	RGB(   0,   0, 160 )		// ?ï¿½ï¿½Z?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½
+#define CLR_LIGHTBLUE	RGB( 173, 216, 230 )		// ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½
+#define CLR_PURPLE		RGB( 167,  87, 168 )		// ?ï¿½ï¿½?ï¿½ï¿½
 #define CLR_FUCHSIA		RGB( 255,   0, 255 )
 
 /*************************************************/
-/*  ?¿½R?¿½?¿½?¿½g?¿½?¿½?¿½[?¿½?¿½?¿½t?¿½@?¿½C?¿½?¿½                         */
+/*  ?ï¿½ï¿½R?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½g?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½[?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½t?ï¿½ï¿½@?ï¿½ï¿½C?ï¿½ï¿½?ï¿½ï¿½                         */
 /*************************************************/
 typedef struct CONTROL_BUFF{
-	char	LoadFlag[30];		/*   0	?¿½?¿½?¿½[?¿½f?¿½B?¿½?¿½?¿½O?¿½?¿½?¿½	*/
-	short	SDataCnt;		/*  38	?¿½d?¿½?¿½?¿½f?¿½[?¿½^?¿½?¿½?¿½?¿½		*/
-	short	TDataCnt;		/*  42	?¿½I?¿½?¿½?¿½f?¿½[?¿½^?¿½?¿½?¿½?¿½		*/
-	short	IDataCnt;		/*  44	?¿½Ú“ï¿½?¿½f?¿½[?¿½^?¿½?¿½?¿½?¿½		*/
-	short	NDataCnt;		/*  46	?¿½l?¿½?¿½?¿½f?¿½[?¿½^?¿½?¿½?¿½?¿½		*/
-	char	Cursor;			/*  48	?¿½J?¿½[?¿½\?¿½?¿½?¿½^?¿½C?¿½v 		*/
-	char	Beep;			/*  49	?¿½?¿½?¿½Ý’ï¿½ 			*/
-	char	Bright;			/*  50	?¿½?¿½Ê‹P?¿½x?¿½Ý’ï¿½		*/
-	short	BUMSTCnt;		/*  54	?¿½?¿½?¿½?¿½}?¿½X?¿½^?¿½?¿½?¿½?¿½   	*/
-	short	HIMSTCnt;		/*  58	?¿½i?¿½?¿½}?¿½X?¿½^?¿½?¿½?¿½?¿½		*/
-	short	URDataCnt;		/*  62	?¿½?¿½?¿½?¿½f?¿½[?¿½^?¿½?¿½?¿½?¿½		*/
-	short	InfoUrCnt;		/*  66	?¿½?¿½?¿½?¿½f?¿½[?¿½^?¿½?¿½?¿½?¿½		*/
-	long	RecNo;			/*  74	?¿½?¿½?¿½V?¿½[?¿½gNO		*/
-	char	RejiNo[2];		/*  76	?¿½?¿½?¿½WNO			*/
-	char	RecPrint[1];		/*  77	?¿½?¿½?¿½V?¿½[?¿½g?¿½?¿½		*/
-	char	TaxRate[2];		/*  79	?¿½V?¿½X?¿½e?¿½?¿½?¿½Å—ï¿½		*/	
-	char    TaxType[1];		/*  80	?¿½V?¿½X?¿½e?¿½?¿½?¿½Å‹ï¿½		*/	
-	char	filler[49];		/*  49	?¿½\?¿½?¿½			*/
-} CONTROLDATA;				/* 128?¿½o?¿½C?¿½g			*/
+	char	LoadFlag[30];		/*   0	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½[?ï¿½ï¿½f?ï¿½ï¿½B?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½O?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½	*/
+	short	SDataCnt;		/*  38	?ï¿½ï¿½d?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½		*/
+	short	TDataCnt;		/*  42	?ï¿½ï¿½I?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½		*/
+	short	IDataCnt;		/*  44	?ï¿½ï¿½Ú“ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½		*/
+	short	NDataCnt;		/*  46	?ï¿½ï¿½l?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½		*/
+	char	Cursor;			/*  48	?ï¿½ï¿½J?ï¿½ï¿½[?ï¿½ï¿½\?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½^?ï¿½ï¿½C?ï¿½ï¿½v 		*/
+	char	Beep;			/*  49	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½Ý’ï¿½ 			*/
+	char	Bright;			/*  50	?ï¿½ï¿½?ï¿½ï¿½Ê‹P?ï¿½ï¿½x?ï¿½ï¿½Ý’ï¿½		*/
+	short	BUMSTCnt;		/*  54	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½}?ï¿½ï¿½X?ï¿½ï¿½^?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½   	*/
+	short	HIMSTCnt;		/*  58	?ï¿½ï¿½i?ï¿½ï¿½?ï¿½ï¿½}?ï¿½ï¿½X?ï¿½ï¿½^?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½		*/
+	short	URDataCnt;		/*  62	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½		*/
+	short	InfoUrCnt;		/*  66	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½		*/
+	long	RecNo;			/*  74	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½V?ï¿½ï¿½[?ï¿½ï¿½gNO		*/
+	char	RejiNo[2];		/*  76	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½WNO			*/
+	char	RecPrint[1];		/*  77	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½V?ï¿½ï¿½[?ï¿½ï¿½g?ï¿½ï¿½?ï¿½ï¿½		*/
+	char	TaxRate[2];		/*  79	?ï¿½ï¿½V?ï¿½ï¿½X?ï¿½ï¿½e?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½Å—ï¿½		*/	
+	char    TaxType[1];		/*  80	?ï¿½ï¿½V?ï¿½ï¿½X?ï¿½ï¿½e?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½Å‹ï¿½		*/	
+	char	filler[49];		/*  49	?ï¿½ï¿½\?ï¿½ï¿½?ï¿½ï¿½			*/
+} CONTROLDATA;				/* 128?ï¿½ï¿½o?ï¿½ï¿½C?ï¿½ï¿½g			*/
 
 
 /*****************************************************************************/
-/* ?¿½?¿½?¿½?¿½}?¿½X?¿½^	2+1+20+1+10+1+2 = 37															 */
+/* ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½}?ï¿½ï¿½X?ï¿½ï¿½^	2+1+20+1+10+1+2 = 37															 */
 /*****************************************************************************/
 typedef struct BUMST_TAG {
-	char	Code[2];			//   ?¿½R?¿½[?¿½h	 2
-	char	FillerA;			//   ?¿½J?¿½?¿½?¿½} 	 1		
-	char	Name[20];			//   ?¿½?¿½?¿½å–¼	20		
-	char	FillerB;			//   ?¿½J?¿½?¿½?¿½} 	 1		
-	char	Ryaku[10];			//   ?¿½?¿½?¿½?¿½	10
-	char	FillerC;			//   ?¿½J?¿½?¿½?¿½} 	 1		
-	char	Zeiritu[2];			//   ?¿½Å—ï¿½	 2		
+	char	Code[2];			//   ?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	 2
+	char	FillerA;			//   ?ï¿½ï¿½J?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½} 	 1		
+	char	Name[20];			//   ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½å–¼	20		
+	char	FillerB;			//   ?ï¿½ï¿½J?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½} 	 1		
+	char	Ryaku[10];			//   ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½	10
+	char	FillerC;			//   ?ï¿½ï¿½J?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½} 	 1		
+	char	Zeiritu[2];			//   ?ï¿½ï¿½Å—ï¿½	 2		
 } BUMST;
 
 /*****************************************************************************/
-/* ?¿½i?¿½?¿½}?¿½X?¿½^	4+1+20+1+10+1+2+1+2+1+2=45															 */
+/* ?ï¿½ï¿½i?ï¿½ï¿½?ï¿½ï¿½}?ï¿½ï¿½X?ï¿½ï¿½^	4+1+20+1+10+1+2+1+2+1+2=45															 */
 /*****************************************************************************/
 typedef struct HIMST_TAG {
-	char	Code[4];			//   ?¿½R?¿½[?¿½h	 4
-	char	FillerA;			//   ?¿½J?¿½?¿½?¿½} 	 1		
-	char	Name[20];			//   ?¿½i?¿½ú²¼	20		
-	char	FillerB;			//   ?¿½J?¿½?¿½?¿½} 	 1		
-	char	Ryaku[10];			//   ?¿½?¿½?¿½?¿½	10
-	char	FillerC;			//   ?¿½J?¿½?¿½?¿½} 	 1		
-	char	Wari[2];			//   ?¿½?¿½?¿½?¿½?¿½?¿½	 2	
-	char	FillerD;			//   ?¿½J?¿½?¿½?¿½} 	 1		
-	char	Zeiku[2];			//   ?¿½Å‹ï¿½	 2		
-	char	Filler5;			//   ?¿½J?¿½?¿½?¿½} 	 1		
-	char	Tenku[2];			//   ?¿½_?¿½?¿½	 2		
+	char	Code[4];			//   ?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	 4
+	char	FillerA;			//   ?ï¿½ï¿½J?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½} 	 1		
+	char	Name[20];			//   ?ï¿½ï¿½i?ï¿½ï¿½ï¿½ï¿½ï¿½	20		
+	char	FillerB;			//   ?ï¿½ï¿½J?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½} 	 1		
+	char	Ryaku[10];			//   ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½	10
+	char	FillerC;			//   ?ï¿½ï¿½J?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½} 	 1		
+	char	Wari[2];			//   ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½	 2	
+	char	FillerD;			//   ?ï¿½ï¿½J?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½} 	 1		
+	char	Zeiku[2];			//   ?ï¿½ï¿½Å‹ï¿½	 2		
+	char	Filler5;			//   ?ï¿½ï¿½J?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½} 	 1		
+	char	Tenku[2];			//   ?ï¿½ï¿½_?ï¿½ï¿½?ï¿½ï¿½	 2		
 } HIMST;
 
 /*****************************************************************************/
-/* ?¿½I?¿½?¿½?¿½f?¿½[?¿½^																 */
+/* ?ï¿½ï¿½I?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^																 */
 /*****************************************************************************/
 typedef struct TDATA_TAG {
-	char	Date[8];			/*   0	?¿½?¿½?¿½t		*/
-	char	Shop[2];			/*  14	?¿½X?¿½ÜƒR?¿½[?¿½h	*/
-	char	Code1[13];			/*  18	?¿½?¿½i?¿½R?¿½[?¿½h	*/
-	char	Code2[13];			/*  31	?¿½?¿½?¿½i?¿½R?¿½[?¿½h	*/
-	char	Code3[8];			/*  44	?¿½l?¿½?¿½?¿½R?¿½[?¿½h	*/
-	char	Num[5];				/*  52	?¿½?¿½?¿½?¿½		*/
+	char	Date[8];			/*   0	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½t		*/
+	char	Shop[2];			/*  14	?ï¿½ï¿½X?ï¿½ï¿½ÜƒR?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Code1[13];			/*  18	?ï¿½ï¿½?ï¿½ï¿½i?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Code2[13];			/*  31	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½i?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Code3[8];			/*  44	?ï¿½ï¿½l?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Num[5];				/*  52	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½		*/
 } TDATA;
 
 /*****************************************************************************/
-/* ?¿½Ú“ï¿½?¿½f?¿½[?¿½^																 */
+/* ?ï¿½ï¿½Ú“ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^																 */
 /*****************************************************************************/
 typedef struct IDATA_TAG {
-	char	Date[8];			/*   0	?¿½?¿½?¿½t		*/
-	char	Shop[2];			/*  14	?¿½o?¿½×“X?¿½R?¿½[?¿½h	*/
-	char	Shop2[2];			/*  16	?¿½?¿½?¿½?¿½X?¿½R?¿½[?¿½h	*/
-	char	Code1[13];			/*  18	?¿½?¿½i?¿½R?¿½[?¿½h	*/
-	char	Code2[13];			/*  31	?¿½?¿½?¿½i?¿½R?¿½[?¿½h	*/
-	char	Code3[8];			/*  44	?¿½l?¿½?¿½?¿½R?¿½[?¿½h	*/
-	char	Num[5];				/*  52	?¿½?¿½?¿½?¿½		*/
+	char	Date[8];			/*   0	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½t		*/
+	char	Shop[2];			/*  14	?ï¿½ï¿½o?ï¿½ï¿½×“X?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Shop2[2];			/*  16	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½X?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Code1[13];			/*  18	?ï¿½ï¿½?ï¿½ï¿½i?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Code2[13];			/*  31	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½i?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Code3[8];			/*  44	?ï¿½ï¿½l?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Num[5];				/*  52	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½		*/
 } IDATA;
-	/* 	57?¿½o?¿½C?¿½g		*/
+	/* 	57?ï¿½ï¿½o?ï¿½ï¿½C?ï¿½ï¿½g		*/
 
 /*****************************************************************************/
-/* ?¿½d?¿½?¿½?¿½f?¿½[?¿½^																 */
+/* ?ï¿½ï¿½d?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^																 */
 /*****************************************************************************/
 typedef struct SDATA_TAG {
-	char	Date[8];			/*   0	?¿½?¿½?¿½t		*/
-	char	DenNo[8];			/*   0	?¿½`?¿½[No		*/
-	char	Shop[2];			/*  14	?¿½o?¿½×“X?¿½R?¿½[?¿½h	*/
-	char	Code1[13];			/*  18	?¿½?¿½i?¿½R?¿½[?¿½h	*/
-	char	Code2[13];			/*  31	?¿½?¿½?¿½i?¿½R?¿½[?¿½h	*/
-	char	Code3[8];			/*  44	?¿½l?¿½?¿½?¿½R?¿½[?¿½h	*/
-	char	Num[5];				/*  52	?¿½?¿½?¿½?¿½		*/
+	char	Date[8];			/*   0	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½t		*/
+	char	DenNo[8];			/*   0	?ï¿½ï¿½`?ï¿½ï¿½[No		*/
+	char	Shop[2];			/*  14	?ï¿½ï¿½o?ï¿½ï¿½×“X?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Code1[13];			/*  18	?ï¿½ï¿½?ï¿½ï¿½i?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Code2[13];			/*  31	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½i?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Code3[8];			/*  44	?ï¿½ï¿½l?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Num[5];				/*  52	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½		*/
 } SDATA;
-	/* 	57?¿½o?¿½C?¿½g		*/
+	/* 	57?ï¿½ï¿½o?ï¿½ï¿½C?ï¿½ï¿½g		*/
 /*****************************************************************************/
-/* ?¿½l?¿½?¿½?¿½f?¿½[?¿½^																 */
+/* ?ï¿½ï¿½l?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^																 */
 /*****************************************************************************/
 typedef struct NDATA_TAG {
-	char	Date[8];			/*   0	?¿½?¿½?¿½t		*/
-	char	Shop[1];			/*  14	?¿½o?¿½×“X?¿½R?¿½[?¿½h	*/
-	char	Code1[13];			/*  18	?¿½?¿½i?¿½R?¿½[?¿½h	*/
-	char	Code2[13];			/*  31	?¿½?¿½?¿½i?¿½R?¿½[?¿½h	*/
-	char	Code3[8];			/*  44	?¿½l?¿½?¿½?¿½R?¿½[?¿½h	*/
-	char	Code4[13];			/*  44	?¿½l?¿½?¿½?¿½R?¿½[?¿½h	*/
-	char	Num[5];				/*  52	?¿½?¿½?¿½?¿½		*/
-} NDATA;/* 	57?¿½o?¿½C?¿½g		*/
+	char	Date[8];			/*   0	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½t		*/
+	char	Shop[1];			/*  14	?ï¿½ï¿½o?ï¿½ï¿½×“X?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Code1[13];			/*  18	?ï¿½ï¿½?ï¿½ï¿½i?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Code2[13];			/*  31	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½i?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Code3[8];			/*  44	?ï¿½ï¿½l?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Code4[13];			/*  44	?ï¿½ï¿½l?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
+	char	Num[5];				/*  52	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½		*/
+} NDATA;/* 	57?ï¿½ï¿½o?ï¿½ï¿½C?ï¿½ï¿½g		*/
 
 /****************************************************************************/
-/* ?¿½e?¿½?¿½?¿½?¿½
+/* ?ï¿½ï¿½e?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½
 /****************************************************************************/
 typedef struct INFO_DATA{
-	char	Date[8];			//   0	?¿½?¿½?¿½t		
+	char	Date[8];			//   0	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½t		
 	char	Time[6];
-	char	tenpo1[2];			//  ?¿½o?¿½×“X?¿½R?¿½[?¿½h	
-	char	tenpo2[2];			//  ?¿½?¿½?¿½?¿½X?¿½R?¿½[?¿½h
+	char	tenpo1[2];			//  ?ï¿½ï¿½o?ï¿½ï¿½×“X?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	
+	char	tenpo2[2];			//  ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½X?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h
 	char	Bumon[2];
 	char	Hinsyu[4];
-	char	Code1[13];			//  JAN?¿½R?¿½[?¿½h
+	char	Code1[13];			//  JAN?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h
 	char 	Joudai[10];
 	char	Gedai[10];
 	char	tanto[2];
 	char	Code2[13];
-	char	Code3[13];			//  ?¿½l?¿½?¿½
+	char	Code3[13];			//  ?ï¿½ï¿½l?ï¿½ï¿½?ï¿½ï¿½
 	char	Num[4];
+	long    BumonTaxRate;
+	long    lngSystemTaxRateTax;
+	long    lngBumonTaxRateTax;
+	long	lngHinsyuZeiku;
+	long	lngSystemZeiku;
 	int	flag;
 } INFO;
 	
 /*****************************************************************************/
-/* ?¿½?¿½?¿½?¿½f?¿½[?¿½^																 */
+/* ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^																 */
 /*****************************************************************************/
 typedef struct URDATA_TAG {
-	char	Date[8];			//   0	?¿½?¿½?¿½t		
+	char	Date[8];			//   0	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½t		
 	char	Time[6];
-	char	Shop[2];			//  14	?¿½o?¿½×“X?¿½R?¿½[?¿½h	
+	char	Shop[2];			//  14	?ï¿½ï¿½o?ï¿½ï¿½×“X?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	
 	char	RejiNo[2];
 	char	Tanto[2];
-	char	Code1[13];			//  18	?¿½?¿½i?¿½R?¿½[?¿½h	
-	char	Code2[13];			//  31	?¿½?¿½?¿½i?¿½R?¿½[?¿½h	
-	char	Code3[8];			//  44	?¿½l?¿½?¿½?¿½R?¿½[?¿½h	
+	char	Code1[13];			//  18	?ï¿½ï¿½?ï¿½ï¿½i?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	
+	char	Code2[13];			//  31	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½i?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	
+	char	Code3[8];			//  44	?ï¿½ï¿½l?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	
 	char	Name[20];
 	char	Baika[10];
-	char	Num[5];				//  52	?¿½?¿½?¿½?¿½		
+	char	Num[5];				//  52	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½		
 	char 	Genkin[6];
 	char	Credit[6];
 	char 	Kinken[6];
@@ -241,25 +246,25 @@ typedef struct URDATA_TAG {
 } URDATA;
 
 /*****************************************************************************/
-/* ?¿½êŽžï¿½?¿½?¿½?¿½f?¿½[?¿½^																 */
+/* ?ï¿½ï¿½êŽžï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^																 */
 /*****************************************************************************/
 typedef struct INFOUR_TAG {	
-	char	Date[8];			//   0	?¿½?¿½?¿½t		
+	char	Date[8];			//   0	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½t		
 	char	Time[6];
-	char	Code1[13];			//  18	?¿½?¿½i?¿½R?¿½[?¿½h	
-	char	Code2[13];			//  18	?¿½?¿½i?¿½R?¿½[?¿½h	
-	char	Code3[13];			//  44	?¿½l?¿½?¿½?¿½R?¿½[?¿½h	
+	char	Code1[13];			//  18	?ï¿½ï¿½?ï¿½ï¿½i?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	
+	char	Code2[13];			//  18	?ï¿½ï¿½?ï¿½ï¿½i?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	
+	char	Code3[13];			//  44	?ï¿½ï¿½l?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	
 	char	Name[20];
 	char	Baika[10];
-	char	Num[4];				//  52	?¿½?¿½?¿½?¿½	
+	char	Num[4];				//  52	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½	
 
 } INFOUR;
 
 /*****************************************************************************/
-/* ?¿½êŽžï¿½?¿½?¿½?¿½f?¿½[?¿½^																 */
+/* ?ï¿½ï¿½êŽžï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^																 */
 /*****************************************************************************/
 typedef struct INFOUR_TAG2 {	
-	char	Date[8];			//   0	?¿½?¿½?¿½t		
+	char	Date[8];			//   0	?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½t		
 	char	Time[6];
 	char 	Genkin[6];
 	char	Credit[6];
@@ -271,18 +276,18 @@ typedef struct INFOUR_TAG2 {
 } INFOUR2;
 
 typedef struct TENPO_DATA{
-	char	tenpo1[2];			/*  14	?¿½o?¿½×“X?¿½R?¿½[?¿½h	*/
+	char	tenpo1[2];			/*  14	?ï¿½ï¿½o?ï¿½ï¿½×“X?ï¿½ï¿½R?ï¿½ï¿½[?ï¿½ï¿½h	*/
 	char	tenpo2[2];
 	int	flag;
-} TENPO;/* 	5?¿½o?¿½C?¿½g		*/
+} TENPO;/* 	5?ï¿½ï¿½o?ï¿½ï¿½C?ï¿½ï¿½g		*/
 
 extern	CONTROLDATA	ctrl;
-extern	TDATA		tdata;		/* ?¿½I?¿½?¿½?¿½f?¿½[?¿½^		*/
-extern	IDATA		idata;		/* ?¿½Ú“ï¿½?¿½f?¿½[?¿½^		*/
-extern	NDATA		ndata;		/* ?¿½l?¿½?¿½?¿½f?¿½[?¿½^		*/
-extern	SDATA		sdata;		/* ?¿½d?¿½?¿½?¿½f?¿½[?¿½^		*/
-extern	BUMST		bumst;		/* ?¿½S?¿½?¿½?¿½f?¿½[?¿½^		*/
-extern	HIMST		himst;		/* ?¿½?¿½?¿½?¿½f?¿½[?¿½^		*/
+extern	TDATA		tdata;		/* ?ï¿½ï¿½I?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^		*/
+extern	IDATA		idata;		/* ?ï¿½ï¿½Ú“ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^		*/
+extern	NDATA		ndata;		/* ?ï¿½ï¿½l?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^		*/
+extern	SDATA		sdata;		/* ?ï¿½ï¿½d?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^		*/
+extern	BUMST		bumst;		/* ?ï¿½ï¿½S?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^		*/
+extern	HIMST		himst;		/* ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½f?ï¿½ï¿½[?ï¿½ï¿½^		*/
 extern  TENPO		tenpo;
 extern	char		scanBuf[30],dt[32], dspBuf[50];
 
@@ -301,11 +306,12 @@ extern  void 	displayMsg( long );
 extern  void 	displayStringMsg( char* );
 extern	long 	getJyoudai(char *barcode);
 extern	long	getGedai(const char *barcode);
+extern	long	GetNesage(const char *barcode, long jyoudai);
 extern	int	ctoi(char c);
 extern	long	powOfTen(int exp);
 extern	void	insComma( long, char[] );
 extern	void	printNumberWithComma( long num, int col, int row ) ;
-// ?¿½?¿½?¿½?¿½
+// ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½
 extern	URDATA		urdata;	
 extern  INFO		info;
 extern  INFOUR		infour;
@@ -316,3 +322,4 @@ extern	long	BumonTaxFind( char *key );
 extern	long	BumonTaxFindByCode1( char *code1 );
 extern	long	HinsyuZeikuFindByCode1( char *code1 );
 extern	void	drawLineCrossScreen(long y);
+extern	void	convertToString( long num, char str[MAXLEN] );
