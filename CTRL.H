@@ -206,7 +206,7 @@ typedef struct INFO_DATA{
 	char	Gedai[10];
 	char	tanto[2];
 	char	Code2[13];
-	char	Code3[13];			//  ?��l?��?��
+	char	Code3[8];			//  ?��l?��?��
 	char	Num[4];
 	long    BumonTaxRate;
 	long    lngSystemTaxRateTax;
@@ -253,7 +253,7 @@ typedef struct INFOUR_TAG {
 	char	Time[6];
 	char	Code1[13];			//  18	?��?��i?��R?��[?��h	
 	char	Code2[13];			//  18	?��?��i?��R?��[?��h	
-	char	Code3[13];			//  44	?��l?��?��?��R?��[?��h	
+	char	Code3[8];			//  44	?��l?��?��?��R?��[?��h	
 	char	Name[20];
 	char	Baika[10];
 	char	Num[4];				//  52	?��?��?��?��	

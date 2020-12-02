@@ -1,8 +1,5 @@
 //////////////////////////////////
-// ç≈èIçXêV 2013/04/26
-// #01:è¨åvéûBTê⁄ë±
-// #02:ÉNÉåÉWÉbÉg,è§ïiåîèàóùâèú
-//
+// * ç≈èIçXêV 2020/12/02
 //////////////////////////////////
 
 #include <stdio.h>
@@ -25,6 +22,7 @@ enum {
 	TANTO,
 	CODE1,
 	CODE2,
+	CODE3,
 	NUM,
 	BAIHEN,
 	GENKIN,
@@ -89,6 +87,49 @@ static long getZeikomiKingaku(char *barcode, short count) {
 	long bumon_tax = calculateTax2(jyoudai, BumonTaxFindByCode1(barcode));
 	return (jyoudai + bumon_tax) * count;
 }
+/*****************************************************************************/
+/*                                                                           */
+/*****************************************************************************/
+short CodeInput8orNull( short x, short y, char *s, short length, unsigned long prm )
+{
+	short	ret, len;
+	char	inpBuf[50];
+
+	memset( inpBuf, 0x00, sizeof( inpBuf ) );
+	if( s[0] ){
+		memncpy( inpBuf, s, length );
+		if( inpBuf[7] == ' ' ) inpBuf[7] = 0x00;
+	}
+	while( 1 ){
+		/*if( ctrl.BcrType == '1' ) prm |= BCR_PEN;*/
+		ret = input( x, y, inpBuf, length, prm | TRIG_ENT );
+
+		if( !(prm & BCR_NOTCD) && ( prm & BCRFLAGMASK ) && ( ret == SENTRY || ret == ENTRY ) ){
+			if( !atol( inpBuf ) || !isBarcode( inpBuf, False ) ){
+				beepEx( 50, 1 );
+				continue;
+			}
+		}
+		if( ret == ENTRY || ret == SENTRY || ret == SKIP || ret == BARENT ){
+			len = strlen( inpBuf );
+			memset( s, ' ', length );
+			if( ret != SKIP ){
+				if ( len == 8 ) {
+					memcpy( s, inpBuf, len );
+				}
+			}
+			break;
+		} else if( ret == BAR_ERR ){
+			beepEx( 50, 1 );
+		} else if( ret == F1KEY || ret == F2KEY || ret == F3KEY ||
+				   ret == F4KEY || ret == DEC_CLR_KEY ||
+				   ret == BSKEY || ret == UPKEY || ret == DOWNKEY ){
+			break;
+		}
+	}
+	return( ret );
+}
+
 
 //****************************************************************************
 //* 	ñæç◊ÉfÅ[É^èâä˙âª														 */
@@ -103,7 +144,7 @@ static void meisaiclr( void )
 	
 	memset( info.Code1, 0x00, sizeof( info.Code1 ) );
 	memset( info.Code2, 0x00, sizeof( info.Code2 ) );
-	memset( info.Code3, 0x00, sizeof( info.Code2 ) );
+	memset( info.Code3, 0x00, sizeof( info.Code3 ) );
 	memset( info.Num, 0x00, sizeof( info.Num ) );
 	memset( info.Joudai, 0x00, sizeof( info.Joudai ) );
 	memset( Code,	0x00, sizeof( Code ) );
@@ -119,7 +160,7 @@ static void infoclr( void ){
 	memset( info.tanto, 0x00, sizeof( info.tanto ));
 	memset( info.Code1, 0x00, sizeof( info.Code1 ) );
 	memset( info.Code2, 0x00, sizeof( info.Code2 ) );
-	memset( info.Code3, 0x00, sizeof( info.Code2 ) );
+	memset( info.Code3, 0x00, sizeof( info.Code3 ) );
 	memset( info.Num, 0x00, sizeof( info.Num ) );
 	memset( info.Joudai, 0x00, sizeof( info.Num ) );
 //	memset( mmst.Name,0x00, sizeof( mmst.Name ) );
@@ -131,7 +172,7 @@ static void infoclr( void ){
 static void infoclrExceptTenpoTanto( void ){
 	memset( info.Code1, 0x00, sizeof( info.Code1 ) );
 	memset( info.Code2, 0x00, sizeof( info.Code2 ) );
-	memset( info.Code3, 0x00, sizeof( info.Code2 ) );
+	memset( info.Code3, 0x00, sizeof( info.Code3 ) );
 	memset( info.Num, 0x00, sizeof( info.Num ) );
 	memset( info.Joudai, 0x00, sizeof( info.Num ) );
 //	memset( mmst.Name,0x00, sizeof( mmst.Name ) );
@@ -248,22 +289,20 @@ static void Display( short item )
 			reprint = 0; teisei = 0;
 			if( SaveItem != CODE1){
 				ClsColor();
-				if( memcmp( info.tanto,"00",2 ) == 0 ){
-					ckputss( 0,  0, "<ó˚èK”∞ƒﬁ>      ", False, CLR_PR_TITLE );
-					ckprintf(10, 0, False, CLR_PR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-				}else{
-					ckputss( 0,  0, "<îÑè„ì¸óÕ>      ", False, CLR_UR_TITLE );
-					ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-				}
-				ckputss( 0,  2, "ìXï‹:   íSìñ:   ", False, CLR_BASE );
-				ckputsn( 5,  2, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_BASE );
-				ckputsn( 13, 2, info.tanto, sizeof( info.tanto ), False, CLR_BASE );
-				ckputss( 0,  5, "Å£              ", False, CLR_BASE );
-				ckputss( 0,  7, "Å§              ", False, CLR_BASE );				
+
+				ckputss( 0, 0, "îÑÅ@Å@Å@        ", False, CLR_UR_TITLE );
+				ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
+				ckputsn( 3, 0, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_UR_TITLE );
+				ckputsn( 5, 0, info.tanto, sizeof( info.tanto ), False, CLR_UR_TITLE );
+
+				ckputss( 0,  2, "Å£              ", False, CLR_BASE );
+				ckputss( 0,  4, "Å§              ", False, CLR_BASE );				
+				ckputss( 0,  6, "ílâ∫:           ", False, CLR_BASE );				
 
 				// * åªç›è¨åvã‡äz
 				ckputss( 0, 12, "åv        Å@Å@", False, CLR_SI_TITLE );
-				insComma( getZeikomiKingaku(info.Code1, 1), strGoukei);			//ZNATZ
+				insComma( lngGoukei, strGoukei ); 								
+				// insComma( getZeikomiKingaku(info.Code1, 1), strGoukei);			//ZNATZ
 				ckprintf(2, 12, False, CLR_SI_TITLE, "%7sâ~", strGoukei );
 
 				// * åªç›è¨åvì_êî
@@ -277,23 +316,21 @@ static void Display( short item )
 			reprint = 0; teisei = 0;
 			if( SaveItem != CODE2){
 				ClsColor();
-				if( memcmp( info.tanto,"00",2 ) == 0 ){
-					ckputss( 0,  0, "<ó˚èK”∞ƒﬁ>      ", False, CLR_PR_TITLE );
-					ckprintf(10, 0, False, CLR_PR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-				}else{
-					ckputss( 0,  0, "<îÑè„ì¸óÕ>      ", False, CLR_UR_TITLE );
-					ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-				}
-				ckputss( 0,  2, "ìXï‹:   íSìñ:   ", False, CLR_BASE );
-				ckputsn( 5,  2, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_BASE );
-				ckputsn( 13, 2, info.tanto, sizeof( info.tanto ), False, CLR_BASE );
-				ckputss( 0,  5, "Å¢              ", False, CLR_BASE );
-				ckputsn( 3,  5, info.Code1, 13, False, CLR_BASE );
-				ckputss( 0,  7, "Å•              ", False, CLR_BASE );
+
+				ckputss( 0, 0, "îÑÅ@Å@Å@        ", False, CLR_UR_TITLE );
+				ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
+				ckputsn( 3, 0, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_UR_TITLE );
+				ckputsn( 5, 0, info.tanto, sizeof( info.tanto ), False, CLR_UR_TITLE );
+
+				ckputss( 0,  2, "Å¢              ", False, CLR_BASE );
+				ckputsn( 3,  2, info.Code1, 13, False, CLR_BASE );
+				ckputss( 0,  4, "Å•              ", False, CLR_BASE );
+				ckputss( 0,  6, "ílâ∫:           ", False, CLR_BASE );				
 
 				// * åªç›è¨åvã‡äz
 				ckputss( 0, 12, "åv        Å@Å@", False, CLR_SI_TITLE );
-				insComma( getZeikomiKingaku(info.Code1, 1), strGoukei);			//ZNATZ
+				// insComma( getZeikomiKingaku(info.Code1, 1), strGoukei);			//ZNATZ
+				insComma( lngGoukei, strGoukei ); 								
 				ckprintf(2, 12, False, CLR_SI_TITLE, "%7sâ~", strGoukei );
 
 				// * åªç›è¨åvì_êî
@@ -303,24 +340,54 @@ static void Display( short item )
 				ckputss( 0, 16, "         F4:ê∏éZ", False, CLR_BASE );	
 			}
 			break;			
+		case CODE3:
+			if( SaveItem != CODE3){
+				ClsColor();	
+
+				ckputss( 0, 0, "îÑÅ@Å@Å@        ", False, CLR_UR_TITLE );
+				ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
+				ckputsn( 3, 0, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_UR_TITLE );
+				ckputsn( 5, 0, info.tanto, sizeof( info.tanto ), False, CLR_UR_TITLE );
+
+				ckputss( 0,  2, "Å¢              ", False, CLR_BASE );
+				ckputss( 0,  4, "Å§              ", False, CLR_BASE );
+				ckputss( 0,  6, "ílâ∫:           ", False, CLR_BASE );				
+				ckputsn( 3,  2, info.Code1, 13, False, CLR_BASE );
+				ckputsn( 3,  4, info.Code2, 13, False, CLR_BASE );
+				
+				// * îÑâøï\é¶
+				insComma( getZeikomiKingaku(info.Code1, 1), strBaika);
+				ckprintf(0,  9, False, CLR_BASE , "Åè%7s",strBaika );
+
+				// * åªç›è¨åvã‡äz
+				ckputss( 0, 12, "åv        Å@Å@", False, CLR_SI_TITLE );
+				insComma( lngGoukei, strGoukei );
+				ckprintf(2, 12, False, CLR_SI_TITLE, "%7sâ~", strGoukei );
+
+				// * åªç›è¨åvì_êî
+				ckprintf(11,12, False, CLR_SI_TITLE , "%3dì_", lngTensuu );
+
+				ckputss( 0, 14, "F1:ñﬂÇÈ ENT:ämíË", False, CLR_BASE );	
+				ckputss( 0, 16, "         F4:ê∏éZ", False, CLR_BASE );	
+			}
+			break;
+
+
 		case NUM:
 			if( SaveItem != NUM){
 				ClsColor();	
-				if( memcmp( info.tanto,"00",2 ) == 0 ){
-					ckputss( 0,  0, "<ó˚èK”∞ƒﬁ>      ", False, CLR_PR_TITLE );
-					ckprintf(10, 0, False, CLR_PR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-				}else{
-					ckputss( 0,  0, "<îÑè„ì¸óÕ>      ", False, CLR_UR_TITLE );
-					ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-				}
-				ckputss( 0,  2, "ìXï‹:   íSìñ:   ", False, CLR_BASE );
-				ckputsn( 5,  2, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_BASE );
-				ckputsn( 13, 2, info.tanto, sizeof( info.tanto ), False, CLR_BASE );
-				
-				ckputss( 0,  5, "Å¢              ", False, CLR_BASE );
-				ckputss( 0,  7, "Å§              ", False, CLR_BASE );
-				ckputsn( 3,  5, info.Code1, 13, False, CLR_BASE );
-				ckputsn( 3,  7, info.Code2, 13, False, CLR_BASE );
+
+				ckputss( 0, 0, "îÑÅ@Å@Å@        ", False, CLR_UR_TITLE );
+				ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
+				ckputsn( 3, 0, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_UR_TITLE );
+				ckputsn( 5, 0, info.tanto, sizeof( info.tanto ), False, CLR_UR_TITLE );
+
+				ckputss( 0,  2, "Å¢              ", False, CLR_BASE );
+				ckputss( 0,  4, "Å§              ", False, CLR_BASE );
+				ckputss( 0,  6, "ílâ∫:           ", False, CLR_BASE );				
+				ckputsn( 3,  2, info.Code1, 13, False, CLR_BASE );
+				ckputsn( 3,  4, info.Code2, 13, False, CLR_BASE );
+				ckputsn( 5,  6, info.Code3, 8, False, CLR_BASE );
 				
 				// * îÑâøï\é¶
 				insComma( getZeikomiKingaku(info.Code1, 1), strBaika);
@@ -339,42 +406,42 @@ static void Display( short item )
 			}
 			break;
 
-		case BAIHEN:
-			if( SaveItem != NUM){
-				ClsColor();
-				if( memcmp( info.tanto,"00",2 ) == 0 ){
-					ckputss( 0,  0, "<îÑâøïœçX(ó˚èK)>", False, CLR_PR_TITLE );
-				}else{
-					ckputss( 0,  0, "  <îÑâøïœçX>    ", False, CLR_UR_TITLE );
-				}
-				ckputss( 0,  2, "ìXï‹:   íSìñ:   ", False, CLR_BASE );
-				ckputsn( 5,  2, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_BASE );
-				ckputsn( 13, 2, info.tanto, sizeof( info.tanto ), False, CLR_BASE );
-				ckputss( 0,  5, "BC:          ", False, CLR_BASE );
-				ckputsn( 3,  5, info.Code1, 13, False, CLR_BASE );
-				ckputss( 0, 10, "îÑâø :         ", False, CLR_BASE );
-				insComma( atoln( info.Joudai, sizeof( info.Joudai )), strGoukei );
-				ckprintf(7, 10, False, CLR_BASE, "%-7sâ~", strGoukei );
-				ckputss( 0, 12, " Å®           â~", False, CLR_BASE );
-				ckputss( 0, 15, "F1:ñﬂÇÈ ENT:ämíË", False, CLR_BASE );	
-			}
-			break;
+		// case BAIHEN:
+		// 	if( SaveItem != NUM){
+		// 		ClsColor();
+		// 		if( memcmp( info.tanto,"00",2 ) == 0 ){
+		// 			ckputss( 0,  0, "<îÑâøïœçX(ó˚èK)>", False, CLR_PR_TITLE );
+		// 		}else{
+		// 			ckputss( 0,  0, "  <îÑâøïœçX>    ", False, CLR_UR_TITLE );
+		// 		}
+		// 		ckputss( 0,  2, "ìXï‹:   íSìñ:   ", False, CLR_BASE );
+		// 		ckputsn( 5,  2, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_BASE );
+		// 		ckputsn( 13, 2, info.tanto, sizeof( info.tanto ), False, CLR_BASE );
+		// 		ckputss( 0,  5, "BC:          ", False, CLR_BASE );
+		// 		ckputsn( 3,  5, info.Code1, 13, False, CLR_BASE );
+		// 		ckputss( 0, 10, "îÑâø :         ", False, CLR_BASE );
+		// 		insComma( atoln( info.Joudai, sizeof( info.Joudai )), strGoukei );
+		// 		ckprintf(7, 10, False, CLR_BASE, "%-7sâ~", strGoukei );
+		// 		ckputss( 0, 12, " Å®           â~", False, CLR_BASE );
+		// 		ckputss( 0, 15, "F1:ñﬂÇÈ ENT:ämíË", False, CLR_BASE );	
+		// 	}
+		// 	break;
 		case DENTRY:
 			if( SaveItem != DENTRY){
 				ClsColor();	
-				if( memcmp( info.tanto,"00",2 ) == 0 ){
-					ckputss( 0,  0, "<ó˚èK”∞ƒﬁ>      ", False, CLR_PR_TITLE );
-					ckprintf(10, 0, False, CLR_PR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-				}else{
-					ckputss( 0,  0, "<îÑè„ì¸óÕ>      ", False, CLR_UR_TITLE );
-					ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-				}
-				ckputss( 0,  2, "ìXï‹:   íSìñ:   ", False, CLR_BASE );
-				ckputsn( 5,  2, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_BASE );
-				ckputsn( 13, 2, info.tanto, sizeof( info.tanto ), False, CLR_BASE );
-				ckputss( 0,  5, "BC:          ", False, CLR_BASE );
-				ckputsn( 3,  5, info.Code1, 13, False, CLR_BASE );
-				
+
+				ckputss( 0, 0, "îÑÅ@Å@Å@        ", False, CLR_UR_TITLE );
+				ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
+				ckputsn( 3, 0, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_UR_TITLE );
+				ckputsn( 5, 0, info.tanto, sizeof( info.tanto ), False, CLR_UR_TITLE );
+
+				ckputss( 0,  2, "Å¢              ", False, CLR_BASE );
+				ckputss( 0,  4, "Å§              ", False, CLR_BASE );
+				ckputss( 0,  6, "ílâ∫:           ", False, CLR_BASE );				
+				ckputsn( 3,  2, info.Code1, 13, False, CLR_BASE );
+				ckputsn( 3,  4, info.Code2, 13, False, CLR_BASE );
+				ckputsn( 5,  6, info.Code3, 8, False, CLR_BASE );
+
 				// * îÑâøï\é¶
 				insComma( getZeikomiKingaku(info.Code1, 1), strBaika);
 				ckprintf(0,  9, False, CLR_BASE , "Åè%7sÅ~",strBaika );
@@ -396,13 +463,8 @@ static void Display( short item )
 		case GENKIN:
 			if( SaveItem != GENKIN){
 				ClsColor();	
-				if( memcmp( info.tanto,"00",2 ) == 0 ){
-					ckputss( 0,  0, "<ó˚èK”∞ƒﬁ>      ", False, CLR_PR_TITLE );
-					ckprintf(10, 0, False, CLR_PR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-				}else{
-					ckputss( 0,  0, "<îÑè„ì¸óÕ>      ", False, CLR_UR_TITLE );
-					ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-				}
+				ckputss( 0,  0, "<îÑè„ì¸óÕ>      ", False, CLR_UR_TITLE );
+				ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
 				ckputss( 0,  2, "ìXï‹:   íSìñ:   ", False, CLR_BASE );
 				ckputsn( 5,  2, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_BASE );
 				ckputsn( 13, 2, info.tanto, sizeof( info.tanto ), False, CLR_BASE );
@@ -419,7 +481,7 @@ static void Display( short item )
 				ckprintf(9,  4, False, CLR_BASE, "%7s", strGoukei );
 				ckputss( 0,  6, " åª  ã‡ ", False, CLR_SI_TITLE );
 				ckputss( 8,  6, ":", False, CLR_BASE );
-				ckputss( 0,  8, " ∏⁄ºﬁØƒ :       ", False, CLR_BASE );//#02
+				ckputss( 0,  8, " îÑ  ä| :       ", False, CLR_BASE );
 				insComma( atoln( Credit, sizeof( Credit )), strGoukei );
 				ckprintf(9,  8, False, CLR_BASE, "%7s", strGoukei );
 				ckputss( 0, 10, " Ç®íﬁÇË :       ", False, CLR_BASE );
@@ -431,13 +493,8 @@ static void Display( short item )
 		case CREDIT:
 			if( SaveItem != CREDIT){
 				ClsColor();	
-				if( memcmp( info.tanto,"00",2 ) == 0 ){
-					ckputss( 0,  0, "<ó˚èK”∞ƒﬁ>      ", False, CLR_PR_TITLE );
-					ckprintf(10, 0, False, CLR_PR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-				}else{
-					ckputss( 0,  0, "<îÑè„ì¸óÕ>      ", False, CLR_UR_TITLE );
-					ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-				}
+				ckputss( 0,  0, "<îÑè„ì¸óÕ>      ", False, CLR_UR_TITLE );
+				ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
 				ckputss( 0,  2, "ìXï‹:   íSìñ:   ", False, CLR_BASE );
 				ckputsn( 5,  2, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_BASE );
 				ckputsn( 13, 2, info.tanto, sizeof( info.tanto ), False, CLR_BASE );
@@ -455,7 +512,7 @@ static void Display( short item )
 				ckputss( 0,  6, " åª  ã‡ :       ", False, CLR_BASE );
 				insComma( atoln( Genkin, sizeof( Genkin )), strGoukei );
 				ckprintf(9,  6, False, CLR_BASE, "%7s", strGoukei );
-				ckputss( 0,  8, " ∏⁄ºﬁØƒ ", False, CLR_SI_TITLE );
+				ckputss( 0,  8, " îÑ  ä| ", False, CLR_BASE );
 				ckputss( 8,  8, ":", False, CLR_BASE );
 				ckputss( 0, 10, " Ç®íﬁÇË :       ", False, CLR_BASE );
 				insComma( lngOturi, strGoukei );
@@ -464,86 +521,24 @@ static void Display( short item )
 			}
 			break;
 
-		// case KINKEN:
-		// 	if( SaveItem != KINKEN){
-		// 		ClsColor();	
-		// 		if( memcmp( info.tanto,"00",2 ) == 0 ){
-		// 			ckputss( 0,  0, "<ó˚èK”∞ƒﬁ>      ", False, CLR_PR_TITLE );
-		// 			ckprintf(10, 0, False, CLR_PR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-		// 		}else{
-		// 			ckputss( 0,  0, "<îÑè„ì¸óÕ>      ", False, CLR_UR_TITLE );
-		// 			ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-		// 		}
-		// 		ckputss( 0,  2, "ìXï‹:   íSìñ:   ", False, CLR_BASE );
-		// 		ckputsn( 5,  2, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_BASE );
-		// 		ckputsn( 13, 2, info.tanto, sizeof( info.tanto ), False, CLR_BASE );
-		// 		ckputss( 0,  4, " è¨  åv :       ", False, CLR_BASE );
-		// 		insComma( calculateTax(lngGoukei, taxrate), strGoukei );		// ZNATZ
-		// 		ckprintf(9,  4, False, CLR_BASE, "%7s", strGoukei );
-		// 		ckputss( 0,  6, " åª  ã‡ :       ", False, CLR_BASE );
-		// 		insComma( atoln( Genkin, sizeof( Genkin )), strGoukei );
-		// 		ckprintf(9,  6, False, CLR_BASE, "%7s", strGoukei );
-		// 		ckputss( 0,  8, " ∏⁄ºﬁØƒ :       ", False, CLR_BASE );
-		// 		insComma( atoln( Credit, sizeof( Credit )), strGoukei );
-		// 		ckprintf(9,  8, False, CLR_BASE, "%7s", strGoukei ); //#02
-		// 		ckputss( 0, 10, " Ç®íﬁÇË :       ", False, CLR_BASE );
-		// 		insComma( lngOturi, strGoukei );
-		// 		ckprintf(9, 10, False, CLR_BASE, "%7s", strGoukei );
-		// 		ckputss( 0, 16, "F1:ñﬂÇÈ ENT:ämíË", False, CLR_BASE );		
-		// 	}
-		// 	break;
-		// case COUPON:
-		// 	if( SaveItem != COUPON){
-		// 		ClsColor();	
-		// 		if( memcmp( info.tanto,"00",2 ) == 0 ){
-		// 			ckputss( 0,  0, "<ó˚èK”∞ƒﬁ>      ", False, CLR_PR_TITLE );
-		// 			ckprintf(10, 0, False, CLR_PR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-		// 		}else{
-		// 			ckputss( 0,  0, "<îÑè„ì¸óÕ>      ", False, CLR_UR_TITLE );
-		// 			ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-		// 		}
-		// 		ckputss( 0,  2, "ìXï‹:   íSìñ:   ", False, CLR_BASE );
-		// 		ckputsn( 5,  2, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_BASE );
-		// 		ckputsn( 13, 2, info.tanto, sizeof( info.tanto ), False, CLR_BASE );
-		// 		ckputss( 0,  4, " è¨  åv :       ", False, CLR_BASE );
-		// 		insComma( calculateTax(lngGoukei, taxrate), strGoukei );		// ZNATZ
-		// 		ckprintf(9, 4, False, CLR_BASE, "%7s", strGoukei );
-		// 		ckputss( 0,  6, " åª  ã‡ :       ", False, CLR_BASE );
-		// 		insComma( atoln( Genkin, sizeof( Genkin )), strGoukei );
-		// 		ckprintf(9,  6, False, CLR_BASE, "%7s", strGoukei );
-		// 		ckputss( 0,  8, " ∏⁄ºﬁØƒ :       ", False, CLR_BASE );
-		// 		insComma( atoln( Credit, sizeof( Credit )), strGoukei );
-		// 		ckprintf(9,  8, False, CLR_BASE, "%7s", strGoukei );
-		// 		ckputss( 0, 14, " Ç®íﬁÇË :       ", False, CLR_BASE );
-		// 		insComma( lngOturi, strGoukei );
-		// 		ckprintf(9, 14, False, CLR_BASE, "%7s", strGoukei );
-		// 		ckputss( 0, 16, "F1:ñﬂÇÈ ENT:ämíË", False, CLR_BASE );		
-		// 	}
-		// 	break;
 		case SEISAN:
 			if( SaveItem != COUPON){
 				ClsColor();	
-				if( memcmp( info.tanto,"00",2 ) == 0 ){
-					ckputss( 0,  0, "<ó˚èK”∞ƒﬁ>      ", False, CLR_PR_TITLE );
-					ckprintf(10, 0, False, CLR_PR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-				}else{
-					ckputss( 0,  0, "<îÑè„ì¸óÕ>      ", False, CLR_UR_TITLE );
-					ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-				}
+				ckputss( 0,  0, "<îÑè„ì¸óÕ>      ", False, CLR_UR_TITLE );
+				ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
 				ckputss( 0,  2, "ìXï‹:   íSìñ:   ", False, CLR_BASE );
 				ckputsn( 5,  2, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_BASE );
 				ckputsn( 13, 2, info.tanto, sizeof( info.tanto ), False, CLR_BASE );
 				ckputss( 0,  4, " è¨  åv :       ", False, CLR_BASE );
 
 				// TODO
-				// insComma( calculateTax(lngGoukei, taxrate), strGoukei );
 				insComma( lngGoukei, strGoukei );
 
 				ckprintf(9,  4, False, CLR_BASE, "%7s", strGoukei );
 				ckputss( 0,  6, " åª  ã‡ :       ", False, CLR_BASE );
 				insComma( atoln( Genkin, sizeof( Genkin )), strGoukei );
 				ckprintf(9,  6, False, CLR_BASE, "%7s", strGoukei );
-				ckputss( 0,  8, " ∏⁄ºﬁØƒ :       ", False, CLR_BASE );
+				ckputss( 0,  8, " îÑ  ä| :       ", False, CLR_BASE );
 				insComma( atoln( Credit, sizeof( Credit )), strGoukei );
 				ckprintf(9,  8, False, CLR_BASE, "%7s", strGoukei ); 
 				ckputss( 0, 10, " Ç®íﬁÇË : ", False, CLR_BASE );
@@ -562,13 +557,7 @@ static void Display( short item )
 		case RYOUSYU:	// ZNATZ_RYOUSYU
 			if( SaveItem != RYOUSYU){
 				ClsColor();	
-				// if( memcmp( info.tanto,"00",2 ) == 0 ){
-				// 	ckputss( 0,  0, "<ó˚èK”∞ƒﬁ>      ", False, CLR_PR_TITLE );
-				// 	ckprintf(10, 0, False, CLR_PR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-				// }else{
-				// 	ckputss( 0,  0, "<îÑè„ì¸óÕ>      ", False, CLR_UR_TITLE );
-				// 	ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
-				// }
+
 				ckputss( 0,  0, "<îÑè„ì¸óÕ>      ", False, CLR_UR_TITLE );
 				ckprintf(10, 0, False, CLR_UR_TITLE , "%4dåè", ctrl.InfoUrCnt );
 				ckputss( 0,  2, "ìXï‹:   íSìñ:   ", False, CLR_BASE );
@@ -580,7 +569,7 @@ static void Display( short item )
 				ckputss( 0,  6, " åª  ã‡ :       ", False, CLR_BASE );
 				insComma( atoln( Genkin, sizeof( Genkin )), strGoukei );
 				ckprintf(9,  6, False, CLR_BASE, "%7s", strGoukei );
-				ckputss( 0,  8, " ∏⁄ºﬁØƒ :       ", False, CLR_BASE );
+				ckputss( 0,  8, " îÑ  ä| :       ", False, CLR_BASE );
 				insComma( atoln( Credit, sizeof( Credit )), strGoukei );
 				ckprintf(9,  8, False, CLR_BASE, "%7s", strGoukei ); 
 
@@ -602,6 +591,7 @@ static void Display( short item )
 static void entrydata( short sw ){
 	memcpy( infour.Code1, info.Code1 , sizeof( infour.Code1 ));
 	memcpy( infour.Code2, info.Code2 , sizeof( infour.Code2 ));
+	memcpy( infour.Code3, info.Code3 , sizeof( infour.Code3 ));
 	memcpy( infour.Baika, info.Joudai , sizeof( infour.Baika ));
 	memcpy( infour.Num, info.Num , sizeof( infour.Num ));
 
@@ -644,6 +634,7 @@ static void entryUriage(){
 
 			memcpy( urdata.Code1, infour.Code1 , sizeof( urdata.Code1 ));
 			memcpy( urdata.Code2, infour.Code2 , sizeof( urdata.Code2 ));
+			memcpy( urdata.Code3, infour.Code3 , sizeof( urdata.Code3 ));
 			memcpy( urdata.Name , infour.Name  , sizeof( urdata.Name ));
 			memcpy( urdata.Baika, infour.Baika , sizeof( urdata.Baika ));
 			
@@ -900,12 +891,16 @@ void uriage( int flag, int firsttime )
 				ret = NumInput( 6, 10, info.tanto, sizeof( info.tanto ),  0, 99L, IN_NUMERIC | KEY_MINUS | KEY_FUNC, TYPE_NUM, NO_CHECK );
 				break;
 			case CODE1:
-				ret = CodeInput( 3, 5, info.Code1, sizeof( info.Code1 ), 
+				ret = CodeInput( 3, 2, info.Code1, sizeof( info.Code1 ), 
 								 BCR_NOTDRW | BCR_WPC | KEY_FUNC );
 				break;			
 			case CODE2:
-				ret = CodeInput( 3, 7, info.Code2, sizeof( info.Code2 ), 
+				ret = CodeInput( 3, 4, info.Code2, sizeof( info.Code2 ), 
 								 BCR_NOTDRW | BCR_WPC | KEY_FUNC );
+				break;				
+			case CODE3:
+				ret = CodeInput8orNull( 5, 6, info.Code3, sizeof( info.Code3 ), 
+								 BCR_NOTDRW | BCR_WPC | KEY_FUNC | KEY_SKIP );
 				break;				
 			case NUM:
 				memcpy( info.Num ,"0001" ,sizeof( info.Num )); 
@@ -1105,35 +1100,6 @@ void uriage( int flag, int firsttime )
 						memcpy(info.Joudai, _buf, sizeof(info.Joudai));
 						item = CODE2;
 						continue;
-					} else if( ctrl.URDataCnt > 0 && !memcmp( info.Code1, "30", 2 ) && info.Code1[8] == ' ' ){
-
-						/* ìoò^çœÇ›ÉfÅ[É^Ç™ë∂ç›Ç∑ÇÈÇ©Ç¬è„íiÉRÅ[ÉhÇÃêÊì™Ç©ÇÁÇQåÖÇ™ÇRÇOÅAÇ©Ç¬ÇWåÖÇÃèÍçá */
-						/* äÑà¯ó¶Ç‹ÇΩÇÕílâ∫ã‡äzÇç≈å„ÇÃìoò^ÉfÅ[É^Ç÷ÉZÉbÉgÇµÉfÅ[É^èCê≥ÇçsÇ§			*/
-						memcpy( Code, info.Code1, sizeof( Code ) );
-						ram_read( ctrl.URDataCnt-1, &urdata, URDATAF );
-						memcpy( urdata.Code3, Code, sizeof( urdata.Code3 ) );
-
-						// TODO
-						long lngNesageKingaku = GetNesage(info.Code1, info.Joudai);
-						convertToString(lngNesageKingaku, info.Joudai);
-						displayMsg(atoi(info.Joudai, 10));
-						/* VB Code VBÇ…ÇÕèdï°èàóùÇµÇ»Ç¢ÇÊÇ§Ç…
-						'îÑâø
-						If StrComp(Mid(dat$(5), 1, 2), "30") = 0 Then
-							'%ílà¯ÉVÅ[Éã?
-							If StrComp(Mid(dat$(5), 1, 3), "309") = 0 And StrComp(Mid(dat$(5), 6, 2), "99") = 0 Then
-								Bai$ = Trim(Str(Val(Jyo$) - Val(Jyo$) * Val(Mid(dat$(5), 4, 2)) / 100))
-							Else
-								Bai$ = Mid$(dat$(5), 3, 5)
-							End If
-						Else
-							Bai$ = Jyo$
-						End If
-						*/
-
-						memcpy( urdata.Code3, Code, sizeof( urdata.Code3 ) );
-						item = DENTRY;
-						continue;
 					} else {
 						/* è„ãLÇ…äYìñÇµÇ»Ç¢èÍçáÇÕÉGÉâÅ[ */
 						beep( 10, 2 );
@@ -1141,7 +1107,6 @@ void uriage( int flag, int firsttime )
 						continue;
 					}
 				}
-				
 			} else if( item == CODE2 ){
 
 				if( MaxCheck( ctrl.URDataCnt, URDATA_MAX ) ) return;//@01
@@ -1153,11 +1118,11 @@ void uriage( int flag, int firsttime )
 				}
 				/* è„íiÉRÅ[ÉhÇÃêÊì™Ç©ÇÁÇRåÖÇ™501Å`999ÇÃèÍçáÅAÇOÇXÇXÇXÅAÇPÅAÇRÇ©ÇÁénÇ‹ÇÈÉRÅ[Éhà»äOïsâ¬ */
 				if( atoin( info.Code1, 3 ) > 500 && atoin( info.Code1, 3 ) < 999 ){
-					if( (info.Code2[0] == '0' || info.Code2[0] == '1' || info.Code2[0] == '2' || info.Code2[0] == '3') && sdata.Code2[12] != ' ' ){
+					if( (info.Code2[0] == '0' || info.Code2[0] == '1' || info.Code2[0] == '2' || info.Code2[0] == '3') && info.Code2[12] != ' ' ){
 						// TODO
 						lngGoukei = lngGoukei + getZeikomiKingaku(info.Code1, 1);
 						lngTensuu = lngTensuu + 1; 
-						item = NUM;
+						item = CODE3;
 						continue;
 					} else {
 						/* è„ãLÇ…äYìñÇµÇ»Ç¢èÍçáÇÕÉGÉâÅ[ */
@@ -1167,11 +1132,44 @@ void uriage( int flag, int firsttime )
 					}
 				} else {
 					/* è„ãLÇ…äYìñÇµÇ»Ç¢èÍçáÇÕÉGÉâÅ[ */
-					memset( sdata.Code2, 0x00, sizeof( sdata.Code2 ) );
+					memset( info.Code2, 0x00, sizeof( info.Code2 ) );
 					beep( 10, 2 );
 					continue;
 				}
-				
+						
+			} else if( item == CODE3 ){
+
+				if ( ret == SKIP ) {
+					item = NUM;
+					continue;
+				}
+
+				if( info.Code3[0] ){
+
+					if( ctrl.InfoUrCnt == INFOUR_MAX ){//åèêîÇí¥Ç¶ÇÈèÍçáÇÕìoò^ïsâ¬
+						beeb(10,2, 1);
+						memset( info.Code1, 0x00, sizeof( info.Code1 ) );
+						memset( info.Code2, 0x00, sizeof( info.Code2 ) );
+						memset( info.Code3, 0x00, sizeof( info.Code3 ) );
+						continue;
+					}
+
+					if( !memcmp( info.Code3, "30", 2 ) && info.Code3[7] != ' ' ){
+
+						// TODO
+						long lngNesageKingaku = GetNesage(info.Code3, info.Joudai);
+						convertToString(lngNesageKingaku, info.Joudai);
+						displayMsg(atoi(info.Joudai, 10));
+
+						item = NUM;
+						continue;
+					} else {
+						// /* è„ãLÇ…äYìñÇµÇ»Ç¢èÍçáÇÕÉGÉâÅ[ */
+						beep( 10, 2 );
+						memset( info.Code3, 0x00, sizeof( info.Code3 ) );
+						continue;
+					}
+				} 			
  			} else if( item == NUM ){
 
 				 long current_input_num = atoln(info.Num, sizeof(info.Num));
@@ -1413,6 +1411,10 @@ void uriage( int flag, int firsttime )
 			}else if( item == CODE2 ) {
 				meisaiclr();
 				item = CODE1;
+				continue;
+			}else if( item == CODE3 ) {
+				meisaiclr();
+				item = CODE2;
 				continue;
 			}else if( item == YEAR ){
 				infoclr();
