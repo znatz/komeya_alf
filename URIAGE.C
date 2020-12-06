@@ -22,7 +22,7 @@ enum {
 	TANTO,
 	CODE1,
 	CODE2,
-	CODE3,
+	CODE3, //値下
 	NUM,
 	BAIHEN,
 	GENKIN,
@@ -86,6 +86,23 @@ static long getZeikomiKingaku(char *barcode, short count) {
 	long jyoudai = getJyoudai(barcode);
 	long bumon_tax = calculateTax2(jyoudai, BumonTaxFindByCode1(barcode));
 	return (jyoudai + bumon_tax) * count;
+}
+
+// * 上段バーコードから税込金額計算、値下が上代より少ないなら、値下する
+static long getZeikomiKingakuWithNesgae(char *barcode, short count, char *sageBarcode) { 
+	long jyoudai = getJyoudai(barcode);
+	long bumon_tax = calculateTax2(jyoudai, BumonTaxFindByCode1(barcode));
+
+	short taxrate = atoin( ctrl.TaxRate, sizeof(ctrl.TaxRate)) + 100.0;
+	long sage_baika_inc_tax = calculateTax2(GetNesage(sageBarcode, jyoudai), taxrate);
+
+	if (sage_baika_inc_tax <= (jyoudai + bumon_tax)) {
+		displayMsg(sage_baika_inc_tax);
+		return sage_baika_inc_tax * count;
+	} else {
+		return (jyoudai + bumon_tax) * count;
+	}
+	
 }
 /*****************************************************************************/
 /*                                                                           */
@@ -198,6 +215,13 @@ static void infoclrExceptTenpoTanto( void ){
 /*****************************************************************************/
 /* 			     															 */
 /*****************************************************************************/
+static void DisplayHeader() {
+	ckputss( 0, 0, "売　　　        ", False, CLR_UR_TITLE );
+	ckprintf(10, 0, False, CLR_UR_TITLE , "%4d件", ctrl.InfoUrCnt );
+	ckputsn( 3, 0, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_UR_TITLE );
+	ckputsn( 5, 0, info.tanto, sizeof( info.tanto ), False, CLR_UR_TITLE );
+}
+
 static void Display( short item )
 {
 	// ZNATZ
@@ -290,10 +314,7 @@ static void Display( short item )
 			if( SaveItem != CODE1){
 				ClsColor();
 
-				ckputss( 0, 0, "売　　　        ", False, CLR_UR_TITLE );
-				ckprintf(10, 0, False, CLR_UR_TITLE , "%4d件", ctrl.InfoUrCnt );
-				ckputsn( 3, 0, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_UR_TITLE );
-				ckputsn( 5, 0, info.tanto, sizeof( info.tanto ), False, CLR_UR_TITLE );
+				DisplayHeader();
 
 				ckputss( 0,  2, "▲              ", False, CLR_BASE );
 				ckputss( 0,  4, "▽              ", False, CLR_BASE );				
@@ -317,10 +338,7 @@ static void Display( short item )
 			if( SaveItem != CODE2){
 				ClsColor();
 
-				ckputss( 0, 0, "売　　　        ", False, CLR_UR_TITLE );
-				ckprintf(10, 0, False, CLR_UR_TITLE , "%4d件", ctrl.InfoUrCnt );
-				ckputsn( 3, 0, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_UR_TITLE );
-				ckputsn( 5, 0, info.tanto, sizeof( info.tanto ), False, CLR_UR_TITLE );
+				DisplayHeader();
 
 				ckputss( 0,  2, "△              ", False, CLR_BASE );
 				ckputsn( 3,  2, info.Code1, 13, False, CLR_BASE );
@@ -344,10 +362,7 @@ static void Display( short item )
 			if( SaveItem != CODE3){
 				ClsColor();	
 
-				ckputss( 0, 0, "売　　　        ", False, CLR_UR_TITLE );
-				ckprintf(10, 0, False, CLR_UR_TITLE , "%4d件", ctrl.InfoUrCnt );
-				ckputsn( 3, 0, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_UR_TITLE );
-				ckputsn( 5, 0, info.tanto, sizeof( info.tanto ), False, CLR_UR_TITLE );
+				DisplayHeader();
 
 				ckputss( 0,  2, "△              ", False, CLR_BASE );
 				ckputss( 0,  4, "▽              ", False, CLR_BASE );
@@ -377,10 +392,7 @@ static void Display( short item )
 			if( SaveItem != NUM){
 				ClsColor();	
 
-				ckputss( 0, 0, "売　　　        ", False, CLR_UR_TITLE );
-				ckprintf(10, 0, False, CLR_UR_TITLE , "%4d件", ctrl.InfoUrCnt );
-				ckputsn( 3, 0, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_UR_TITLE );
-				ckputsn( 5, 0, info.tanto, sizeof( info.tanto ), False, CLR_UR_TITLE );
+				DisplayHeader();
 
 				ckputss( 0,  2, "△              ", False, CLR_BASE );
 				ckputss( 0,  4, "▽              ", False, CLR_BASE );
@@ -406,34 +418,11 @@ static void Display( short item )
 			}
 			break;
 
-		// case BAIHEN:
-		// 	if( SaveItem != NUM){
-		// 		ClsColor();
-		// 		if( memcmp( info.tanto,"00",2 ) == 0 ){
-		// 			ckputss( 0,  0, "<売価変更(練習)>", False, CLR_PR_TITLE );
-		// 		}else{
-		// 			ckputss( 0,  0, "  <売価変更>    ", False, CLR_UR_TITLE );
-		// 		}
-		// 		ckputss( 0,  2, "店舗:   担当:   ", False, CLR_BASE );
-		// 		ckputsn( 5,  2, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_BASE );
-		// 		ckputsn( 13, 2, info.tanto, sizeof( info.tanto ), False, CLR_BASE );
-		// 		ckputss( 0,  5, "BC:          ", False, CLR_BASE );
-		// 		ckputsn( 3,  5, info.Code1, 13, False, CLR_BASE );
-		// 		ckputss( 0, 10, "売価 :         ", False, CLR_BASE );
-		// 		insComma( atoln( info.Joudai, sizeof( info.Joudai )), strGoukei );
-		// 		ckprintf(7, 10, False, CLR_BASE, "%-7s円", strGoukei );
-		// 		ckputss( 0, 12, " →           円", False, CLR_BASE );
-		// 		ckputss( 0, 15, "F1:戻る ENT:確定", False, CLR_BASE );	
-		// 	}
-		// 	break;
 		case DENTRY:
 			if( SaveItem != DENTRY){
 				ClsColor();	
 
-				ckputss( 0, 0, "売　　　        ", False, CLR_UR_TITLE );
-				ckprintf(10, 0, False, CLR_UR_TITLE , "%4d件", ctrl.InfoUrCnt );
-				ckputsn( 3, 0, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_UR_TITLE );
-				ckputsn( 5, 0, info.tanto, sizeof( info.tanto ), False, CLR_UR_TITLE );
+				DisplayHeader();
 
 				ckputss( 0,  2, "△              ", False, CLR_BASE );
 				ckputss( 0,  4, "▽              ", False, CLR_BASE );
@@ -907,12 +896,8 @@ void uriage( int flag, int firsttime )
 				ret = NumInput( 12, 9, info.Num, sizeof( info.Num ), 0, 99999L,
 								IN_NUMERIC | KEY_MINUS | KEY_FUNC, TYPE_NUM, NO_CHECK );
 				break;
-			// case BAIHEN:
-			// 	memcpy( Baika ,info.Joudai ,sizeof( Baika )); 
-			// 	ret = NumInput( 6, 12, Baika, sizeof( Baika ), 0, 999999L,
-			// 					IN_NUMERIC | KEY_MINUS | KEY_FUNC, TYPE_NUM, NO_CHECK );
-			// 	break;
 			case DENTRY:
+				// TODO
 				if( !memcmp( Code, "30", 2 ) ){
 					entrydata( False );
 				} else {
@@ -1119,9 +1104,6 @@ void uriage( int flag, int firsttime )
 				/* 上段コードの先頭から３桁が501～999の場合、０９９９、１、３から始まるコード以外不可 */
 				if( atoin( info.Code1, 3 ) > 500 && atoin( info.Code1, 3 ) < 999 ){
 					if( (info.Code2[0] == '0' || info.Code2[0] == '1' || info.Code2[0] == '2' || info.Code2[0] == '3') && info.Code2[12] != ' ' ){
-						// TODO
-						lngGoukei = lngGoukei + getZeikomiKingaku(info.Code1, 1);
-						lngTensuu = lngTensuu + 1; 
 						item = CODE3;
 						continue;
 					} else {
@@ -1157,9 +1139,9 @@ void uriage( int flag, int firsttime )
 					if( !memcmp( info.Code3, "30", 2 ) && info.Code3[7] != ' ' ){
 
 						// TODO
-						long lngNesageKingaku = GetNesage(info.Code3, info.Joudai);
-						convertToString(lngNesageKingaku, info.Joudai);
-						displayMsg(atoi(info.Joudai, 10));
+						// long lngNesageKingaku = GetNesage(info.Code3, info.Joudai);
+						// convertToString(lngNesageKingaku, info.Joudai);
+						// displayMsg(atoi(info.Joudai, 10));
 
 						item = NUM;
 						continue;
@@ -1194,7 +1176,7 @@ void uriage( int flag, int firsttime )
 				// | 金額オバーチェック
 				// └------------------------------------------------------------------------------- 
 				lngTmpKin = lngGoukei;
-				lngGoukei = lngGoukei + getZeikomiKingaku(info.Code1, (current_input_num - 1 ) ) ;
+				lngGoukei = lngGoukei + getZeikomiKingakuWithNesgae(info.Code1, current_input_num, info.Code3 ) ;
 				
 				if( lngGoukei > 999999 || lngGoukei < -99999 ){
 					lngGoukei = lngTmpKin;
@@ -1207,7 +1189,7 @@ void uriage( int flag, int firsttime )
 				// | 数量オバーチェック
 				// └------------------------------------------------------------------------------- 
 				lngTmpSuu = lngTensuu;
-				lngTensuu = lngTensuu + current_input_num - 1; 
+				lngTensuu = lngTensuu + current_input_num ; 
 
 				if( lngTensuu > 999 || lngTensuu < -99 ){
 					lngGoukei = lngTmpKin;
@@ -1220,19 +1202,6 @@ void uriage( int flag, int firsttime )
 				item = DENTRY;
 				continue;
 
-			} else if( item == BAIHEN ){
-				if( atoln( Baika, sizeof( Baika )) > atoln( info.Joudai, sizeof( info.Joudai )) || atoln( Baika, sizeof( Baika )) <= 0 ){
-					memcpy( Baika , info.Joudai, sizeof( Baika ) );
-					beep( 50,1 );
-					continue;
-				}
-
-				memcpy( info.Joudai , Baika , sizeof( info.Joudai ) );				
-				long price = atoln( info.Joudai, sizeof( info.Joudai ));
-				lngGoukei = lngGoukei + calculateTax2(price, taxrate);
-
-				item = NUM;
-				continue;
 			} else if( item == GENKIN ){
 				
 				if ( lngGoukei < 0 ) { item = CREDIT; continue; }
