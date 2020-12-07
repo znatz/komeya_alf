@@ -50,6 +50,7 @@ static long		lngOturi;
 static long		lngOturiChk;
 static long		lngGoukei;
 static long		lngTensuu;
+static long		lngBaika; //20201207
 
 static void		meisaiclr( void );
 static void		Display( short item );
@@ -59,14 +60,6 @@ static void		entryUriage();
 // ZNATZ
 static int		reprint;
 static int		teisei;
-// static long 	calculateTax(long lngPrice, short rate);
-
-// static long calculateTax(long lngPrice, short rate)
-// {
-// 	// ZZZZ
-// 	long result = lngPrice;
-// 	return result;
-// }
 
 // * 税額取得
 static long calculateTax2(long lngPrice, short rate)
@@ -84,7 +77,14 @@ static long calculateTax2(long lngPrice, short rate)
 static long getZeikomiKingaku(char *barcode, short count) { 
 	// displayMsg(BumonTaxFindByCode1(barcode));
 	long jyoudai = getJyoudai(barcode);
-	long bumon_tax = calculateTax2(jyoudai, BumonTaxFindByCode1(barcode));
+	long zeiku = HinsyuZeikuFindByCode1(barcode);
+	long bumon_tax ;
+	// * 品種税区 0:外税 1:内税
+	if (zeiku == 1) {
+		bumon_tax = 0;
+	} else {
+		bumon_tax = calculateTax2(jyoudai, BumonTaxFindByCode1(barcode));
+	}
 	return (jyoudai + bumon_tax) * count;
 }
 
@@ -97,13 +97,12 @@ static long getZeikomiKingakuWithNesgae(char *barcode, short count, char *sageBa
 	long sage_baika_inc_tax = calculateTax2(GetNesage(sageBarcode, jyoudai), taxrate);
 
 	if (sage_baika_inc_tax <= (jyoudai + bumon_tax)) {
-		displayMsg(sage_baika_inc_tax);
 		return sage_baika_inc_tax * count;
 	} else {
 		return (jyoudai + bumon_tax) * count;
 	}
-	
 }
+
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
@@ -166,6 +165,9 @@ static void meisaiclr( void )
 	memset( info.Joudai, 0x00, sizeof( info.Joudai ) );
 	memset( Code,	0x00, sizeof( Code ) );
 	memset( Name,	0x00, sizeof( Name ) );
+
+	//20201207
+	lngBaika = 0;
 }
 
 //****************************************************************************
@@ -323,7 +325,6 @@ static void Display( short item )
 				// * 現在小計金額
 				ckputss( 0, 12, "計        　　", False, CLR_SI_TITLE );
 				insComma( lngGoukei, strGoukei ); 								
-				// insComma( getZeikomiKingaku(info.Code1, 1), strGoukei);			//ZNATZ
 				ckprintf(2, 12, False, CLR_SI_TITLE, "%7s円", strGoukei );
 
 				// * 現在小計点数
@@ -347,7 +348,6 @@ static void Display( short item )
 
 				// * 現在小計金額
 				ckputss( 0, 12, "計        　　", False, CLR_SI_TITLE );
-				// insComma( getZeikomiKingaku(info.Code1, 1), strGoukei);			//ZNATZ
 				insComma( lngGoukei, strGoukei ); 								
 				ckprintf(2, 12, False, CLR_SI_TITLE, "%7s円", strGoukei );
 
@@ -402,7 +402,9 @@ static void Display( short item )
 				ckputsn( 5,  6, info.Code3, 8, False, CLR_BASE );
 				
 				// * 売価表示
-				insComma( getZeikomiKingaku(info.Code1, 1), strBaika);
+				// * 売変の反映はCODE3を読んだ後 20201207
+				// insComma( getZeikomiKingaku(info.Code1, 1), strBaika);
+				insComma( lngBaika, strBaika);
 				ckprintf(0,  9, False, CLR_BASE , "￥%7s×",strBaika );
 
 				// * 現在小計金額
@@ -432,7 +434,7 @@ static void Display( short item )
 				ckputsn( 5,  6, info.Code3, 8, False, CLR_BASE );
 
 				// * 売価表示
-				insComma( getZeikomiKingaku(info.Code1, 1), strBaika);
+				insComma( lngBaika, strBaika);
 				ckprintf(0,  9, False, CLR_BASE , "￥%7s×",strBaika );
 
 				// * 数量表示
@@ -445,7 +447,6 @@ static void Display( short item )
 				
 				ckprintf(11,12, False, CLR_SI_TITLE , "%3d点", lngTensuu );
 				ckputss( 0, 14, "F1:戻る ENT:確定", False, CLR_BASE );	
-				// ckputss( 0, 16, "F3:売変  F4:精算", False, CLR_BASE );	
 				ckputss( 0, 16, "         F4:精算", False, CLR_BASE );	
 			}
 			break;	
@@ -534,7 +535,7 @@ static void Display( short item )
 				insComma( lngOturi, strGoukei );
 				ckprintf(9, 10, False, CLR_BASE, "%7s", strGoukei );
 				
-				ckputss( 0, 16, "F1:戻る ENT:終了", False, CLR_BASE );		
+				ckputss( 0, 16, "F1:戻る ENT:終了", False, CLR_BASE );
 			}
 			break;
 		case KAKUNIN:
@@ -581,7 +582,9 @@ static void entrydata( short sw ){
 	memcpy( infour.Code1, info.Code1 , sizeof( infour.Code1 ));
 	memcpy( infour.Code2, info.Code2 , sizeof( infour.Code2 ));
 	memcpy( infour.Code3, info.Code3 , sizeof( infour.Code3 ));
-	memcpy( infour.Baika, info.Joudai , sizeof( infour.Baika ));
+
+	memcpy( infour.Joudai, info.Joudai , sizeof( infour.Joudai ));
+	memcpy( infour.Baika, info.Baika , sizeof( infour.Baika ));
 	memcpy( infour.Num, info.Num , sizeof( infour.Num ));
 
 
@@ -625,6 +628,7 @@ static void entryUriage(){
 			memcpy( urdata.Code2, infour.Code2 , sizeof( urdata.Code2 ));
 			memcpy( urdata.Code3, infour.Code3 , sizeof( urdata.Code3 ));
 			memcpy( urdata.Name , infour.Name  , sizeof( urdata.Name ));
+			memcpy( urdata.Joudai, infour.Joudai , sizeof( urdata.Joudai ));
 			memcpy( urdata.Baika, infour.Baika , sizeof( urdata.Baika ));
 			
 			memcpy( urdata.Num , infour.Num , sizeof( urdata.Num ));
@@ -897,12 +901,7 @@ void uriage( int flag, int firsttime )
 								IN_NUMERIC | KEY_MINUS | KEY_FUNC, TYPE_NUM, NO_CHECK );
 				break;
 			case DENTRY:
-				// TODO
-				if( !memcmp( Code, "30", 2 ) ){
-					entrydata( False );
-				} else {
-					entrydata( True );
-				}
+				entrydata( True );
 				item = CODE1;
 				break;
 			case GENKIN:
@@ -911,16 +910,6 @@ void uriage( int flag, int firsttime )
 				break;
 			case CREDIT:
 				ret = NumInput( 10, 8, Credit, 6, 0, 999999L,	
-								IN_NUMERIC | KEY_MINUS | KEY_FUNC, TYPE_NUM, NO_CHECK );
-				break;
-			case KINKEN:
-				//ret = NumInput( 10, 10, Kinken, 6, 0, 999999L,
-				//				IN_NUMERIC | KEY_MINUS | KEY_FUNC, TYPE_NUM, NO_CHECK ); //#02
-				ret = NumInput( 10, 8, Kinken, 6, 0, 999999L,
-								IN_NUMERIC | KEY_MINUS | KEY_FUNC, TYPE_NUM, NO_CHECK );
-				break;
-			case COUPON:
-				ret = NumInput( 10, 12, Coupon, 6, 0, 999999L,
 								IN_NUMERIC | KEY_MINUS | KEY_FUNC, TYPE_NUM, NO_CHECK );
 				break;
 			case SEISAN:
@@ -1074,6 +1063,7 @@ void uriage( int flag, int firsttime )
 					if( ctrl.InfoUrCnt == INFOUR_MAX ){//件数を超える場合は登録不可
 						beeb(10,2, 1);
 						memset( info.Code1, 0x00, sizeof( info.Code1 ) );
+						lngBaika = 0;
 						continue;
 					}
 
@@ -1083,6 +1073,7 @@ void uriage( int flag, int firsttime )
 						char _buf[10];
 						sprintf(_buf, "%010d", getJyoudai(info.Code1));
 						memcpy(info.Joudai, _buf, sizeof(info.Joudai));
+						lngBaika = getZeikomiKingaku(info.Code1, 1);
 						item = CODE2;
 						continue;
 					} else {
@@ -1099,6 +1090,7 @@ void uriage( int flag, int firsttime )
 				if( ctrl.InfoUrCnt == INFOUR_MAX ){//件数を超える場合は登録不可
 					beeb(10,2, 1);
 					memset( info.Code1, 0x00, sizeof( info.Code1 ) );
+					lngBaika = 0;
 					continue;
 				}
 				/* 上段コードの先頭から３桁が501～999の場合、０９９９、１、３から始まるコード以外不可 */
@@ -1122,6 +1114,12 @@ void uriage( int flag, int firsttime )
 			} else if( item == CODE3 ){
 
 				if ( ret == SKIP ) {
+					// * 20201207 売変ない場合はそのまま税込上代
+					lngBaika = getZeikomiKingaku(info.Code1, 1);
+					// displayMsg(lngBaika);
+					char _buf[10];
+					sprintf(_buf, "%010d", lngBaika);
+					memcpy(info.Baika, _buf, sizeof(info.Baika));
 					item = NUM;
 					continue;
 				}
@@ -1138,10 +1136,13 @@ void uriage( int flag, int firsttime )
 
 					if( !memcmp( info.Code3, "30", 2 ) && info.Code3[7] != ' ' ){
 
-						// TODO
-						// long lngNesageKingaku = GetNesage(info.Code3, info.Joudai);
-						// convertToString(lngNesageKingaku, info.Joudai);
-						// displayMsg(atoi(info.Joudai, 10));
+						// TODO 20201207 売変の税込金額 システム税率, 外税
+						long lngNesageKingaku = calculateTax2(GetNesage(info.Code3, info.Joudai), taxrate);
+						lngBaika = lngNesageKingaku;
+
+						char _buf[10];
+						sprintf(_buf, "%010d", lngBaika);
+						memcpy(info.Baika, _buf, sizeof(info.Baika));
 
 						item = NUM;
 						continue;
@@ -1171,12 +1172,12 @@ void uriage( int flag, int firsttime )
 					continue;
 				}
 
-				// ┌------------------------------------------------------------------------------- 
-				// | lngTmpKin, lngTmpSuu で一時現在小計情報を保存
-				// | 金額オバーチェック
-				// └------------------------------------------------------------------------------- 
+				// * ┌------------------------------------------------------------------------------- 
+				// * | lngTmpKin, lngTmpSuu で一時現在小計情報を保存
+				// * | 金額オバーチェック
+				// * └------------------------------------------------------------------------------- 
 				lngTmpKin = lngGoukei;
-				lngGoukei = lngGoukei + getZeikomiKingakuWithNesgae(info.Code1, current_input_num, info.Code3 ) ;
+				lngGoukei = lngGoukei + lngBaika * current_input_num; 
 				
 				if( lngGoukei > 999999 || lngGoukei < -99999 ){
 					lngGoukei = lngTmpKin;
@@ -1184,10 +1185,10 @@ void uriage( int flag, int firsttime )
 					continue;
 				}
 
-				// ┌------------------------------------------------------------------------------- 
-				// | lngTmpKin, lngTmpSuu で一時現在小計情報を保存
-				// | 数量オバーチェック
-				// └------------------------------------------------------------------------------- 
+				// * ┌------------------------------------------------------------------------------- 
+				// * | lngTmpKin, lngTmpSuu で一時現在小計情報を保存
+				// * | 数量オバーチェック
+				// * └------------------------------------------------------------------------------- 
 				lngTmpSuu = lngTensuu;
 				lngTensuu = lngTensuu + current_input_num ; 
 
@@ -1198,8 +1199,13 @@ void uriage( int flag, int firsttime )
 					continue;
 				}
 
-				// 登録 
+				// * ┌------------------------------------------------------------------------------- 
+				// * | !! 
+				// * | ※ OKの場合、Info -> Infourに確定
+				// * | !! 
+				// * └------------------------------------------------------------------------------- 
 				item = DENTRY;
+
 				continue;
 
 			} else if( item == GENKIN ){
@@ -1371,27 +1377,37 @@ void uriage( int flag, int firsttime )
 		}else if( ret == F1KEY ){//戻る
 			if( item == NUM ){
 				// TODO 20201123 税計算
-				// lngGoukei = lngGoukei - atoln( info.Joudai, sizeof( info.Joudai ));
-				lngGoukei = lngGoukei - getZeikomiKingaku(info.Code1, 1);
-				lngTensuu = lngTensuu - 1; 
+				// * 20201207 未確定なので、戻す必要がなくなった。
+				// lngGoukei = lngGoukei - getZeikomiKingaku(info.Code1, 1);
+				// lngTensuu = lngTensuu - 1; 
 				meisaiclr();
 				item = CODE1;
 				continue;
 			}else if( item == CODE2 ) {
-				meisaiclr();
+				memset( infour.Code1, 0x00, sizeof( infour.Code1 ) );
+				memset( infour.Code2, 0x00, sizeof( infour.Code2 ) );
+				memset( infour.Code3, 0x00, sizeof( infour.Code3 ) );
+				memset( infour.Num, 0x00, sizeof( infour.Num ) );
+
+				memset( info.Code1, 0x00, sizeof( info.Code1 ) );
+				memset( info.Code2, 0x00, sizeof( info.Code2 ) );
+				memset( info.Code3, 0x00, sizeof( info.Code3 ) );
+				memset( info.Num, 0x00, sizeof( info.Num ) );
 				item = CODE1;
 				continue;
 			}else if( item == CODE3 ) {
-				meisaiclr();
+				memset( infour.Code2, 0x00, sizeof( infour.Code2 ) );
+				memset( infour.Code3, 0x00, sizeof( infour.Code3 ) );
+				memset( infour.Num, 0x00, sizeof( infour.Num ) );
+
+				memset( info.Code2, 0x00, sizeof( info.Code2 ) );
+				memset( info.Code3, 0x00, sizeof( info.Code3 ) );
+				memset( info.Num, 0x00, sizeof( info.Num ) );
 				item = CODE2;
 				continue;
 			}else if( item == YEAR ){
 				infoclr();
 				menu();
-			}else if( item == BAIHEN ){
-				lngGoukei = lngGoukei + atoln( info.Joudai, sizeof( info.Joudai ));
-				item = NUM;
-				continue;
 			}else if( item == GENKIN ){
 				lngOturi = 0;
 				/*if( memcmp( ctrl.RecPrint,"1",1 ) == 0 ){//#01
@@ -1408,17 +1424,6 @@ void uriage( int flag, int firsttime )
 			infoclr();
 			item = YEAR;
 			continue;
-		// }else if( ret == F3KEY ){
-		// 	if( item ==  YEAR || item == MONTH || item == DAY || item == SHOP || item == TANTO ){
-		// 		//item = KAKUNIN;
-		// 		continue;
-		// 	}else if( item == NUM ){
-		// 		long bk = atoln( info.Joudai, sizeof( info.Joudai ));
-		// 		lngGoukei = lngGoukei - calculateTax2(bk, taxrate);				
-		// 		// item = BAIHEN;
-		// 		Display( item );
-		// 		continue;
-		// 	}
 		}else if( ret == F4KEY ){//日計表・現金
 			if( item ==  YEAR || item == MONTH || item == DAY || item == SHOP || item == TANTO ){
 				cls();
