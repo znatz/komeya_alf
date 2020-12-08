@@ -433,10 +433,25 @@ long	HinsyuZeikuFindByCode1( char *code1 )
 	}
 	return 0;
 }
+/*****************************************************/
+/*  品種検索    	                                   */
+/*  呼び出し例: 　	                                   */
+/*****************************************************/
+long	HinsyuFindByCode1( char *code1 )
+{
+	long	adrs;
 
-
-
-
+	//memset( &mmst, 0x00, sizeof( mmst ) );
+#if 0	/* ２分法 */
+	//adrs = binarySearch( key, sizeof( mmst.Code ), MMSTF, ctrl.MMstCnt, 0 );
+#else	/* 先頭から検索 */
+	adrs = beginSearch( code1+3, 1, 0, sizeof( himst.Code ), 0, ctrl.HIMSTCnt, HIMSTF );
+#endif
+	if( adrs != -1 ){
+		return adrs;
+	}
+	return 0;
+}
 
 /**************************************************/
 /*  店舗マスタ検索	                              */

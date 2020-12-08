@@ -27,7 +27,7 @@ URDATA		urdata; /* 売上データ			*/
 char		scanBuf[30];
 char		dt[32], dspBuf[50];
 
-static void 	StartLoading( void );
+static void StartLoading( void );
 static void	Wakeup( void );
 static void	InitScaner( void );
 /****************************************************************/
@@ -128,7 +128,7 @@ void 	displayStringMsg( char* msg )
 {
 	char buf[256];
 	memset(buf, 0x00, sizeof(buf));
-	sprintf(buf, "%s", &msg);
+	sprintf(buf, "%s", msg);
 	msgbox( LCD_MSGBOX_WARNING, 0x00, "", buf, "確認", 0x00 );
 	return;
 }

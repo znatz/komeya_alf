@@ -642,7 +642,15 @@ static void entryUriage(){
 			urdata.lngFinalTaxRateTax = infour.lngFinalTaxRateTax;
 			urdata.lngBumonTaxRateTax = infour.lngBumonTaxRateTax;
 			urdata.lngSystemTaxRateTax = infour.lngSystemTaxRateTax;
-			
+
+			// * 20201208
+			if(HinsyuFindByCode1(urdata.Code1) != 0) {
+				memcpy(urdata.Name, himst.Name, sizeof(urdata.Name));
+				// * ---------------------------------------------------- DEBUG用
+				displayStringMsg(&himst.Name);
+				// * ---------------------------------------------------- DEBUG用
+			}
+
 			memcpy( urdata.Num , infour.Num , sizeof( urdata.Num ));
 			if( intCnt == ctrl.InfoUrCnt - 1 ){
 				ram_read( 0  , &infour2, INFOURF2 );
@@ -1081,15 +1089,25 @@ void uriage( int flag, int firsttime )
 
 					//3桁が501～999の場合
 					if( atoin( info.Code1, 3 ) > 500 && atoin( info.Code1, 3 ) < 999 ){
-						// TODO
-						char _buf[10];
-						sprintf(_buf, "%010d", getJyoudai(info.Code1));
-						memcpy(info.Joudai, _buf, sizeof(info.Joudai));
-						lngBaika = getZeikomiKingaku(info.Code1, 1);
+
+						// * 品種検索 20201208
+						if(HinsyuFindByCode1(info.Code1) != 0) {
+							char _buf[10];
+							sprintf(_buf, "%010d", getJyoudai(info.Code1));
+							memcpy(info.Joudai, _buf, sizeof(info.Joudai));
+							lngBaika = getZeikomiKingaku(info.Code1, 1);
+							// * ---------------------------------------------------- DEBUG用
+							// displayStringMsg(&himst.Name);
+							// * ---------------------------------------------------- DEBUG用
+						} else {
+							beep( 10, 2 );
+							meisaiclr();
+							continue;
+						}
+
 						item = CODE2;
 						continue;
 					} else {
-						/* 上記に該当しない場合はエラー */
 						beep( 10, 2 );
 						meisaiclr();
 						continue;
@@ -1146,7 +1164,7 @@ void uriage( int flag, int firsttime )
 					sprintf(_buf, "%010d", lngBaika);
 					memcpy(info.Baika, _buf, sizeof(info.Baika));
 
-					// * 上代確定 20201208 TODO
+					// * 上代確定 20201208
 					lngJoudai = getJyoudai(info.Code1);
 
 					// * 税区より一品消費税確定

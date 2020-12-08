@@ -337,3 +337,4 @@ extern	long	BumonTaxFindByCode1( char *code1 );
 extern	long	HinsyuZeikuFindByCode1( char *code1 );
 extern	void	drawLineCrossScreen(long y);
 extern	void	convertToString( long num, char str[MAXLEN] );
+extern	long	HinsyuFindByCode1( char *code1 );
