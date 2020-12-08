@@ -231,7 +231,8 @@ static short URDataSend( void )
 {
 	short	i, ret, sPos;
 	char strBaika[10];
-	char strBumon_taxrate[2];
+	char strTaxRate[2];
+	char strZeiku[1];
 	short taxrate = atoin( ctrl.TaxRate, sizeof(ctrl.TaxRate)) + 100.0;
 	long joudai;
 	long baika;
@@ -305,40 +306,47 @@ static short URDataSend( void )
 		memcpy( &_SendBuf[sPos], urdata.Num, sizeof( urdata.Num ) );			sPos += 4;
 		_SendBuf[sPos] = ',';	++sPos;
 
-		
-		/* ----------------------------------------------------------------------------------------------  col12  :  部門消費税金額	*/
-		sprintf( strBaika , "%8ld",  urdata.lngBumonTaxRateTax);
+		/* ----------------------------------------------------------------------------------------------  col12  :  最終採用税額*/
+		sprintf( strBaika , "%8ld",  urdata.lngFinalTaxRateTax);
 		memcpy( &_SendBuf[sPos], strBaika , 8); 			sPos += 8;
 		_SendBuf[sPos] = ',';	++sPos;
 
-		/* ----------------------------------------------------------------------------------------------  col13  :  現金   		*/
+		/* ----------------------------------------------------------------------------------------------  col13  :  現金   	*/
 		memcpy( &_SendBuf[sPos], urdata.Genkin , sizeof( urdata.Genkin )); 		sPos += sizeof( urdata.Genkin );
 		_SendBuf[sPos] = ',';	++sPos;
 		
-		/* ----------------------------------------------------------------------------------------------  col14  :  実際は売掛	*/
+		/* ----------------------------------------------------------------------------------------------  col14  :  実際は売掛	 */
 		memcpy( &_SendBuf[sPos], urdata.Credit , sizeof( urdata.Credit )); 		sPos += sizeof( urdata.Credit ); 
 		_SendBuf[sPos] = ',';	++sPos;
 		
-		
-		/* ----------------------------------------------------------------------------------------------  col16  :   DateTime		*/
-		memcpy( &_SendBuf[sPos], urdata.Date, sizeof( urdata.Date ) ); sPos += sizeof( urdata.Date );
-		memcpy( &_SendBuf[sPos], urdata.Time, sizeof( urdata.Time ) ); sPos += sizeof( urdata.Time );
+		/* ----------------------------------------------------------------------------------------------  col15  :  おつり      */
+		sprintf( strBaika , "%8ld",  urdata.lngOturi);
+		memcpy( &_SendBuf[sPos], strBaika , 8); 			sPos += 8;
 		_SendBuf[sPos] = ',';	++sPos;
 		
-		/* ----------------------------------------------------------------------------------------------  col18 :  部門税率		*/
-		sprintf( strBumon_taxrate , "%2d", urdata.BumonTaxRate);
-		memcpy( &_SendBuf[sPos], strBumon_taxrate , sizeof( strBumon_taxrate )); 			sPos += sizeof( strBumon_taxrate );
+		/* ----------------------------------------------------------------------------------------------  col16 :  税区         */
+		sprintf( strZeiku , "%1d", urdata.lngZeiku);
+		memcpy( &_SendBuf[sPos], strZeiku , sizeof( strZeiku )); 			sPos += sizeof( strZeiku );
+		_SendBuf[sPos] = ',';	++sPos;
+
+		/* ----------------------------------------------------------------------------------------------  col17 :  最終採用税率  */
+		sprintf( strTaxRate , "%2d", urdata.lngFinalTaxRate);
+		memcpy( &_SendBuf[sPos], strTaxRate , sizeof( strTaxRate )); 			sPos += sizeof( strTaxRate );
 		_SendBuf[sPos] = ',';	++sPos;
 		
-		/* ----------------------------------------------------------------------------------------------  col19 :  システム税率金額		*/
-		sprintf( strBaika , "%10d", urdata.lngSystemTaxRateTax);
+		/* ----------------------------------------------------------------------------------------------  col18 :  軽減税率金額   */
+		sprintf( strBaika , "%10d", urdata.lngBumonTaxRateTax);
 		memcpy( &_SendBuf[sPos], strBaika , sizeof( strBaika )); 			sPos += sizeof( strBaika );
 		_SendBuf[sPos] = ',';	++sPos;
 
-		/* ----------------------------------------------------------------------------------------------  col20 :  軽減税率金額		*/
-		sprintf( strBaika , "%10d", urdata.lngBumonTaxRateTax);
+		/* ----------------------------------------------------------------------------------------------  col19 :  システム税率金額*/
+		sprintf( strBaika , "%10d", urdata.lngSystemTaxRateTax);
 		memcpy( &_SendBuf[sPos], strBaika , sizeof( strBaika )); 			sPos += sizeof( strBaika );	
+		_SendBuf[sPos] = ',';	++sPos;
 		
+		/* ----------------------------------------------------------------------------------------------  col20 :  DateTime   */
+		memcpy( &_SendBuf[sPos], urdata.Date, sizeof( urdata.Date ) ); sPos += sizeof( urdata.Date );
+		memcpy( &_SendBuf[sPos], urdata.Time, sizeof( urdata.Time ) ); sPos += sizeof( urdata.Time );
 		
 		// 改行コード 
 		_SendBuf[sPos] = 0x0d;	++sPos;
@@ -463,7 +471,7 @@ TopFunc:
 	_AlfInf.sendLen	 = 68+2;	/* 改行コード付き	*/
 	switch( job ){
 		case 	JOB_URI:
-			_AlfInf.sendLen	 = 137+18+2; break;
+			_AlfInf.sendLen	 = 146+20+2; break;
 		case	JOB_SIIRE:
 			_AlfInf.sendLen	 = 68+2; break;
 		case	JOB_TANA:

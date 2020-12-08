@@ -45,12 +45,14 @@ static char		Genkin[6];
 static char		Credit[6];
 static char		Kinken[6];
 static char		Coupon[6];
-static char		Baika[6];
+static char		Baika[10];
 static long		lngOturi;
 static long		lngOturiChk;
 static long		lngGoukei;
 static long		lngTensuu;
 static long		lngBaika; //20201207
+static long		lngJoudai;
+static long		lngSingleTax;
 
 static void		meisaiclr( void );
 static void		Display( short item );
@@ -157,6 +159,9 @@ static void meisaiclr( void )
 	memset( infour.Baika, 0x00, sizeof( infour.Baika  ) );
 	memset( infour.Num, 0x00, sizeof( infour.Num   ) );
 	memset( infour.Name, 0x00, sizeof( infour.Name  ) );
+	infour.lngFinalTaxRateTax = 0;
+	infour.lngBumonTaxRateTax = 0;
+	infour.lngSystemTaxRateTax = 0;
 	
 	memset( info.Code1, 0x00, sizeof( info.Code1 ) );
 	memset( info.Code2, 0x00, sizeof( info.Code2 ) );
@@ -165,9 +170,14 @@ static void meisaiclr( void )
 	memset( info.Joudai, 0x00, sizeof( info.Joudai ) );
 	memset( Code,	0x00, sizeof( Code ) );
 	memset( Name,	0x00, sizeof( Name ) );
+	info.lngFinalTaxRateTax = 0;
+	info.lngBumonTaxRateTax = 0;
+	info.lngSystemTaxRateTax = 0;
 
 	//20201207
+	lngJoudai = 0;
 	lngBaika = 0;
+	lngSingleTax = 0;
 }
 
 //****************************************************************************
@@ -458,17 +468,11 @@ static void Display( short item )
 				ckputss( 0,  2, "店舗:   担当:   ", False, CLR_BASE );
 				ckputsn( 5,  2, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_BASE );
 				ckputsn( 13, 2, info.tanto, sizeof( info.tanto ), False, CLR_BASE );
+
 				ckputss( 0,  4, " 小  計 :       ", False, CLR_BASE );
-				
-				// TODO 
-				// if ( reprint == 0 || teisei == 0 ) {
-				// 	insComma( calculateTax(lngGoukei, taxrate), strGoukei );
-				// } else {
-				// 	insComma( lngGoukei, strGoukei );		
-				// }
 				insComma( lngGoukei, strGoukei );		
-				
 				ckprintf(9,  4, False, CLR_BASE, "%7s", strGoukei );
+
 				ckputss( 0,  6, " 現  金 ", False, CLR_SI_TITLE );
 				ckputss( 8,  6, ":", False, CLR_BASE );
 				ckputss( 0,  8, " 売  掛 :       ", False, CLR_BASE );
@@ -488,17 +492,11 @@ static void Display( short item )
 				ckputss( 0,  2, "店舗:   担当:   ", False, CLR_BASE );
 				ckputsn( 5,  2, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_BASE );
 				ckputsn( 13, 2, info.tanto, sizeof( info.tanto ), False, CLR_BASE );
-				ckputss( 0,  4, " 小  計 :       ", False, CLR_BASE );
 
-				// TODO
-				// if ( reprint == 0 || teisei == 0 ) {
-				// 	insComma( calculateTax(lngGoukei, taxrate), strGoukei );
-				// } else {
-				// 	insComma( lngGoukei, strGoukei );		
-				// }
+				ckputss( 0,  4, " 小  計 :       ", False, CLR_BASE );
 				insComma( lngGoukei, strGoukei );		
-				
 				ckprintf(9, 4, False, CLR_BASE, "%7s", strGoukei );
+
 				ckputss( 0,  6, " 現  金 :       ", False, CLR_BASE );
 				insComma( atoln( Genkin, sizeof( Genkin )), strGoukei );
 				ckprintf(9,  6, False, CLR_BASE, "%7s", strGoukei );
@@ -587,6 +585,16 @@ static void entrydata( short sw ){
 	memcpy( infour.Baika, info.Baika , sizeof( infour.Baika ));
 	memcpy( infour.Num, info.Num , sizeof( infour.Num ));
 
+	// * 税区
+	infour.lngZeiku = info.lngZeiku;
+	// * 最終採用税率
+	infour.lngFinalTaxRate = info.lngFinalTaxRate;
+	// * 最終採用税額(数量加味)
+	infour.lngFinalTaxRateTax = info.lngFinalTaxRateTax;
+	// * システム税率と違う税率を採用した税額(数量加味)
+	infour.lngBumonTaxRateTax = info.lngBumonTaxRateTax;
+	// * システム税率を採用した税額(数量加味)
+	infour.lngSystemTaxRateTax = info.lngSystemTaxRateTax;
 
 	if( sw ){
 		// 新規登録 
@@ -610,8 +618,6 @@ static void entryUriage(){
 	int     intCnt;
 	char 	RecNo[6];//,chkGenkin[6];
 	
-	
-	
 	sprintf( RecNo, "%06d",ctrl.RecNo);
 	if( memcmp( info.tanto,"00",2 ) != 0 ){
 		for ( intCnt = 0; intCnt < ctrl.InfoUrCnt; intCnt++) {
@@ -630,6 +636,12 @@ static void entryUriage(){
 			memcpy( urdata.Name , infour.Name  , sizeof( urdata.Name ));
 			memcpy( urdata.Joudai, infour.Joudai , sizeof( urdata.Joudai ));
 			memcpy( urdata.Baika, infour.Baika , sizeof( urdata.Baika ));
+
+			urdata.lngZeiku = infour.lngZeiku;
+			urdata.lngFinalTaxRate = infour.lngFinalTaxRate;
+			urdata.lngFinalTaxRateTax = infour.lngFinalTaxRateTax;
+			urdata.lngBumonTaxRateTax = infour.lngBumonTaxRateTax;
+			urdata.lngSystemTaxRateTax = infour.lngSystemTaxRateTax;
 			
 			memcpy( urdata.Num , infour.Num , sizeof( urdata.Num ));
 			if( intCnt == ctrl.InfoUrCnt - 1 ){
@@ -1113,32 +1125,60 @@ void uriage( int flag, int firsttime )
 						
 			} else if( item == CODE3 ){
 
+				if( ctrl.InfoUrCnt == INFOUR_MAX ){//件数を超える場合は登録不可
+					beeb(10,2, 1);
+					memset( info.Code1, 0x00, sizeof( info.Code1 ) );
+					memset( info.Code2, 0x00, sizeof( info.Code2 ) );
+					memset( info.Code3, 0x00, sizeof( info.Code3 ) );
+					lngJoudai = 0;
+					lngBaika = 0;
+					lngSingleTax = 0;
+					continue;
+				}
+
+				// * -------------------------------------------------------------------------------------------------　売変無し
 				if ( ret == SKIP ) {
+
 					// * 20201207 売変ない場合はそのまま税込上代
+					// * 売価確定
 					lngBaika = getZeikomiKingaku(info.Code1, 1);
-					// displayMsg(lngBaika);
 					char _buf[10];
 					sprintf(_buf, "%010d", lngBaika);
 					memcpy(info.Baika, _buf, sizeof(info.Baika));
+
+					// * 上代確定 20201208 TODO
+					lngJoudai = getJyoudai(info.Code1);
+
+					// * 税区より一品消費税確定
+					long lngCheckZeiku = HinsyuZeikuFindByCode1(info.Code1);
+					if ( lngCheckZeiku == 0 ) {
+						// * 外税
+						lngSingleTax = lngBaika - lngJoudai;
+					} else if ( lngCheckZeiku == 1 ) {
+						// * 内税
+						lngSingleTax = calculateTax2(lngJoudai, BumonTaxFindByCode1(info.Code1));
+					} else {
+						// * 非課税
+						lngSingleTax = 0;
+					}
+
+					// displayMsg(lngBaika);
 					item = NUM;
 					continue;
 				}
 
+				// * -------------------------------------------------------------------------------------------------　売変有り
 				if( info.Code3[0] ){
-
-					if( ctrl.InfoUrCnt == INFOUR_MAX ){//件数を超える場合は登録不可
-						beeb(10,2, 1);
-						memset( info.Code1, 0x00, sizeof( info.Code1 ) );
-						memset( info.Code2, 0x00, sizeof( info.Code2 ) );
-						memset( info.Code3, 0x00, sizeof( info.Code3 ) );
-						continue;
-					}
-
 					if( !memcmp( info.Code3, "30", 2 ) && info.Code3[7] != ' ' ){
 
 						// TODO 20201207 売変の税込金額 システム税率, 外税
+						// * 売価確定
 						long lngNesageKingaku = calculateTax2(GetNesage(info.Code3, info.Joudai), taxrate);
 						lngBaika = lngNesageKingaku;
+
+						// TODO 20201208
+						// * 一品消費税確定(売変)
+						lngSingleTax = lngNesageKingaku - GetNesage(info.Code3,info.Joudai);
 
 						char _buf[10];
 						sprintf(_buf, "%010d", lngBaika);
@@ -1204,6 +1244,47 @@ void uriage( int flag, int firsttime )
 				// * | ※ OKの場合、Info -> Infourに確定
 				// * | !! 
 				// * └------------------------------------------------------------------------------- 
+
+				// * 税率 値下: system   以外: 部門
+				long lngTmp;
+				if( !memcmp( info.Code3, "30", 2 ) && info.Code3[7] != ' ' ){
+					// * 税区確定
+					info.lngZeiku = 0;
+					// * 税率確定
+					info.lngFinalTaxRate = taxrate - 100;
+					// * 税額確定
+					info.lngFinalTaxRateTax = lngSingleTax * current_input_num;
+					// * 部門税額
+					info.lngBumonTaxRateTax = 0;
+					// * システム税額
+					info.lngSystemTaxRateTax = info.lngFinalTaxRateTax;
+				} else {
+					// * 税区確定
+					info.lngZeiku = HinsyuZeikuFindByCode1(info.Code1);
+					// * 税率確定
+					info.lngFinalTaxRate = BumonTaxFindByCode1(info.Code1);
+					// * 税額確定
+					info.lngFinalTaxRateTax = lngSingleTax * current_input_num;
+					if ( info.lngFinalTaxRate != taxrate ) {
+						// * 部門税額
+						info.lngBumonTaxRateTax = info.lngFinalTaxRateTax;
+						// * システム税額
+						info.lngSystemTaxRateTax = 0;
+					} else {
+						// * 部門税額
+						info.lngBumonTaxRateTax = 0;
+						// * システム税額
+						info.lngSystemTaxRateTax = info.lngFinalTaxRateTax;
+					}
+				}
+
+				// * --------------------------------------------------- Debug用
+				// displayMsg(info.lngFinalTaxRate);
+				// displayMsg(info.lngFinalTaxRateTax);
+				// displayMsg(info.lngBumonTaxRateTax);
+				// displayMsg(info.lngSystemTaxRateTax);
+				// * --------------------------------------------------- Debug用
+
 				item = DENTRY;
 
 				continue;

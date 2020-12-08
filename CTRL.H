@@ -209,7 +209,9 @@ typedef struct INFO_DATA{
 	char	Code2[13];
 	char	Code3[8];			//  ??申?申l??申?申??申?申
 	char	Num[4];
-	long    BumonTaxRate;
+	long	lngZeiku;
+	long	lngFinalTaxRate;
+	long	lngFinalTaxRateTax;
 	long    lngBumonTaxRateTax;
 	long    lngSystemTaxRate;
 	long    lngSystemTaxRateTax;
@@ -243,7 +245,9 @@ typedef struct URDATA_TAG {
 	char  	SyouhiFlg[1];
 	char 	Reason[2];
 	long	lngOturi;
-	long    BumonTaxRate;
+	long	lngZeiku;
+	long	lngFinalTaxRate;
+	long	lngFinalTaxRateTax;
 	long    lngBumonTaxRateTax;
 	long    lngSystemTaxRate;
 	long    lngSystemTaxRateTax;
@@ -262,7 +266,9 @@ typedef struct INFOUR_TAG {
 	char	Joudai[10];
 	char	Baika[10];
 	char	Num[4];				//  52	??申?申??申?申??申?申??申?申	
-	long    BumonTaxRate;
+	long	lngZeiku;
+	long	lngFinalTaxRate;
+	long	lngFinalTaxRateTax;
 	long    lngBumonTaxRateTax;
 	long    lngSystemTaxRate;
 	long    lngSystemTaxRateTax;
