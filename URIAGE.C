@@ -647,7 +647,7 @@ static void entryUriage(){
 			if(HinsyuFindByCode1(urdata.Code1) != 0) {
 				memcpy(urdata.Name, himst.Name, sizeof(urdata.Name));
 				// * ---------------------------------------------------- DEBUG用
-				displayStringMsg(&himst.Name);
+				// displayStringMsg(&himst.Name);
 				// * ---------------------------------------------------- DEBUG用
 			}
 
@@ -756,13 +756,12 @@ int print( short Flag ){
 	BtGetLastAddr((unsigned char*)addr);
 
 	while (1) {
-		if( Flag == 0 ){
-			ckputss( 1,  3, "1.日計表印刷  ", False, CLR_BASE );
-		}else if( Flag == 1 ){
+		// * レシート印刷部分に行く
+		if ( Flag == 1 ) {
 			break;
-		} else if ( Flag == 3 ) {
-			ckputss( 1,  3, "1.値札印刷  ", False, CLR_BASE );
 		}
+
+		ckputss( 1,  3, "1.日計表印刷  ", False, CLR_BASE );
 		ckputss( 1,  5, "2.接続確認    ", False, CLR_BASE );
 		ckputss( 1,  7, "3.印刷終了    ", False, CLR_BASE );	
 		ckputss( 0,  12, "  ﾌﾟﾘﾝﾀ ｱﾄﾞﾚｽ　 ", False, CLR_UR_TITLE );
@@ -775,12 +774,10 @@ int print( short Flag ){
 		key = getch();
 		
 		if (key == '1') {
-			if(Flag == 3 ) { 
-				//PrintPricetag((char*)addr, false, 0); 
-				return 1;
-			}
+			// if(Flag == 3 ) { return 1; }
 			while( 1 ){
-				intMsg = PrintMain((char*)addr, false, 0 , Flag );
+				// intMsg = PrintMain((char*)addr, false, 0 , Flag );
+				intMsg = PrintMain_NEX_M230((char*)addr, false, 0 , Flag );
 				if( intMsg == 1 )break;
 			}
 			Display( 0 );
@@ -815,7 +812,8 @@ int print( short Flag ){
 		ram_write( 0, &infour2, INFOURF2 );
 		while( 1 ){
 			// 本格印刷 ZNATZ_PRINT
-			intMsg = PrintMain((char*)addr, false, 0 , Flag );
+			// intMsg = PrintMain((char*)addr, false, 0 , Flag );
+			intMsg = PrintMain_NEX_M230((char*)addr, false, 0 , Flag );
 			// if( intMsg == 1 )break;
 			if( intMsg == 1 ) { return 0;}
 		}
@@ -1343,15 +1341,14 @@ void uriage( int flag, int firsttime )
 					ckprintf(9, 10, False, CLR_BASE, "%7s", strGoukei );
 					
 					
-					if( memcmp( info.tanto,"00",2 ) != 0 && reprint == 0 && teisei == 0 ){
+					if( memcmp( info.tanto,"00",2 ) != 0 && reprint == 0 && teisei == 0 ) {
 						++ctrl.RecNo;
 						if( ctrl.RecNo > 999999 )ctrl.RecNo = 1;
 					}
 
 					if( memcmp( ctrl.RecPrint,"1",1 ) == 0 ){
-						// 成功なら印刷 ZNATZ_PRINT reprint=1なら元画面戻る
-						if ( print( 1 ) == 0 ) 
-						{
+						// * 成功なら印刷 ZNATZ_PRINT reprint=1なら元画面戻る
+						if ( print( 1 ) == 0 ) {
 							reprint = 1;
 							item=RYOUSYU; //GENKIN
 						}

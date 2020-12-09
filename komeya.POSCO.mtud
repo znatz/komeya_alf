@@ -1577,16 +1577,6 @@
       <PanelCount>0</PanelCount>
     </Instance>
   </Class>
-  <Class Guid="78a1d8b9-6c3e-49af-90d4-3c01ff02a7b4">
-    <Instance Guid="ec8b1ab3-b062-4f67-8de0-8a9cfd0e8265">
-      <ViewHardwareBreak>True</ViewHardwareBreak>
-      <ViewSoftwareBreak>True</ViewSoftwareBreak>
-      <ViewTimer>True</ViewTimer>
-      <ViewTrace>True</ViewTrace>
-      <ViewAction>True</ViewAction>
-      <ViewBuiltin>True</ViewBuiltin>
-    </Instance>
-  </Class>
   <Class Guid="a86d2744-4eb1-43a4-bbcb-1f717558eac6">
     <Instance Guid="a86d2744-4eb1-43a4-bbcb-1f717558eac6">
       <ExtendedItems>ada8bfb8-7602-4dce-9ce6-ada77b2afa07
@@ -1595,6 +1585,16 @@
       <TopItem>ada8bfb8-7602-4dce-9ce6-ada77b2afa07</TopItem>
       <ViewMode>2</ViewMode>
       <ViewModeToggle>False</ViewModeToggle>
+    </Instance>
+  </Class>
+  <Class Guid="78a1d8b9-6c3e-49af-90d4-3c01ff02a7b4">
+    <Instance Guid="ec8b1ab3-b062-4f67-8de0-8a9cfd0e8265">
+      <ViewHardwareBreak>True</ViewHardwareBreak>
+      <ViewSoftwareBreak>True</ViewSoftwareBreak>
+      <ViewTimer>True</ViewTimer>
+      <ViewTrace>True</ViewTrace>
+      <ViewAction>True</ViewAction>
+      <ViewBuiltin>True</ViewBuiltin>
     </Instance>
   </Class>
   <Class Guid="84287b3e-7c41-456a-95e9-c7acc8f124ab">

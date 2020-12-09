@@ -338,3 +338,4 @@ extern	long	HinsyuZeikuFindByCode1( char *code1 );
 extern	void	drawLineCrossScreen(long y);
 extern	void	convertToString( long num, char str[MAXLEN] );
 extern	long	HinsyuFindByCode1( char *code1 );
+extern	int		PrintMain_NEX_M230(char* addr, bool crc, int mode , short Flag );
