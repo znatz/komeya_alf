@@ -71,6 +71,59 @@ const char  hriBoth[3] = {0x1D, 0x48, 0x3};
 // *  Print Barcode
 const char  printJAN13[3] = {0x1D, 0x6B, 0x2};
 
+
+    // Public Sub bufferRegisterImage(ByRef filename As String, ByVal number As Int32)
+
+    //         Dim bBufWork As [Byte]() = New [Byte]() {}
+    //         Dim bmp As Bitmap = New Bitmap(filename)
+
+    //         Dim n1 As Byte = (bmp.Width + (8 - (bmp.Width Mod 8))) / 8
+    //         Dim n2 As Byte = bmp.Height
+
+    //         Select Case number
+    //             Case 0
+    //                 Commands.startRegisterImage0.CopyTo(bufferToPrint, currentLength)
+    //                 currentLength = currentLength + Commands.startRegisterImage0.Length
+    //             Case 1
+    //                 Commands.startRegisterImage1.CopyTo(bufferToPrint, currentLength)
+    //                 currentLength = currentLength + Commands.startRegisterImage0.Length
+    //             Case 2
+    //                 Commands.startRegisterImage2.CopyTo(bufferToPrint, currentLength)
+    //                 currentLength = currentLength + Commands.startRegisterImage0.Length
+    //         End Select
+
+    //         bBufWork = New Byte() {&H1B, &H62, n1, n2, &H0}
+    //         bBufWork.CopyTo(bufferToPrint, currentLength)
+    //         currentLength = currentLength + bBufWork.Length
+
+    //         For y As Integer = 0 To bmp.Height - 1
+    //             Dim line(bmp.Width - 1) As Char
+    //             For x As Integer = 0 To bmp.Width - 1
+    //                 If bmp.GetPixel(x, y).R <> &H0 Then
+    //                     line(x) = "0"
+    //                 Else
+    //                     line(x) = "1"
+    //                 End If
+    //             Next
+
+    //             Dim every8bit() As String = SplitString(padLineTo8Bit(line), 8)
+
+    //             For Each eightBit In every8bit
+    //                 bBufWork = New Byte() {Convert.ToInt32(eightBit, 2)}
+    //                 bBufWork.CopyTo(bufferToPrint, currentLength)
+    //                 currentLength = currentLength + bBufWork.Length
+    //             Next
+    //         Next
+
+    //         bBufWork = New Byte() {&H1B, &H4A, &H0}
+    //         bBufWork.CopyTo(bufferToPrint, currentLength)
+    //         currentLength = currentLength + bBufWork.Length
+
+    //         Commands.finishRegisterImage.CopyTo(bufferToPrint, currentLength)
+    //         currentLength = currentLength + Commands.finishRegisterImage.Length
+    //     End Sub
+
+
 int	PrintMain_NEX_M230(char* _addr, bool _crc, int _mode , short _Flag ) {
 	bt_conf_t conf;
 	int ret;
