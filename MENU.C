@@ -7,6 +7,7 @@
 #include "ram_io.h"
 #include "sub.h"
 #include "worksub.h"
+#include "print.h"
 
 static void		SndMenu( void );
 static void		DelDat( void );
@@ -237,11 +238,12 @@ void menu( void )
 		ClsColor();
 		offkey(1);
 		ckputss(  0,  0, " <<Main Menu>>  ", False, CLR_TITLE );
-		ckputss(  0,  4, " 1:仕入  2:仕返 ", False, CLR_BASE );
-		ckputss(  0,  6, " 3:棚卸  4:移動 ", False, CLR_BASE );
-		ckputss(  0,  8, " 5:売上  6:受信 ", False, CLR_BASE );
-		ckputss(  0, 10, " 7:転送  8:検品 ", False, CLR_BASE );
-		ckputss(  0, 12, " 9:削除  0:設定 ", False, CLR_BASE );
+		ckputss(  0,  3, " 1:仕入  2:仕返 ", False, CLR_BASE );
+		ckputss(  0,  5, " 3:棚卸  4:移動 ", False, CLR_BASE );
+		ckputss(  0,  7, " 5:売上  6:受信 ", False, CLR_BASE );
+		ckputss(  0,  9, " 7:転送  8:検品 ", False, CLR_BASE );
+		ckputss(  0, 11, " 9:削除  0:設定 ", False, CLR_BASE );
+		ckputss(  0, 13, " F1:ﾌﾟﾘﾝﾀ ﾃｽﾄ   ", False, CLR_BASE );
 		ckputsn(  1, 16, VER2, sizeof( VER2 ), False, CLR_BASE );
 		//ckputss(  0,  8, " 5:転送  9:削除 ", False, CLR_BASE );
 		while( 2 ){
@@ -276,8 +278,171 @@ void menu( void )
 			} else if( ret == '0' ){	/* 削除 */
 				Setting();
 				break;
+			} else if( ret == 97 ) {
+				test_print(1);
+				break;
 			}
 
 		}
 	}
+}
+
+//****************************************************************************/
+/* 	印刷設定
+/*	Flag=1:日計表
+/*	Flag=2:レシート
+/*	Flag=3:値札(不使用)
+//****************************************************************************/
+int test_print( short Flag ){
+	bt_conf_t conf;
+	int ret ,intMsg = 0;
+	unsigned char addr[13];
+	unsigned char name[41];
+	char buf[256] , strGoukei[MAXLEN] ;
+	int key;
+	
+	
+	cls();
+	// ckputss( 0,  0, "<プリンタテスト>", False, CLR_UR_TITLE );
+	ckputss( 0,  0, " <Printer Test> ", False, CLR_UR_TITLE );
+	
+	ret = BtConfig(BT_GET, &conf);
+	if (ret != 0) {
+		memset(buf, 0x00, sizeof(buf));
+		sprintf(buf, "BtConfig %d", ret);
+		msgbox(LCD_MSGBOX_ERROR, 0, "エラー", buf, NULL, NULL); 
+	} else {
+		// PINコード 
+		strncpy(conf.localPIN, "0000000000000000", sizeof(conf.localPIN));
+		conf.timeout = 30;
+		conf.MITM_Enable = DISABLE;
+		
+		ret = BtConfig(BT_SET, &conf);
+		if (ret != 0) {
+			memset(buf, 0x00, sizeof(buf));
+			sprintf(buf, "BtConfig %d", ret);
+			msgbox(LCD_MSGBOX_ERROR, 0, "エラー", buf, NULL, NULL); 
+		}
+	}
+	
+	memset(addr, 0x00, sizeof(addr));
+	memset(name, 0x00, sizeof(name));
+
+	BtGetLastAddr((unsigned char*)addr);
+
+	while (1) {
+
+		ckputss( 1,  3, "1.テスト印刷  ", False, CLR_BASE );
+		ckputss( 1,  5, "2.接続確認    ", False, CLR_BASE );
+		ckputss( 1,  7, "3.テスト終了  ", False, CLR_BASE );	
+		ckputss( 0,  12, "  ﾌﾟﾘﾝﾀ ｱﾄﾞﾚｽ　 ", False, CLR_UR_TITLE );
+		
+		if (strlen((char*)addr) == 0) {
+			ckputss( 1,  14, " 未設定", False, CLR_BASE );
+		} else {
+			ckputsn( 1,  14, (char *)addr, 16, False, CLR_BASE );
+		}
+
+		key = getch();
+		
+		if (key == '1') {
+	
+			ret = EzBtSelect(EZ_BT_MODE_MENU, addr, name);
+			if (ret != 0) {
+				sprintf(buf, "EzBtSelect %d", ret);
+				goto exit;
+			}
+
+			// 接続無応答となることがあったのでリトライする
+			int retry_count = 0; 
+			retry:	
+			ret = EzBtConnect(addr, UUID_SPP);
+			if (ret == BT_AT_NO_ANSWER) {
+				retry_count++;
+				if (retry_count > 2) {
+					goto exit;
+				}
+				goto retry;
+			} else if (ret != 0) {
+				sprintf(buf, "EzBtConnect %d", ret);
+				goto exit;
+			} 
+
+			rsettime(PORT_BLUETOOTH, 3);
+
+			// * ------------------------  印字構築部分開始
+
+			// * -- 日本語
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignCenter, sizeof(bAlignCenter));
+
+			// * -- タイトル
+			memset(buf,0x0, sizeof(buf));
+			sprintf(buf, "販 売 管 理\n");
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+
+			// * -- ローマ字
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)bSizeNor, sizeof(bSizeNor));
+			sprintf(buf, VER2);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+
+			// * -- 現時間
+			char now[8];
+			memset(now,0x0, sizeof(now));
+			getrtc4( now );
+
+			memset(buf,0x0,11);
+			memcpy(buf,now,4);
+			memcpy(buf+4,"/",1);
+			memcpy(buf+5,now+4,2);
+			memcpy(buf+7,"/",1);
+			memcpy(buf+8,now+6,2);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+
+			// * -- 改行
+			ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+
+			// * -- 日本語
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignLeft, sizeof(bAlignLeft));
+
+			// * -- 設定印字
+			memset(buf,0x0,sizeof(buf));
+			snprintf(buf, 10, "%s%s", "レジNO:", ctrl.RejiNo);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+			ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+
+			memset(buf,0x0,sizeof(buf));
+			snprintf(buf, 10, "%s%s", "  税率:", ctrl.TaxRate);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+			ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+
+			memset(buf,0x0,sizeof(buf));
+			snprintf(buf, 9, "%s%s", "  税区:", ctrl.TaxType);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+			ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+
+			// * -- Printer & Line Feed
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)nFeedLine, sizeof(nFeedLine));
+
+			// * -- カット
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)bCut, sizeof(bCut));
+
+			// * ------------------------  印字構築部分終了
+			break;
+		} else if (key == '2') {
+			ret = EzBtSelect(EZ_BT_MODE_MENU, addr, name);
+			if (ret != 0 && ret != -10) {
+				memset(buf, 0x00, sizeof(buf));
+				sprintf(buf, "EzBtSelect %d", ret);
+				msgbox(LCD_MSGBOX_ERROR, 0, "エラー", buf, NULL, NULL); 
+			}
+		} else if (key == '3'){
+			break;
+		}
+	}
+
+exit:
+	rclose(PORT_BLUETOOTH);
+	return 1;
 }

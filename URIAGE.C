@@ -518,14 +518,13 @@ static void Display( short item )
 				ckputsn( 5,  2, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_BASE );
 				ckputsn( 13, 2, info.tanto, sizeof( info.tanto ), False, CLR_BASE );
 				ckputss( 0,  4, " 小  計 :       ", False, CLR_BASE );
-
-				// TODO
 				insComma( lngGoukei, strGoukei );
-
 				ckprintf(9,  4, False, CLR_BASE, "%7s", strGoukei );
+
 				ckputss( 0,  6, " 現  金 :       ", False, CLR_BASE );
 				insComma( atoln( Genkin, sizeof( Genkin )), strGoukei );
 				ckprintf(9,  6, False, CLR_BASE, "%7s", strGoukei );
+
 				ckputss( 0,  8, " 売  掛 :       ", False, CLR_BASE );
 				insComma( atoln( Credit, sizeof( Credit )), strGoukei );
 				ckprintf(9,  8, False, CLR_BASE, "%7s", strGoukei ); 
@@ -552,7 +551,7 @@ static void Display( short item )
 				ckputsn( 5,  2, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_BASE );
 				ckputsn( 13, 2, info.tanto, sizeof( info.tanto ), False, CLR_BASE );
 				ckputss( 0,  4, " 小  計 :       ", False, CLR_BASE );
-				insComma( lngGoukei, strGoukei );		// ZNATZ　再び税計算しないように！
+				insComma( lngGoukei, strGoukei );
 				ckprintf(9,  4, False, CLR_BASE, "%7s", strGoukei );
 				ckputss( 0,  6, " 現  金 :       ", False, CLR_BASE );
 				insComma( atoln( Genkin, sizeof( Genkin )), strGoukei );
@@ -566,7 +565,8 @@ static void Display( short item )
 				ckprintf(9, 10, False, CLR_BASE, "%7s", strGoukei );
 
 				ckputss( 0, 14, "F1:訂正F2:再発行", False, CLR_BASE );		
-				ckputss( 0, 16, "F3:領収書ENT:終", False, CLR_BASE );
+				// ckputss( 0, 16, "F3:領収書ENT:終", False, CLR_BASE );
+				ckputss( 0, 16, "  　　ENT:終了 ", False, CLR_BASE );
 			}	
 			break;
 	}
@@ -774,11 +774,9 @@ int print( short Flag ){
 		key = getch();
 		
 		if (key == '1') {
-			// if(Flag == 3 ) { return 1; }
 			while( 1 ){
-				// intMsg = PrintMain((char*)addr, false, 0 , Flag );
 				intMsg = PrintMain_NEX_M230((char*)addr, false, 0 , Flag );
-				if( intMsg == 1 )break;
+				if( intMsg == 0 )break;
 			}
 			Display( 0 );
 			break;
@@ -812,10 +810,8 @@ int print( short Flag ){
 		ram_write( 0, &infour2, INFOURF2 );
 		while( 1 ){
 			// 本格印刷 ZNATZ_PRINT
-			// intMsg = PrintMain((char*)addr, false, 0 , Flag );
 			intMsg = PrintMain_NEX_M230((char*)addr, false, 0 , Flag );
-			// if( intMsg == 1 )break;
-			if( intMsg == 1 ) { return 0;}
+			if( intMsg == 0 ) { return 0;}
 		}
 	}
 	

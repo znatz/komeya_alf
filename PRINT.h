@@ -25,10 +25,10 @@
 #define LAPIN_ERR_OFFLINE		-24
 #define LAPIN_ERR_COMMAND		-25
 
-#define COMMAND_MODE_SBPL		0	// SBPLƒRƒ}ƒ“ƒhƒ‚[ƒh
-#define COMMAND_MODE_COMPAT		1	// ŒİŠ·ƒRƒ}ƒ“ƒhƒ‚[ƒh
+#define COMMAND_MODE_SBPL		0	// SBPLï¿½Rï¿½}ï¿½ï¿½ï¿½hï¿½ï¿½ï¿½[ï¿½h
+#define COMMAND_MODE_COMPAT		1	// ï¿½İŠï¿½ï¿½Rï¿½}ï¿½ï¿½ï¿½hï¿½ï¿½ï¿½[ï¿½h
 
-/* §ŒäƒR[ƒh ---------------------------*/
+/* ï¿½ï¿½ï¿½ï¿½Rï¿½[ï¿½h ---------------------------*/
 #define STX		0x02
 #define ETX		0x03
 #define ACK		0x06
@@ -38,8 +38,8 @@
 #define CAN		0x18
 
 
-/*SBPLƒ‚[ƒh*/
-/* ƒXƒe[ƒ^ƒX ---------------------------*/
+/*SBPLï¿½ï¿½ï¿½[ï¿½h*/
+/* ï¿½Xï¿½eï¿½[ï¿½^ï¿½X ---------------------------*/
 #define OFF_NOERR				'0'
 #define OFF_BAT_LOW				'1'
 #define OFF_BUFF_FULL				'2'
@@ -68,28 +68,80 @@
 #define ERR_COVER				'h'
 #define ERR_OTHER				'k'
 
-/*ƒvƒ`ƒ‰ƒpƒ“ŒİŠ·ƒ‚[ƒh */
-#define CMD_ERR_NOERR				0x00	/*ºÏİÄŞ½Ã°À½ ³íI—¹*/
-#define CMD_ERR					0x01	/*ºÏİÄŞ½Ã°À½ ƒRƒ}ƒ“ƒhw’èƒGƒ‰[*/
-#define CMD_ERR_PARAM				0x02	/*ºÏİÄŞ½Ã°À½ ƒpƒ‰ƒ[ƒ^w’èƒGƒ‰[*/
-#define CMD_ERR_POS				0x03	/*ºÏİÄŞ½Ã°À½ ˆóšˆÊ’uw’èƒGƒ‰[*/
-#define CMD_ERR_BCR				0x04	/*ºÏİÄŞ½Ã°À½ ƒo[ƒR[ƒhˆóš—ÌˆæƒI[ƒo[ƒGƒ‰[*/
-#define CMD_ERR_PDF				0x05	/*ºÏİÄŞ½Ã°À½ PDF417w’èƒGƒ‰[*/
-#define CMD_ERR_QR				0x06	/*ºÏİÄŞ½Ã°À½ QRƒR[ƒhw’èƒGƒ‰[*/
-#define CMD_ERR_CRC				0x10	/*ºÏİÄŞ½Ã°À½ CRCƒGƒ‰[*/
+/*ï¿½vï¿½`ï¿½ï¿½ï¿½pï¿½ï¿½ï¿½İŠï¿½ï¿½ï¿½ï¿½[ï¿½h */
+#define CMD_ERR_NOERR				0x00	/*ï¿½ï¿½ï¿½ï¿½Ş½Ã°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½*/
+#define CMD_ERR					0x01	/*ï¿½ï¿½ï¿½ï¿½Ş½Ã°ï¿½ï¿½ ï¿½Rï¿½}ï¿½ï¿½ï¿½hï¿½wï¿½ï¿½Gï¿½ï¿½ï¿½[*/
+#define CMD_ERR_PARAM				0x02	/*ï¿½ï¿½ï¿½ï¿½Ş½Ã°ï¿½ï¿½ ï¿½pï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½^ï¿½wï¿½ï¿½Gï¿½ï¿½ï¿½[*/
+#define CMD_ERR_POS				0x03	/*ï¿½ï¿½ï¿½ï¿½Ş½Ã°ï¿½ï¿½ ï¿½óšˆÊ’uï¿½wï¿½ï¿½Gï¿½ï¿½ï¿½[*/
+#define CMD_ERR_BCR				0x04	/*ï¿½ï¿½ï¿½ï¿½Ş½Ã°ï¿½ï¿½ ï¿½oï¿½[ï¿½Rï¿½[ï¿½hï¿½óš—Ìˆï¿½Iï¿½[ï¿½oï¿½[ï¿½Gï¿½ï¿½ï¿½[*/
+#define CMD_ERR_PDF				0x05	/*ï¿½ï¿½ï¿½ï¿½Ş½Ã°ï¿½ï¿½ PDF417ï¿½wï¿½ï¿½Gï¿½ï¿½ï¿½[*/
+#define CMD_ERR_QR				0x06	/*ï¿½ï¿½ï¿½ï¿½Ş½Ã°ï¿½ï¿½ QRï¿½Rï¿½[ï¿½hï¿½wï¿½ï¿½Gï¿½ï¿½ï¿½[*/
+#define CMD_ERR_CRC				0x10	/*ï¿½ï¿½ï¿½ï¿½Ş½Ã°ï¿½ï¿½ CRCï¿½Gï¿½ï¿½ï¿½[*/
 
-#define STS_ERR_NOERR				0x00	/*½Ã°À½Ú× ³íI—¹AóM‘Ò‚¿*/
-#define STS_ERR_EDIT				0x01	/*½Ã°À½Ú× ‰ğÍE•ÒW’†AƒnƒNƒŠ‘Ò‚¿*/
-#define STS_ERR_OFFLINE				0x02	/*½Ã°À½Ú× ƒIƒtƒ‰ƒCƒ“*/
-#define STS_ERR_COVER				0x03	/*½Ã°À½Ú× ƒJƒo[ƒI[ƒvƒ“*/
-#define STS_ERR_PAPER				0x04	/*½Ã°À½Ú× ƒy[ƒp[ƒGƒ“ƒh*/
-#define STS_ERR_SENSOR				0x06	/*½Ã°À½Ú× ƒZƒ“ƒTƒGƒ‰[*/
-#define STS_ERR_HEAD				0x07	/*½Ã°À½Ú× ƒwƒbƒhƒGƒ‰[*/
-#define STS_ERR_BAT				0x10	/*½Ã°À½Ú× ƒoƒbƒeƒŠƒGƒ‰[*/
-#define STS_ERR_OTHER				0x11	/*½Ã°À½Ú× ‚»‚Ì‘¼ƒGƒ‰[*/
+#define STS_ERR_NOERR				0x00	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½Aï¿½ï¿½Mï¿½Ò‚ï¿½*/
+#define STS_ERR_EDIT				0x01	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½ï¿½ÍEï¿½ÒWï¿½ï¿½ï¿½Aï¿½nï¿½Nï¿½ï¿½ï¿½Ò‚ï¿½*/
+#define STS_ERR_OFFLINE				0x02	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½Iï¿½tï¿½ï¿½ï¿½Cï¿½ï¿½*/
+#define STS_ERR_COVER				0x03	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½Jï¿½oï¿½[ï¿½Iï¿½[ï¿½vï¿½ï¿½*/
+#define STS_ERR_PAPER				0x04	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½yï¿½[ï¿½pï¿½[ï¿½Gï¿½ï¿½ï¿½h*/
+#define STS_ERR_SENSOR				0x06	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½Zï¿½ï¿½ï¿½Tï¿½Gï¿½ï¿½ï¿½[*/
+#define STS_ERR_HEAD				0x07	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½wï¿½bï¿½hï¿½Gï¿½ï¿½ï¿½[*/
+#define STS_ERR_BAT				0x10	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½oï¿½bï¿½eï¿½ï¿½ï¿½Gï¿½ï¿½ï¿½[*/
+#define STS_ERR_OTHER				0x11	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½ï¿½ï¿½Ì‘ï¿½ï¿½Gï¿½ï¿½ï¿½[*/
 
 
 #define RETRY_CNT				50
+
+
+// * ---------------------------
+// *    NEX-M230 å‘½ä»¤
+// * --------------------------- 
+
+// * Japanese Kanji
+extern const char bJP[5] ;
+extern const char bDoulbeStrike[3] ;
+extern const char bNonDoulbeStrik[3] ;
+
+// *  Alignment
+extern const char bAlignLeft[3] ;
+extern const char bAlignCenter[3] ;
+extern const char bAlignRight[3] ;
+
+// *  Size
+extern const char  bSizeNor[3] ;
+extern const char  bSizeDbl[3] ;
+extern const char  bSizeTri[3] ;
+extern const char  bSizeHDb[3] ;
+
+// *  Feed 4 lines
+extern const char  nFeedLine[3] ;
+
+// *  Cut Paper
+extern const char  bCut[2] ;
+
+// *  Underline
+extern const char  bUnderline0[3] ;
+extern const char  bUnderline1[3] ;
+extern const char  bUnderline2[3] ;
+
+// *  Register Image
+extern const char  startRegisterImage0[3] ;
+extern const char  startRegisterImage1[3] ;
+extern const char  startRegisterImage2[3] ;
+extern const char  finishRegisterImage[3] ;
+
+// *  Print Register Image
+extern const char  printRegisterImage0[3] ;
+extern const char  printRegisterImage1[3] ;
+extern const char  printRegisterImage2[3] ;
+
+// *  HRI Character
+extern const char  hriNon[3] ;
+extern const char  hriAbove[3] ;
+extern const char  hriBelow[3] ;
+extern const char  hriBoth[3] ;
+
+// *  Print Barcode
+extern const char  printJAN13[3] ;
 
 
 extern int LapinBTOpen(char* btAddr, bool CRC_Check, int commandMode);

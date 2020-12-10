@@ -13,6 +13,64 @@
 #include "PRINT.h"
 #include <Math.h>
 
+// * ---------------------------
+// *    NEX-M230 命令
+// * --------------------------- 
+
+// * Japanese Kanji
+const char bJP[5] = {0x1C, 0x26, 0x1C, 0x43, 0x1};
+const char bDoulbeStrike[3] = {0x1B, 0x47, 0x1};
+const char bNonDoulbeStrik[3] = {0x1B, 0x47, 0x0};
+
+// *  Alignment
+const char bAlignLeft[3] = {0x1B, 0x61, 0x0};
+const char bAlignCenter[3] = {0x1B, 0x61, 0x1};
+const char bAlignRight[3] = {0x1B, 0x61, 0x2};
+
+// *  Size
+// const char  bSizeNor[] = {0x1D, 0x21, Convert.ToInt32("00000000", 2)};
+const char  bSizeNor[3] = {0x1D, 0x21, 0};
+
+// const char  bSizeDbl[] = {0x1D, 0x21, Convert.ToInt32("00010001", 2)};
+const char  bSizeDbl[3] = {0x1D, 0x21, 17};
+
+// const char  bSizeTri[] = {0x1D, 0x21, Convert.ToInt32("00001010", 2)};
+const char  bSizeTri[3] = {0x1D, 0x21, 10};
+
+// const char  bSizeHDb[] = {0x1D, 0x21, Convert.ToInt32("00000001", 2)};
+const char  bSizeHDb[3] = {0x1D, 0x21, 1};
+
+// *  Feed 4 lines
+const char  nFeedLine[3] = {0x1B, 0x64, 0x4};
+
+// *  Cut Paper
+const char  bCut[2] = {0x1B, 0x69};
+
+// *  Underline
+const char  bUnderline0[3] = {0x1C, 0x2D, 0x0};
+const char  bUnderline1[3] = {0x1C, 0x2D, 0x1};
+const char  bUnderline2[3] = {0x1C, 0x2D, 0x2};
+
+// *  Register Image
+const char  startRegisterImage0[3] = {0x1D, 0x54, 0x0};
+const char  startRegisterImage1[3] = {0x1D, 0x54, 0x1};
+const char  startRegisterImage2[3] = {0x1D, 0x54, 0x2};
+const char  finishRegisterImage[3] = {0x1D, 0x54, 0xFF};
+
+// *  Print Register Image
+const char  printRegisterImage0[3] = {0x1D, 0x50, 0x0};
+const char  printRegisterImage1[3] = {0x1D, 0x50, 0x1};
+const char  printRegisterImage2[3] = {0x1D, 0x50, 0x2};
+
+// *  HRI Character
+const char  hriNon[3] = {0x1D, 0x48, 0x0};
+const char  hriAbove[3] = {0x1D, 0x48, 0x1};
+const char  hriBelow[3] = {0x1D, 0x48, 0x2};
+const char  hriBoth[3] = {0x1D, 0x48, 0x3};
+
+// *  Print Barcode
+const char  printJAN13[3] = {0x1D, 0x6B, 0x2};
+
 int	PrintMain_NEX_M230(char* _addr, bool _crc, int _mode , short _Flag ) {
 	bt_conf_t conf;
 	int ret;
@@ -21,17 +79,12 @@ int	PrintMain_NEX_M230(char* _addr, bool _crc, int _mode , short _Flag ) {
 	unsigned char name[41];
 	char buf[256];//転送用バッファ
 	//各種ステータスを調べるためのコマンド(DLE EOT n)
-	// char printer_status[] = { 0x10, 0x04, 0x01 };
 	char printer_status[] = { 0x10, 0x1b, 0x76, 0x01 };
-	char offline_status[] = { 0x10, 0x04, 0x02 };
-	char error_status[] = { 0x10, 0x04, 0x03 };
-	char sensor_status[] = { 0x10, 0x04, 0x04 };
+
+	progress_start(LCD_PROGRESS_USE_ANIMATION, "印刷中");
+	progress_update(NULL, NULL, 0);
 	
 restart:
-	cls();
-	setcolor(COLOR_WHITE, COLOR_BLUE);
-	putsc("  Printer Test  ");
-	setcolor(COLOR_BLACK, COLOR_WHITE);
 	ret = BtConfig(BT_GET, &conf);
 	if (ret != 0) {
 		sprintf(buf, "BtConfig %d", ret);
@@ -48,11 +101,19 @@ restart:
 		goto exit;
 	}
 	
-	ret = EzBtSelect(EZ_BT_MODE_MENU, addr, name);
-	if (ret != 0) {
-		sprintf(buf, "EzBtSelect %d", ret);
-		goto exit;
-	}
+	// * ---------------------------------------------------- 
+	// * 	接続テストの場合、下記の五行を有効する
+	// * ---------------------------------------------------- 
+	// ret = EzBtSelect(EZ_BT_MODE_MENU, addr, name);
+	// if (ret != 0) {
+	// 	sprintf(buf, "EzBtSelect %d", ret);
+	// 	goto exit;
+	// }
+
+	// * ---------------------------------------------------- 
+	// * 	接続テストではない場合、前回接続成功のアドレスで接続
+	// * ---------------------------------------------------- 
+	BtGetLastAddr(addr);
 
 	// 接続無応答となることがあったのでリトライする
 	retry_count = 0;
@@ -72,94 +133,87 @@ retry:
 
 	rsettime(PORT_BLUETOOTH, 3);
 		
-	//画面表示
-	curp(0,3);
-	putsc("[ENT] test print");
-	curp(0,5);
-	putsc("[C]   end");
+	// * ------------------------  印字構築部分開始
 
+	// * -- 日本語
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignCenter, sizeof(bAlignCenter));
+
+	// * -- タイトル
+	memset(buf,0x0, sizeof(buf));
+	sprintf(buf, "販 売 管 理\n");
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+
+	// * -- ローマ字
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bSizeNor, sizeof(bSizeNor));
+	sprintf(buf, VER2);
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+
+	// * -- 現時間
+	char now[8];
+	memset(now,0x0, sizeof(now));
+	getrtc4( now );
+
+	memset(buf,0x0,11);
+	memcpy(buf,now,4);
+	memcpy(buf+4,"/",1);
+	memcpy(buf+5,now+4,2);
+	memcpy(buf+7,"/",1);
+	memcpy(buf+8,now+6,2);
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+
+	// * -- 改行
+	ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+
+	// * -- 日本語
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignLeft, sizeof(bAlignLeft));
+
+	// * -- 設定印字
+	memset(buf,0x0,sizeof(buf));
+	snprintf(buf, 10, "%s%s", "レジNO:", ctrl.RejiNo);
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+	ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+
+	memset(buf,0x0,sizeof(buf));
+	snprintf(buf, 10, "%s%s", "  税率:", ctrl.TaxRate);
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+	ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+
+	memset(buf,0x0,sizeof(buf));
+	snprintf(buf, 9, "%s%s", "  税区:", ctrl.TaxType);
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+	ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+
+	// * -- Printer & Line Feed
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)nFeedLine, sizeof(nFeedLine));
+
+	// * -- カット
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bCut, sizeof(bCut));
+
+	// * ------------------------  印字構築部分終了
+	/////////////////////////////////////////
+	//short rputs(int port, unsigned char *ptr, short size)
+	//通信ポートportの送信バッファにptrで指定したバッファからsize分の文字を書き込む。
+	/////////////////////////////////////////
 	
-	while (1) {
-		ret = getch();//入力待ち
-		if (ret == CH_CLR) {//ｸﾘｱが押された場合
-			sprintf(buf, "Abort");
-			break;
-		} else if (ret != CH_ENT) {//Ent以外が押された場合
-			continue;
-		} else {
-		}
-		
-		///////////////印字部分//////////////////
-		sprintf(buf, "test\n");
-		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
-		
-		/////////////////////////////////////////
-		//short rputs(int port, unsigned char *ptr, short size)
-		//通信ポートportの送信バッファにptrで指定したバッファからsize分の文字を書き込む。
-		/////////////////////////////////////////
-		
-		//プリンターステータス
-		rxbclr(PORT_BLUETOOTH);
-		ret = rputs(PORT_BLUETOOTH, (unsigned char *)printer_status, sizeof(printer_status));
-		ret = rgetc(PORT_BLUETOOTH);
-		curp(0, 9);
-		if (ret & RSTAT_BIT_RXDATA) {
-			sprintf(buf, "printer %02x", ret & 0xFF);
-		} else {
-			sprintf(buf, "rgetc   %02x", (ret >> 8) & 0xFF);
-		}
-		putsc(buf);
-
-		//オフライン要因ステータス
-		rxbclr(PORT_BLUETOOTH);
-		ret = rputs(PORT_BLUETOOTH, (unsigned char *)offline_status, sizeof(offline_status));
-		ret = rgetc(PORT_BLUETOOTH);
-		curp(0, 11);
-		if (ret & RSTAT_BIT_RXDATA) {
-			sprintf(buf, "offline %02x", ret & 0xFF);
-		} else {
-			sprintf(buf, "rgetc   %02x", (ret >> 8) & 0xFF);
-		}
-		putsc(buf);
-
-		//エラー要因ステータス
-		rxbclr(PORT_BLUETOOTH);
-		ret = rputs(PORT_BLUETOOTH, (unsigned char *)error_status, sizeof(error_status));
-		ret = rgetc(PORT_BLUETOOTH);
-		curp(0, 13);
-		if (ret & RSTAT_BIT_RXDATA) {
-			sprintf(buf, "error  %02x", ret & 0xFF);
-		} else {
-			sprintf(buf, "rgetc  %02x", (ret >> 8) & 0xFF);
-		}
-		putsc(buf);
-
-		//連続用紙検出器ステータス
-		rxbclr(PORT_BLUETOOTH);
-		ret = rputs(PORT_BLUETOOTH, (unsigned char *)sensor_status, sizeof(sensor_status));
-		ret = rgetc(PORT_BLUETOOTH);
-		curp(0, 15);
-		if (ret & RSTAT_BIT_RXDATA) {
-			sprintf(buf, "sensor %02x", ret & 0xFF);
-		} else {
-			sprintf(buf, "rgetc  %02x", (ret >> 8) & 0xFF);
-		}
-		putsc(buf);
-	}
+	//プリンターステータス
+	// rxbclr(PORT_BLUETOOTH);
+	// ret = rputs(PORT_BLUETOOTH, (unsigned char *)printer_status, sizeof(printer_status));
+	// ret = rgetc(PORT_BLUETOOTH);
+	// curp(0, 9);
+	// if (ret & RSTAT_BIT_RXDATA) {
+	// 	sprintf(buf, "printer %02x", ret & 0xFF);
+	// } else {
+	// 	// 「状態 20なら OK」
+	// 	sprintf(buf, "  状態   %02x", (ret >> 8) & 0xFF);
+	// }
+	// putsc(buf);
 	
 exit:
 	rclose(PORT_BLUETOOTH);
 	cls();
-	setcolor(COLOR_WHITE, COLOR_BLUE);
-	putsc("  Printer Test  ");
-	setcolor(COLOR_BLACK, COLOR_WHITE);
-	curp(0,3);
-	putsc("Test End");
-	curp(0,9);
-	putsc(buf);
-	
-	getch();
-	goto restart;
+	return 0;
 }
 
 /********************************************************
