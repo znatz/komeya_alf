@@ -327,7 +327,9 @@ extern	void	insComma( long, char[] );
 extern	void	printNumberWithComma( long num, int col, int row ) ;
 // ??��?��??��?��??��?��??��?��
 extern	URDATA		urdata;	
+// * 明細1行の一時データ
 extern  INFO		info;
+// * レシート1つの一時データ
 extern  INFOUR		infour;
 extern  INFOUR2		infour2;
 

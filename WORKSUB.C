@@ -448,9 +448,9 @@ long	HinsyuFindByCode1( char *code1 )
 	adrs = beginSearch( code1+3, 1, 0, sizeof( himst.Code ), 0, ctrl.HIMSTCnt, HIMSTF );
 #endif
 	if( adrs != -1 ){
-		return adrs;
+		ram_read( adrs, &himst, HIMSTF );
 	}
-	return 0;
+	return adrs;
 }
 
 /**************************************************/

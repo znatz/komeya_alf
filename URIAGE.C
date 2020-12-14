@@ -574,6 +574,228 @@ static void Display( short item )
 }
 
 //****************************************************************************/
+// 	印刷レシート詳細
+//****************************************************************************/
+int entryprintdata() {
+
+	int ret;
+	char buf[256];//転送用バッファ
+	char strNumber[MAXLEN];
+	long lngNumber;
+
+	// * 漢字一つで3mm, (レシート幅58mm - 左右余白10mm)/3mm約16, 半角になると32
+	// * strlen(himst.Name) = 40なので40以下にする必要がある
+	const long LEN_ONELINE = 32;
+	const long LEN_HINMEI  = sizeof(himst.Name)/2;
+	const long LEN_AMOUNT  = 10;
+	const long LEN_COUNT   = LEN_ONELINE-LEN_HINMEI-LEN_AMOUNT;
+
+	if( memcmp( info.tanto,"00",2 ) != 0 ){
+
+		// * -- 日本語
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
+		// * -- 中央寄せ
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignCenter, sizeof(bAlignCenter));
+		// * -- アンダーライン
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)bUnderline1, sizeof(bUnderline1));
+		snprintf(buf, LEN_ONELINE+1, "%s", "                                         ");
+		snprintf(buf, LEN_ONELINE+1, "%s", "品　名　　　数　量　　　金　額\n");
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_ONELINE);
+
+		// * -- 日本語
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
+		// * -- 左寄せ
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignLeft, sizeof(bAlignLeft));
+		// * -- アンダーライン取り消す
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)bUnderline0, sizeof(bUnderline0));
+
+		for ( int intCnt = 0; intCnt < ctrl.InfoUrCnt; intCnt++) {
+
+			// point to address of current receipt 
+			ram_read( intCnt , &infour, INFOURF );
+			displayStringMsg(&infour.Code1);
+			// * 20201208
+			if(HinsyuFindByCode1(infour.Code1) != 0) {
+
+				// * -- アンダーライン
+				if (intCnt == ctrl.InfoUrCnt - 1) {
+					ret = rputs(PORT_BLUETOOTH, (unsigned char *)bUnderline1, sizeof(bUnderline1));
+					displayStringMsg(&himst.Name);
+				}
+
+				// * ---------------------------------------------------- DEBUG用
+				// displayStringMsg(&himst.Name);
+				// * ---------------------------------------------------- DEBUG用
+
+				// * -- 品名
+				// * -- 左寄せ
+				ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignLeft, sizeof(bAlignLeft));
+				snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
+				snprintf(buf, LEN_HINMEI+1, "%s", himst.Name);
+				ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_HINMEI);
+
+				// * -- 個数
+				// * -- 日本語
+				ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
+				// * -- 右寄せ
+				ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignRight, sizeof(bAlignRight));
+				snprintf(buf, LEN_COUNT+1, "%s", "                                    ");
+				snprintf(buf, LEN_COUNT+1, "%5d", atoi(infour.Num));
+				ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_COUNT);
+
+				// * -- 売価
+				memset(strNumber,0x0,sizeof(strNumber));
+				lngNumber = atoln(infour.Baika, sizeof(infour.Baika));
+				insComma( lngNumber, strNumber );
+				snprintf(buf, LEN_AMOUNT+1, "%s", "                                    ");
+				snprintf(buf, LEN_AMOUNT+1, "%s", strNumber);
+				ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_AMOUNT);
+
+
+				ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
+
+			}
+
+
+		}
+	}
+
+	return ret;
+
+}
+
+int	PrintMain_NEX_M230(char* _addr, bool _crc, int _mode , short _Flag ) {
+	bt_conf_t conf;
+	int ret;
+	int retry_count;
+	unsigned char addr[13];
+	unsigned char name[41];
+	char buf[256];//転送用バッファ
+	//各種ステータスを調べるためのコマンド(DLE EOT n)
+	char printer_status[] = { 0x10, 0x1b, 0x76, 0x01 };
+
+	progress_start(LCD_PROGRESS_USE_ANIMATION, "印刷中");
+	progress_update(NULL, NULL, 0);
+	
+restart:
+	ret = BtConfig(BT_GET, &conf);
+	if (ret != 0) {
+		sprintf(buf, "BtConfig %d", ret);
+		goto exit;
+	}
+	//PINｺｰﾄﾞ設定
+	strncpy(conf.localPIN, "0000000000000000", sizeof(conf.localPIN));
+	conf.timeout = 30;
+	conf.MITM_Enable = DISABLE;
+	
+	ret = BtConfig(BT_SET, &conf);
+	if (ret != 0) {
+		sprintf(buf, "BtConfig %d", ret);
+		goto exit;
+	}
+	
+	// * ---------------------------------------------------- 
+	// * 	接続テストの場合、下記の五行を有効する
+	// * ---------------------------------------------------- 
+	// ret = EzBtSelect(EZ_BT_MODE_MENU, addr, name);
+	// if (ret != 0) {
+	// 	sprintf(buf, "EzBtSelect %d", ret);
+	// 	goto exit;
+	// }
+
+	// * ---------------------------------------------------- 
+	// * 	接続テストではない場合、前回接続成功のアドレスで接続
+	// * ---------------------------------------------------- 
+	BtGetLastAddr(addr);
+
+	// 接続無応答となることがあったのでリトライする
+	retry_count = 0;
+retry:	
+	ret = EzBtConnect(addr, UUID_SPP);
+	if (ret == BT_AT_NO_ANSWER) {
+		retry_count++;
+		if (retry_count > 2) {
+			goto exit;
+		}
+		goto retry;
+	} else if (ret != 0) {
+		sprintf(buf, "EzBtConnect %d", ret);
+		goto exit;
+	} else {
+	}
+
+	rsettime(PORT_BLUETOOTH, 3);
+		
+	// * ------------------------  印字構築部分開始
+
+	// * -- 日本語
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignCenter, sizeof(bAlignCenter));
+
+	// * -- タイトル
+	memset(buf,0x0, sizeof(buf));
+	sprintf(buf, "販 売 管 理\n");
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+
+	// * -- ローマ字
+	// ret = rputs(PORT_BLUETOOTH, (unsigned char *)bSizeNor, sizeof(bSizeNor));
+	// sprintf(buf, VER2);
+	// ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+
+	// * -- 現時間
+	char now[8];
+	memset(now,0x0, sizeof(now));
+	getrtc4( now );
+
+	memset(buf,0x0,11);
+	memcpy(buf,now,4);
+	memcpy(buf+4,"/",1);
+	memcpy(buf+5,now+4,2);
+	memcpy(buf+7,"/",1);
+	memcpy(buf+8,now+6,2);
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+
+	// * -- 改行
+	ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+
+	// * -- 日本語
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignLeft, sizeof(bAlignLeft));
+
+	// * -- 明細印字
+	entryprintdata();
+
+	// * -- Printer & Line Feed
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)nFeedLine, sizeof(nFeedLine));
+
+	// * -- カット
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bCut, sizeof(bCut));
+
+	// * ------------------------  印字構築部分終了
+	/////////////////////////////////////////
+	//short rputs(int port, unsigned char *ptr, short size)
+	//通信ポートportの送信バッファにptrで指定したバッファからsize分の文字を書き込む。
+	/////////////////////////////////////////
+	
+	//プリンターステータス
+	// rxbclr(PORT_BLUETOOTH);
+	// ret = rputs(PORT_BLUETOOTH, (unsigned char *)printer_status, sizeof(printer_status));
+	// ret = rgetc(PORT_BLUETOOTH);
+	// curp(0, 9);
+	// if (ret & RSTAT_BIT_RXDATA) {
+	// 	sprintf(buf, "printer %02x", ret & 0xFF);
+	// } else {
+	// 	// 「状態 20なら OK」
+	// 	sprintf(buf, "  状態   %02x", (ret >> 8) & 0xFF);
+	// }
+	// putsc(buf);
+	
+exit:
+	rclose(PORT_BLUETOOTH);
+	cls();
+	return 0;
+}
+//****************************************************************************/
 // 	データ登録 							
 //****************************************************************************/
 static void entrydata( short sw ){
@@ -787,6 +1009,9 @@ int print( short Flag ){
 				sprintf(buf, "EzBtSelect %d", ret);
 				msgbox(LCD_MSGBOX_ERROR, 0, "エラー", buf, NULL, NULL); 
 			}
+			// * 20201211
+			Display( 0 );
+			break;
 		} else if (key == '3'){
 			Display( 0 );
 			break;
@@ -979,6 +1204,7 @@ void uriage( int flag, int firsttime )
 					//infoclr();
 					//menu();
 				} else if ( ret == 99 ) {
+					// * 再発行
 					print(2);
 				} else if ( ret == 13) {
 					// ZNATZ RESET
@@ -1457,13 +1683,23 @@ void uriage( int flag, int firsttime )
 				lngGoukei = 0;
 				lngTensuu = 0;
 				item = CODE1;
-				ckputss( 0,  0, "<売上入力>      ", False, CLR_UR_TITLE );
-				ckprintf(10, 0, False, CLR_UR_TITLE , "%4d件", ctrl.InfoUrCnt );
+				DisplayHeader();
+
+				ckputss( 0,  2, "▲              ", False, CLR_BASE );
+				ckputss( 0,  4, "▽              ", False, CLR_BASE );				
+				ckputss( 0,  6, "値下:           ", False, CLR_BASE );				
+
+				// * 現在小計金額
 				ckputss( 0, 12, "計        　　", False, CLR_SI_TITLE );
-				ckprintf(3, 12, False, CLR_SI_TITLE , "%6d円", lngGoukei );
-				ckprintf(11,12, False, CLR_SI_TITLE , "%3d点", lngTensuu );	
-				ckputss( 0,  5, "▲              ", False, CLR_BASE );
-				ckputss( 0,  7, "▽              ", False, CLR_BASE );	
+				insComma( lngGoukei, strGoukei ); 								
+				ckprintf(2, 12, False, CLR_SI_TITLE, "%7s円", strGoukei );
+
+				// * 現在小計点数
+				ckprintf(11,12, False, CLR_SI_TITLE, "%3d点", lngTensuu );
+
+				ckputss( 0, 14, "F1:戻る  F2:取消", False, CLR_BASE );	
+				ckputss( 0, 16, "         F4:精算", False, CLR_BASE );	
+
 			}
 			continue;
 		}else if( ret == F1KEY ){//戻る
