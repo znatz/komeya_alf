@@ -586,9 +586,11 @@ int entryprintdata() {
 	// * 漢字一つで3mm, (レシート幅58mm - 左右余白10mm)/3mm約16, 半角になると32
 	// * strlen(himst.Name) = 40なので40以下にする必要がある
 	const long LEN_ONELINE = 32;
-	const long LEN_HINMEI  = sizeof(himst.Name)/2;
-	const long LEN_AMOUNT  = 10;
-	const long LEN_COUNT   = LEN_ONELINE-LEN_HINMEI-LEN_AMOUNT;
+	const long LEN_HINMEI  = 18; // sizeof(himst.Name)/2;
+	const long LEN_AMOUNT  = 9;
+	const long LEN_COUNT   = 5; //LEN_ONELINE-LEN_HINMEI-LEN_AMOUNT;
+	char underline[32]; 
+	memset(underline, '-', sizeof(underline));
 
 	if( memcmp( info.tanto,"00",2 ) != 0 ){
 
@@ -599,7 +601,7 @@ int entryprintdata() {
 		// * -- アンダーライン
 		ret = rputs(PORT_BLUETOOTH, (unsigned char *)bUnderline1, sizeof(bUnderline1));
 		snprintf(buf, LEN_ONELINE+1, "%s", "                                         ");
-		snprintf(buf, LEN_ONELINE+1, "%s", "品　名　　　数　量　　　金　額\n");
+		snprintf(buf, LEN_ONELINE+1, "%s", "品　名　　　　　数　量　　金　額　\n");
 		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_ONELINE);
 
 		// * -- 日本語
@@ -617,11 +619,11 @@ int entryprintdata() {
 			// * 20201208
 			if(HinsyuFindByCode1(infour.Code1) != 0) {
 
-				// * -- アンダーライン
-				if (intCnt == ctrl.InfoUrCnt - 1) {
-					ret = rputs(PORT_BLUETOOTH, (unsigned char *)bUnderline1, sizeof(bUnderline1));
-					displayStringMsg(&himst.Name);
-				}
+				// // * -- アンダーライン
+				// if (intCnt == ctrl.InfoUrCnt - 1) {
+				// 	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bUnderline1, sizeof(bUnderline1));
+				// 	displayStringMsg(&himst.Name);
+				// }
 
 				// * ---------------------------------------------------- DEBUG用
 				// displayStringMsg(&himst.Name);
@@ -637,10 +639,11 @@ int entryprintdata() {
 				// * -- 個数
 				// * -- 日本語
 				ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
-				// * -- 右寄せ
-				ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignRight, sizeof(bAlignRight));
+				// // * -- 右寄せ
 				snprintf(buf, LEN_COUNT+1, "%s", "                                    ");
-				snprintf(buf, LEN_COUNT+1, "%5d", atoi(infour.Num));
+				memset(strNumber,0x0,sizeof(strNumber));
+				convertToString(atoi(infour.Num), strNumber);
+				snprintf(buf, LEN_COUNT+1, "%5s", strNumber);
 				ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_COUNT);
 
 				// * -- 売価
@@ -648,11 +651,20 @@ int entryprintdata() {
 				lngNumber = atoln(infour.Baika, sizeof(infour.Baika));
 				insComma( lngNumber, strNumber );
 				snprintf(buf, LEN_AMOUNT+1, "%s", "                                    ");
-				snprintf(buf, LEN_AMOUNT+1, "%s", strNumber);
+				snprintf(buf, LEN_AMOUNT+1, "%9s", strNumber);
 				ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_AMOUNT);
 
 
 				ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
+
+				// * -- アンダーライン
+				if (intCnt == ctrl.InfoUrCnt - 1) {
+					ret = rputs(PORT_BLUETOOTH, (unsigned char *)bUnderline1, sizeof(bUnderline1));
+					snprintf(buf, LEN_ONELINE+1, "%s", "                                         ");
+					snprintf(buf, LEN_ONELINE+1, "%s", "　　　　　　　　　　　　　　　　　\n");
+					ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_ONELINE);
+				}
+
 
 			}
 
