@@ -583,6 +583,10 @@ int entryprintdata() {
 	char strNumber[MAXLEN];
 	long lngNumber;
 
+	short taxrate;
+	short diff_taxrate;
+	taxrate = atoin( ctrl.TaxRate, sizeof(ctrl.TaxRate)); // + 100.0;
+
 	// * 漢字一つで3mm, (レシート幅58mm - 左右余白10mm)/3mm約16, 半角になると32
 	// * strlen(himst.Name) = 40なので40以下にする必要がある
 	const long LEN_ONELINE = 32;
@@ -592,7 +596,13 @@ int entryprintdata() {
 	char underline[32]; 
 	memset(underline, '-', sizeof(underline));
 
+	long kei_zeikomi = 0;
+	long kei_zeinuki = 0;
+	long kei_systemtax = 0; 
+	long kei_bumontax = 0;
+
 	if( memcmp( info.tanto,"00",2 ) != 0 ){
+
 
 		// * -- 日本語
 		ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
@@ -612,17 +622,30 @@ int entryprintdata() {
 		ret = rputs(PORT_BLUETOOTH, (unsigned char *)bUnderline0, sizeof(bUnderline0));
 
 		for ( int intCnt = 0; intCnt < ctrl.InfoUrCnt; intCnt++) {
-
+		
 			// point to address of current receipt 
 			ram_read( intCnt , &infour, INFOURF );
-			displayStringMsg(&infour.Code1);
+
+			// TODO 値下
+			kei_zeikomi = kei_zeikomi + atoln(infour.Baika, sizeof(infour.Baika)) * atoi(infour.Num);
+			kei_zeinuki = kei_zeinuki + atoln(infour.Joudai, sizeof(infour.Joudai)) * atoi(infour.Num); 
+			kei_systemtax = kei_systemtax + infour.lngSystemTaxRateTax;
+			kei_bumontax = kei_bumontax + infour.lngBumonTaxRateTax;
+
+			// * 軽減の時、軽減に使用した税率を一時保存
+			if ( infour.lngBumonTaxRateTax != 0 && diff_taxrate == 0 ) {
+				diff_taxrate = infour.lngFinalTaxRate;
+				displayMsg(999);
+				displayMsg(diff_taxrate);
+			}
+
+	
 			// * 20201208
 			if(HinsyuFindByCode1(infour.Code1) != 0) {
 
 				// // * -- アンダーライン
 				// if (intCnt == ctrl.InfoUrCnt - 1) {
 				// 	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bUnderline1, sizeof(bUnderline1));
-				// 	displayStringMsg(&himst.Name);
 				// }
 
 				// * ---------------------------------------------------- DEBUG用
@@ -632,9 +655,27 @@ int entryprintdata() {
 				// * -- 品名
 				// * -- 左寄せ
 				ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignLeft, sizeof(bAlignLeft));
-				snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
-				snprintf(buf, LEN_HINMEI+1, "%s", himst.Name);
-				ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_HINMEI);
+				if ( infour.lngFinalTaxRate != taxrate ) {
+					snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
+					snprintf(buf, sizeof("☆("), "%s", "☆(");
+					ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("☆"));
+
+					snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
+					snprintf(buf, 2, "%ld", infour.lngFinalTaxRate);
+					ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, 2);
+
+					snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
+					snprintf(buf, sizeof("%)"), "%s", "%)");
+					ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("%)"));
+
+					snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
+					snprintf(buf, LEN_HINMEI+1, "%s", himst.Name);
+					ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_HINMEI - sizeof("(☆%)") );
+				} else {
+					snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
+					snprintf(buf, LEN_HINMEI+1, "%s", himst.Name);
+					ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_HINMEI);
+				}
 
 				// * -- 個数
 				// * -- 日本語
@@ -646,9 +687,9 @@ int entryprintdata() {
 				snprintf(buf, LEN_COUNT+1, "%5s", strNumber);
 				ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_COUNT);
 
-				// * -- 売価
+				// * -- 売価 x 数量
 				memset(strNumber,0x0,sizeof(strNumber));
-				lngNumber = atoln(infour.Baika, sizeof(infour.Baika));
+				lngNumber = atoln(infour.Baika, sizeof(infour.Baika)) * atoi(infour.Num);
 				insComma( lngNumber, strNumber );
 				snprintf(buf, LEN_AMOUNT+1, "%s", "                                    ");
 				snprintf(buf, LEN_AMOUNT+1, "%9s", strNumber);
@@ -659,7 +700,6 @@ int entryprintdata() {
 
 				// * -- アンダーライン
 				if (intCnt == ctrl.InfoUrCnt - 1) {
-					ret = rputs(PORT_BLUETOOTH, (unsigned char *)bUnderline1, sizeof(bUnderline1));
 					snprintf(buf, LEN_ONELINE+1, "%s", "                                         ");
 					snprintf(buf, LEN_ONELINE+1, "%s", "　　　　　　　　　　　　　　　　　\n");
 					ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_ONELINE);
@@ -668,8 +708,86 @@ int entryprintdata() {
 
 			}
 
-
 		}
+
+		// * -- 文字拡大
+		ret = rputs(PORT_BLUETOOTH, bSizeDbl, sizeof(bSizeDbl));
+
+		// * -- 税込
+		snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
+		snprintf(buf, sizeof("税込計"), "%s", "税込計");
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_HINMEI/2 - 2);
+
+		// * -- 税込計
+		memset(strNumber,0x0,sizeof(strNumber));
+		insComma( kei_zeikomi, strNumber );
+		snprintf(buf, LEN_AMOUNT+1, "%s", "                                    ");
+		snprintf(buf, LEN_AMOUNT+1, "%9s", strNumber);
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_AMOUNT);
+
+		// * -- 文字戻す
+		ret = rputs(PORT_BLUETOOTH, bSizeNor, sizeof(bSizeNor));
+		
+		// * -- 改行
+		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
+
+		// * -- 税抜
+		snprintf(buf, LEN_HINMEI + LEN_COUNT + 1, "%s", "                                    ");
+		snprintf(buf, sizeof("[税抜計"), "%s", "[税抜計");
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_HINMEI + LEN_COUNT);
+
+		// * -- 税抜計
+		memset(strNumber,0x0,sizeof(strNumber));
+		insComma( kei_zeinuki, strNumber );
+		snprintf(buf, LEN_AMOUNT+1, "%s", "                                    ");
+		snprintf(buf, LEN_AMOUNT+1, "%9s]", strNumber);
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_AMOUNT + 1);
+
+		// * -- 改行
+		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
+
+		if ( kei_systemtax != 0 ) {
+			// * -- 10%対象
+			snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
+			snprintf(buf, sizeof("(10%対象"), "(%2d%対象)", taxrate);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_HINMEI);
+
+			// * -- 10%対象金額
+			memset(strNumber,0x0,sizeof(strNumber));
+			insComma( kei_systemtax, strNumber );
+			snprintf(buf, LEN_AMOUNT+1, "%s", "                                    ");
+			snprintf(buf, LEN_AMOUNT+1, "%9s", strNumber);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_AMOUNT);
+		}
+
+		if ( kei_bumontax != 0 ) {
+			displayMsg(diff_taxrate);
+			// * -- 8%対象
+			snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
+			snprintf(buf, sizeof("( 8%対象"), "(%2d%対象)", diff_taxrate);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_HINMEI);
+
+			// * -- 8%対象金額
+			memset(strNumber,0x0,sizeof(strNumber));
+			insComma( kei_bumontax, strNumber );
+			snprintf(buf, LEN_AMOUNT+1, "%s", "                                    ");
+			snprintf(buf, LEN_AMOUNT+1, "%9s", strNumber);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_AMOUNT);
+		}
+
+		// // * -- 8%対象
+		// snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
+		// snprintf(buf, sizeof("税込計"), "%s", "税込計");
+		// ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_HINMEI);
+
+		// // * -- 8%対象金額
+		// memset(strNumber,0x0,sizeof(strNumber));
+		// insComma( kei_zeinuki, strNumber );
+		// snprintf(buf, LEN_AMOUNT+1, "%s", "                                    ");
+		// snprintf(buf, LEN_AMOUNT+1, "%9s", strNumber);
+		// ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, LEN_AMOUNT);
+
+
 	}
 
 	return ret;
@@ -1498,6 +1616,7 @@ void uriage( int flag, int firsttime )
 				// * 税率 値下: system   以外: 部門
 				long lngTmp;
 				if( !memcmp( info.Code3, "30", 2 ) && info.Code3[7] != ' ' ){
+					// * 値下
 					// * 税区確定
 					info.lngZeiku = 0;
 					// * 税率確定
@@ -1515,7 +1634,7 @@ void uriage( int flag, int firsttime )
 					info.lngFinalTaxRate = BumonTaxFindByCode1(info.Code1);
 					// * 税額確定
 					info.lngFinalTaxRateTax = lngSingleTax * current_input_num;
-					if ( info.lngFinalTaxRate != taxrate ) {
+					if ( info.lngFinalTaxRate != (taxrate - 100) ) {
 						// * 部門税額
 						info.lngBumonTaxRateTax = info.lngFinalTaxRateTax;
 						// * システム税額
