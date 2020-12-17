@@ -416,23 +416,30 @@ long	BumonTaxFindByCode1( char *code1 )
 /*  品種税区検索	                                   */
 /*  呼び出し例: 　	                                   */
 /* displayMsg(HinsyuZeikuFindByCode1(&tdata.Code1)); */
+/*  !! ☆ 二段バーコードの上段上代が税抜きセットされるため、   */
+/*        0　しか返さない                               */
 /*****************************************************/
 long	HinsyuZeikuFindByCode1( char *code1 )
 {
-	long	adrs;
 
-	//memset( &mmst, 0x00, sizeof( mmst ) );
-#if 0	/* ２分法 */
-	//adrs = binarySearch( key, sizeof( mmst.Code ), MMSTF, ctrl.MMstCnt, 0 );
-#else	/* 先頭から検索 */
-	adrs = beginSearch( code1+3, 1, 0, sizeof( himst.Code ), 0, ctrl.HIMSTCnt, HIMSTF );
-#endif
-	if( adrs != -1 ){
-		ram_read( adrs, &himst, HIMSTF );
-		return atoln(himst.Zeiku, sizeof(himst.Zeiku));
-	}
 	return 0;
+
+// 	long	adrs;
+
+// 	//memset( &mmst, 0x00, sizeof( mmst ) );
+// #if 0	/* ２分法 */
+// 	//adrs = binarySearch( key, sizeof( mmst.Code ), MMSTF, ctrl.MMstCnt, 0 );
+// #else	/* 先頭から検索 */
+// 	adrs = beginSearch( code1+3, 1, 0, sizeof( himst.Code ), 0, ctrl.HIMSTCnt, HIMSTF );
+// #endif
+// 	if( adrs != -1 ){
+// 		ram_read( adrs, &himst, HIMSTF );
+// 		return atoln(himst.Zeiku, sizeof(himst.Zeiku));
+// 	}
+// 	return 0;
+
 }
+
 /*****************************************************/
 /*  品種検索    	                                   */
 /*  呼び出し例: 　	                                   */

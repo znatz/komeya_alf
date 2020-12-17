@@ -17,10 +17,20 @@
 // *    NEX-M230 –½—ß
 // * --------------------------- 
 
+// * Romaji
+const char bRomaji[2] = {0x1B, 0x40};
+
+// * Quadruple Japanese Kanji
+const char bJPx4Release[3] = {0x1C, 0x57, 0x0};
+const char bJPx4Set[3] = {0x1C, 0x57, 0x1};
+
 // * Japanese Kanji
 const char bJP[5] = {0x1C, 0x26, 0x1C, 0x43, 0x1};
 const char bDoulbeStrike[3] = {0x1B, 0x47, 0x1};
 const char bNonDoulbeStrik[3] = {0x1B, 0x47, 0x0};
+
+// * Japanese Release
+const char bJPRelease[2] = {0x1C, 0x2E};
 
 // *  Alignment
 const char bAlignLeft[3] = {0x1B, 0x61, 0x0};
@@ -29,16 +39,20 @@ const char bAlignRight[3] = {0x1B, 0x61, 0x2};
 
 // *  Size
 // const char  bSizeNor[] = {0x1D, 0x21, Convert.ToInt32("00000000", 2)};
+// * Normal Size
 const char  bSizeNor[3] = {0x1D, 0x21, 0};
 
-// const char  bSizeDbl[] = {0x1D, 0x21, Convert.ToInt32("00010001", 2)};
-const char  bSizeDbl[3] = {0x1D, 0x21, 17};
-
-// const char  bSizeTri[] = {0x1D, 0x21, Convert.ToInt32("00001010", 2)};
-const char  bSizeTri[3] = {0x1D, 0x21, 10};
+// const char  bSizeDbl[] = {0x1D, 0x21, Convert.ToInt32("00010000", 2)};
+// * Double Width
+const char  bSizeDbl[3] = {0x1D, 0x21, 0x10};
 
 // const char  bSizeHDb[] = {0x1D, 0x21, Convert.ToInt32("00000001", 2)};
-const char  bSizeHDb[3] = {0x1D, 0x21, 1};
+// * Double Height
+const char  bSizeHDb[3] = {0x1D, 0x21, 0x1};
+
+// const char  bSizeTri[] = {0x1D, 0x21, Convert.ToInt32("00001010", 2)};
+// * Double Width and Height
+const char  bSizeTri[3] = {0x1D, 0x21, 0x11};
 
 // *  Feed 4 lines
 const char  nFeedLine[3] = {0x1B, 0x64, 0x4};

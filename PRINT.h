@@ -25,10 +25,10 @@
 #define LAPIN_ERR_OFFLINE		-24
 #define LAPIN_ERR_COMMAND		-25
 
-#define COMMAND_MODE_SBPL		0	// SBPLï¿½Rï¿½}ï¿½ï¿½ï¿½hï¿½ï¿½ï¿½[ï¿½h
-#define COMMAND_MODE_COMPAT		1	// ï¿½ÝŠï¿½ï¿½Rï¿½}ï¿½ï¿½ï¿½hï¿½ï¿½ï¿½[ï¿½h
+#define COMMAND_MODE_SBPL		0	// SBPL?¿½R?¿½}?¿½?¿½?¿½h?¿½?¿½?¿½[?¿½h
+#define COMMAND_MODE_COMPAT		1	// ?¿½ÝŠï¿½?¿½R?¿½}?¿½?¿½?¿½h?¿½?¿½?¿½[?¿½h
 
-/* ï¿½ï¿½ï¿½ï¿½Rï¿½[ï¿½h ---------------------------*/
+/* ?¿½?¿½?¿½?¿½R?¿½[?¿½h ---------------------------*/
 #define STX		0x02
 #define ETX		0x03
 #define ACK		0x06
@@ -38,8 +38,8 @@
 #define CAN		0x18
 
 
-/*SBPLï¿½ï¿½ï¿½[ï¿½h*/
-/* ï¿½Xï¿½eï¿½[ï¿½^ï¿½X ---------------------------*/
+/*SBPL?¿½?¿½?¿½[?¿½h*/
+/* ?¿½X?¿½e?¿½[?¿½^?¿½X ---------------------------*/
 #define OFF_NOERR				'0'
 #define OFF_BAT_LOW				'1'
 #define OFF_BUFF_FULL				'2'
@@ -68,25 +68,25 @@
 #define ERR_COVER				'h'
 #define ERR_OTHER				'k'
 
-/*ï¿½vï¿½`ï¿½ï¿½ï¿½pï¿½ï¿½ï¿½ÝŠï¿½ï¿½ï¿½ï¿½[ï¿½h */
-#define CMD_ERR_NOERR				0x00	/*ï¿½ï¿½ï¿½ï¿½Þ½Ã°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½*/
-#define CMD_ERR					0x01	/*ï¿½ï¿½ï¿½ï¿½Þ½Ã°ï¿½ï¿½ ï¿½Rï¿½}ï¿½ï¿½ï¿½hï¿½wï¿½ï¿½Gï¿½ï¿½ï¿½[*/
-#define CMD_ERR_PARAM				0x02	/*ï¿½ï¿½ï¿½ï¿½Þ½Ã°ï¿½ï¿½ ï¿½pï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½^ï¿½wï¿½ï¿½Gï¿½ï¿½ï¿½[*/
-#define CMD_ERR_POS				0x03	/*ï¿½ï¿½ï¿½ï¿½Þ½Ã°ï¿½ï¿½ ï¿½óŽšˆÊ’uï¿½wï¿½ï¿½Gï¿½ï¿½ï¿½[*/
-#define CMD_ERR_BCR				0x04	/*ï¿½ï¿½ï¿½ï¿½Þ½Ã°ï¿½ï¿½ ï¿½oï¿½[ï¿½Rï¿½[ï¿½hï¿½óŽš—Ìˆï¿½Iï¿½[ï¿½oï¿½[ï¿½Gï¿½ï¿½ï¿½[*/
-#define CMD_ERR_PDF				0x05	/*ï¿½ï¿½ï¿½ï¿½Þ½Ã°ï¿½ï¿½ PDF417ï¿½wï¿½ï¿½Gï¿½ï¿½ï¿½[*/
-#define CMD_ERR_QR				0x06	/*ï¿½ï¿½ï¿½ï¿½Þ½Ã°ï¿½ï¿½ QRï¿½Rï¿½[ï¿½hï¿½wï¿½ï¿½Gï¿½ï¿½ï¿½[*/
-#define CMD_ERR_CRC				0x10	/*ï¿½ï¿½ï¿½ï¿½Þ½Ã°ï¿½ï¿½ CRCï¿½Gï¿½ï¿½ï¿½[*/
+/*?¿½v?¿½`?¿½?¿½?¿½p?¿½?¿½?¿½ÝŠï¿½?¿½?¿½?¿½[?¿½h */
+#define CMD_ERR_NOERR				0x00	/*?¿½?¿½?¿½?¿½Þ½Ã°?¿½?¿½ ?¿½?¿½?¿½?¿½I?¿½?¿½*/
+#define CMD_ERR					0x01	/*?¿½?¿½?¿½?¿½Þ½Ã°?¿½?¿½ ?¿½R?¿½}?¿½?¿½?¿½h?¿½w?¿½?¿½G?¿½?¿½?¿½[*/
+#define CMD_ERR_PARAM				0x02	/*?¿½?¿½?¿½?¿½Þ½Ã°?¿½?¿½ ?¿½p?¿½?¿½?¿½?¿½?¿½[?¿½^?¿½w?¿½?¿½G?¿½?¿½?¿½[*/
+#define CMD_ERR_POS				0x03	/*?¿½?¿½?¿½?¿½Þ½Ã°?¿½?¿½ ?¿½?šˆÊ’u?¿½w?¿½?¿½G?¿½?¿½?¿½[*/
+#define CMD_ERR_BCR				0x04	/*?¿½?¿½?¿½?¿½Þ½Ã°?¿½?¿½ ?¿½o?¿½[?¿½R?¿½[?¿½h?¿½?š—Ìˆï¿½I?¿½[?¿½o?¿½[?¿½G?¿½?¿½?¿½[*/
+#define CMD_ERR_PDF				0x05	/*?¿½?¿½?¿½?¿½Þ½Ã°?¿½?¿½ PDF417?¿½w?¿½?¿½G?¿½?¿½?¿½[*/
+#define CMD_ERR_QR				0x06	/*?¿½?¿½?¿½?¿½Þ½Ã°?¿½?¿½ QR?¿½R?¿½[?¿½h?¿½w?¿½?¿½G?¿½?¿½?¿½[*/
+#define CMD_ERR_CRC				0x10	/*?¿½?¿½?¿½?¿½Þ½Ã°?¿½?¿½ CRC?¿½G?¿½?¿½?¿½[*/
 
-#define STS_ERR_NOERR				0x00	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½Aï¿½ï¿½Mï¿½Ò‚ï¿½*/
-#define STS_ERR_EDIT				0x01	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½ï¿½ÍEï¿½ÒWï¿½ï¿½ï¿½Aï¿½nï¿½Nï¿½ï¿½ï¿½Ò‚ï¿½*/
-#define STS_ERR_OFFLINE				0x02	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½Iï¿½tï¿½ï¿½ï¿½Cï¿½ï¿½*/
-#define STS_ERR_COVER				0x03	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½Jï¿½oï¿½[ï¿½Iï¿½[ï¿½vï¿½ï¿½*/
-#define STS_ERR_PAPER				0x04	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½yï¿½[ï¿½pï¿½[ï¿½Gï¿½ï¿½ï¿½h*/
-#define STS_ERR_SENSOR				0x06	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½Zï¿½ï¿½ï¿½Tï¿½Gï¿½ï¿½ï¿½[*/
-#define STS_ERR_HEAD				0x07	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½wï¿½bï¿½hï¿½Gï¿½ï¿½ï¿½[*/
-#define STS_ERR_BAT				0x10	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½oï¿½bï¿½eï¿½ï¿½ï¿½Gï¿½ï¿½ï¿½[*/
-#define STS_ERR_OTHER				0x11	/*ï¿½Ã°ï¿½ï¿½ï¿½Úï¿½ ï¿½ï¿½ï¿½Ì‘ï¿½ï¿½Gï¿½ï¿½ï¿½[*/
+#define STS_ERR_NOERR				0x00	/*?¿½Ã°?¿½?¿½?¿½Úï¿½ ?¿½?¿½?¿½?¿½I?¿½?¿½?¿½A?¿½?¿½M?¿½Ò‚ï¿½*/
+#define STS_ERR_EDIT				0x01	/*?¿½Ã°?¿½?¿½?¿½Úï¿½ ?¿½?¿½ÍE?¿½ÒW?¿½?¿½?¿½A?¿½n?¿½N?¿½?¿½?¿½Ò‚ï¿½*/
+#define STS_ERR_OFFLINE				0x02	/*?¿½Ã°?¿½?¿½?¿½Úï¿½ ?¿½I?¿½t?¿½?¿½?¿½C?¿½?¿½*/
+#define STS_ERR_COVER				0x03	/*?¿½Ã°?¿½?¿½?¿½Úï¿½ ?¿½J?¿½o?¿½[?¿½I?¿½[?¿½v?¿½?¿½*/
+#define STS_ERR_PAPER				0x04	/*?¿½Ã°?¿½?¿½?¿½Úï¿½ ?¿½y?¿½[?¿½p?¿½[?¿½G?¿½?¿½?¿½h*/
+#define STS_ERR_SENSOR				0x06	/*?¿½Ã°?¿½?¿½?¿½Úï¿½ ?¿½Z?¿½?¿½?¿½T?¿½G?¿½?¿½?¿½[*/
+#define STS_ERR_HEAD				0x07	/*?¿½Ã°?¿½?¿½?¿½Úï¿½ ?¿½w?¿½b?¿½h?¿½G?¿½?¿½?¿½[*/
+#define STS_ERR_BAT				0x10	/*?¿½Ã°?¿½?¿½?¿½Úï¿½ ?¿½o?¿½b?¿½e?¿½?¿½?¿½G?¿½?¿½?¿½[*/
+#define STS_ERR_OTHER				0x11	/*?¿½Ã°?¿½?¿½?¿½Úï¿½ ?¿½?¿½?¿½Ì‘ï¿½?¿½G?¿½?¿½?¿½[*/
 
 
 #define RETRY_CNT				50
@@ -96,10 +96,20 @@
 // *    NEX-M230 å‘½ä»¤
 // * --------------------------- 
 
+// * Romaji
+extern const char bRomaji[2];
+
+// * Quadruple Japanese Kanji
+extern const char bJPx4Release[3];
+extern const char bJPx4Set[3];
+
 // * Japanese Kanji
 extern const char bJP[5] ;
 extern const char bDoulbeStrike[3] ;
 extern const char bNonDoulbeStrik[3] ;
+
+// * Japanese Release
+extern const char bJPRelease[2];
 
 // *  Alignment
 extern const char bAlignLeft[3] ;
