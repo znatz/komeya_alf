@@ -14,6 +14,8 @@
 CONTROLDATA	ctrl;
 BUMST		bumst;	/* 部門マスタ			*/
 HIMST		himst;	/* 品種マスタ			*/
+TAMST		tamst;	/* 担当マスタ			*/
+REMST		remst;	/* ﾚｼｰﾄマスタ			*/
 TDATA		tdata;	/* 棚卸データ			*/
 IDATA		idata;  /* 移動データ			*/
 SDATA		sdata;  /* 仕入データ			*/

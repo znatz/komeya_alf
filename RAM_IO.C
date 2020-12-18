@@ -25,6 +25,8 @@ static struct {
 	{ sizeof( NDATA )		, NDATA_MAX,	True },		/* 値引データ		 */
 	{ sizeof( BUMST )		, BUMST_MAX,	True },		/* 部門マスタ		 */
 	{ sizeof( HIMST )		, HIMST_MAX,	True },		/* 品種マスタ		 */
+	{ sizeof( TAMST )		, TAMST_MAX,	True },		/* 担当マスタ		 */
+	{ sizeof( REMST )		, REMST_MAX,	True },		/* ﾚｼｰﾄマスタ		 */
 	{ sizeof( URDATA )		, URDATA_MAX,	True },		/* 売上データ		 */
 	{ sizeof( INFOUR )		, INFOUR_MAX,	True },		/* 売上一時データ	 */
 	{ sizeof( INFOUR2 )		, 1,		True }		/* 売上一時データ	 */
@@ -194,4 +196,3 @@ short	beginSearch( void *keyStr, short keycnt, short skip, short keylen, short f
 	}
 	return( -1 );
 }
-

@@ -357,7 +357,7 @@ short	BumonFind( char *key )
 {
 	long	adrs;
 
-	//memset( &mmst, 0x00, sizeof( mmst ) );
+	// memset( &bumst, 0x00, sizeof( bumst ) );
 #if 0	/* ２分法 */
 	//adrs = binarySearch( key, sizeof( mmst.Code ), MMSTF, ctrl.MMstCnt, 0 );
 #else	/* 先頭から検索 */
@@ -376,7 +376,7 @@ long	BumonTaxFind( char *key )
 {
 	long	adrs;
 
-	//memset( &mmst, 0x00, sizeof( mmst ) );
+	// memset( &bumst, 0x00, sizeof( bumst ) );
 #if 0	/* ２分法 */
 	//adrs = binarySearch( key, sizeof( mmst.Code ), MMSTF, ctrl.MMstCnt, 0 );
 #else	/* 先頭から検索 */
@@ -399,7 +399,7 @@ long	BumonTaxFindByCode1( char *code1 )
 {
 	long	adrs;
 
-	//memset( &mmst, 0x00, sizeof( mmst ) );
+	// memset( &bumst, 0x00, sizeof( bumst ) );
 #if 0	/* ２分法 */
 	//adrs = binarySearch( key, sizeof( mmst.Code ), MMSTF, ctrl.MMstCnt, 0 );
 #else	/* 先頭から検索 */
@@ -486,17 +486,37 @@ short	TantoFind( char *key )
 {
 	long	adrs;
 
-	//memset( &tmst, 0x00, sizeof( tmst ) );
+	// memset( &tamst, 0x00, sizeof( tamst ) );
 #if 0	/* ２分法 */
-	//adrs = binarySearch( key, sizeof( tmst.Code ), TMSTF, ctrl.TMstCnt, 0 );
+	//adrs = binarySearch( key, sizeof( tamst.Code ), TAMSTF, ctrl.TAMstCnt, 0 );
 #else	/* 先頭から検索 */
-	//adrs = beginSearch( key, 1, 0, sizeof( tmst.Code ), 0, ctrl.TMstCnt, TMSTF );
+	adrs = beginSearch( key, 1, 0, sizeof( tamst.Code ), 0, ctrl.TAMSTCnt, TAMSTF );
 #endif
-	//if( adrs != -1 ){
-	//	ram_read( adrs, &tmst, TMSTF );
-	//}
-	//return adrs;
+	if( adrs != -1 ){
+		ram_read( adrs, &tamst, TAMSTF );
+	}
+	return adrs;
 }
+
+/**************************************************/
+/*  レシートマスタ検索	                              */
+/**************************************************/
+short	RemasFind( char *key )
+{
+	long	adrs;
+
+	// memset( &remst, 0x00, sizeof( remst ) );
+#if 0	/* ２分法 */
+	//adrs = binarySearch( key, sizeof( tamst.Code ), TAMSTF, ctrl.TAMstCnt, 0 );
+#else	/* 先頭から検索 */
+	adrs = beginSearch( key, 1, 0, sizeof( remst.Code ), 0, ctrl.REMSTCnt, REMSTF );
+#endif
+	if( adrs != -1 ){
+		ram_read( adrs, &remst, REMSTF );
+	}
+	return adrs;
+}
+
 
 /**************************************************/
 /*                                                */

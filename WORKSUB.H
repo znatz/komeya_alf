@@ -19,6 +19,7 @@ extern	short	yymmddInput( short x, short y, char *s, char *now, unsigned long pr
 extern	short	MaxCheck( short cnt, short max );
 extern	short	ShopFind( char *key );
 extern	short	TantoFind( char *key );
+extern  short	RemasFind( char *key );
 extern	long	GetAllCnt( void );
 extern	void	playHzEx( short hz, short tim, short loop );
 extern	void	beebEx( short tim, short loop, short wait );

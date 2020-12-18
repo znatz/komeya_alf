@@ -1587,6 +1587,11 @@
       <ViewModeToggle>False</ViewModeToggle>
     </Instance>
   </Class>
+  <Class Guid="84287b3e-7c41-456a-95e9-c7acc8f124ab">
+    <Instance Guid="29749929-2569-4c1f-a670-baeab3a375e8">
+      <DefaultOpenFileIndex>2</DefaultOpenFileIndex>
+    </Instance>
+  </Class>
   <Class Guid="78a1d8b9-6c3e-49af-90d4-3c01ff02a7b4">
     <Instance Guid="ec8b1ab3-b062-4f67-8de0-8a9cfd0e8265">
       <ViewHardwareBreak>True</ViewHardwareBreak>
@@ -1595,11 +1600,6 @@
       <ViewTrace>True</ViewTrace>
       <ViewAction>True</ViewAction>
       <ViewBuiltin>True</ViewBuiltin>
-    </Instance>
-  </Class>
-  <Class Guid="84287b3e-7c41-456a-95e9-c7acc8f124ab">
-    <Instance Guid="29749929-2569-4c1f-a670-baeab3a375e8">
-      <DefaultOpenFileIndex>2</DefaultOpenFileIndex>
     </Instance>
   </Class>
 </CubeSuiteProject.User>

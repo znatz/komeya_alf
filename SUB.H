@@ -51,8 +51,8 @@ extern	short		okngEx( short Yes, short No );
 /*********************************************************/
 extern	short	getweek(short year, short month, short day);
 extern	void	getrtc4( char *s );
+extern  void    getrtcHourMinute( char *s );
+extern  void    getrtcHourMinuteSecond( char *s );
 extern	void	addYear( char *outYear, char *inYear );
 extern	void	addDay( char *yymmdd, short addCnt );
 extern	short	datechk( char *date, char *now, short check );
-
-

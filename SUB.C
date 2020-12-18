@@ -440,6 +440,44 @@ void getrtc4( char *s )
 }
 
 /**************************************************/
+/* HH:MMを返す									   */
+/**************************************************/
+void getrtcHourMinute( char *s ) {
+
+	char buf[14];
+	getrtc( &buf[0]);
+
+	const int c = sizeof(":");
+
+	memcpy( s, &buf[6], 2);
+	memcpy( s+2, ":", c);
+	memcpy( s+2+c, &buf[8], 2);
+}
+
+/**************************************************/
+/* HH:MM:SSを返す								   */
+/**************************************************/
+void getrtcHourMinuteSecond( char *s ) {
+
+	char buf[14];
+	getrtc( &buf[0]);
+
+	// const int c = sizeof(":");
+
+	short hh = atoin( &buf[6], 2 );
+	short nn = atoin( &buf[8], 2 );
+	short ss = atoin( &buf[10], 2 );
+	snprintf(s, sizeof("00:00:00"), "%02d:%02d:%02d", hh,nn,ss);
+	// memcpy(s, buf, sizeof("00:00:00"));
+	// memcpy( s, &buf[6], 2);
+	// memcpy( s+2, ":", c);
+	// memcpy( s+2+c, &buf[8], 2);
+	// memcpy( s+2+c+2, ":", c);
+	// memcpy( s+2+c+2+c, &buf[10], 2);
+}
+
+
+/**************************************************/
 /* 年をインクリメント                             */
 /* 年は２桁で渡す                                 */
 /**************************************************/

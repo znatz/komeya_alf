@@ -287,6 +287,78 @@ void menu( void )
 	}
 }
 
+void print_receipt_header() {
+
+	short ret;
+	char buf[256];
+
+	// * -- ロゴ
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)printRegisterImage1, sizeof(printRegisterImage1));
+
+	// * -- 日本語
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignCenter, sizeof(bAlignCenter));
+
+	// * -- レシートマスタ(3行中央+1行左)
+	if(RemasFind("01") != -1) {
+		memset(buf,0x0,sizeof(buf));
+		snprintf(buf, 30, "%30s", remst.Name);
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, 30);
+		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+	}
+
+	if(RemasFind("02") != -1) {
+		memset(buf,0x0,sizeof(buf));
+		snprintf(buf, 30, "%30s", remst.Name);
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, 30);
+		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+	}
+
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignLeft, sizeof(bAlignLeft));
+
+	if(RemasFind("03") != -1) {
+		memset(buf,0x0,sizeof(buf));
+		snprintf(buf, 24, "%24s", remst.Name);
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, 24);
+	}
+
+	// * -- 店舗-レジ-担当
+	memset(buf,0x0,sizeof(buf));
+	snprintf(buf, sizeof("00-00-00"), "%02d-%02d-%02d", 6,atoin(ctrl.RejiNo, sizeof(ctrl.RejiNo)),99 );
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("00-00-00"));
+
+	ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+
+	// * -- ローマ字
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bSizeNor, sizeof(bSizeNor));
+
+	// * -- 現時間(yy/MM/dd HH:nn)
+	char now[8];
+	memset(now,0x0, sizeof(now));
+	getrtc4( now );
+
+	memset(buf,0x0,11);
+	memcpy(buf,now,4);
+	memcpy(buf+4,"/",1);
+	memcpy(buf+5,now+4,2);
+	memcpy(buf+7,"/",1);
+	memcpy(buf+8,now+6,2);
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf+2, strlen(buf)-2);
+
+	ret = rputs(PORT_BLUETOOTH, " ", sizeof(" "));
+
+	char time[sizeof("00:00")];
+	memset(time,0x0,sizeof(time));
+	getrtcHourMinute(time);
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)time, sizeof(time));
+
+	// * -- 顧客連番
+	memset(buf,0x0,sizeof(buf));
+	snprintf(buf, sizeof("12345678NO:1234567"), "        NO:%07ld", 0 );
+	ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("12345678NO:1234567"));
+
+}
+
 //****************************************************************************/
 /* 	印刷設定
 /*	Flag=1:日計表
@@ -371,33 +443,7 @@ int test_print( short Flag ){
 			rsettime(PORT_BLUETOOTH, 3);
 
 			// * ------------------------  印字構築部分開始
-
-			// * -- 日本語
-			ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
-			ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignCenter, sizeof(bAlignCenter));
-
-			// * -- タイトル
-			memset(buf,0x0, sizeof(buf));
-			sprintf(buf, "販 売 管 理\n");
-			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
-
-			// * -- ローマ字
-			ret = rputs(PORT_BLUETOOTH, (unsigned char *)bSizeNor, sizeof(bSizeNor));
-			sprintf(buf, VER2);
-			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
-
-			// * -- 現時間
-			char now[8];
-			memset(now,0x0, sizeof(now));
-			getrtc4( now );
-
-			memset(buf,0x0,11);
-			memcpy(buf,now,4);
-			memcpy(buf+4,"/",1);
-			memcpy(buf+5,now+4,2);
-			memcpy(buf+7,"/",1);
-			memcpy(buf+8,now+6,2);
-			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+			print_receipt_header();
 
 			// * -- 改行
 			ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
@@ -421,6 +467,18 @@ int test_print( short Flag ){
 			snprintf(buf, 9, "%s%s", "  税区:", ctrl.TaxType);
 			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
 			ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+
+			// * -- 担当印字
+			memset(buf,0x0,sizeof(buf));
+			if(TantoFind("99") != -1) {
+				// * ---------------------------------------------------- DEBUG用
+				// displayStringMsg(&tamst.Name);
+				// * ---------------------------------------------------- DEBUG用
+				snprintf(buf, sizeof("  担当:1234567890123456"), "  担当:%16s", tamst.Name);
+				ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("  担当:1234567890123456"));
+				ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+			}
+
 
 			// * -- Printer & Line Feed
 			ret = rputs(PORT_BLUETOOTH, (unsigned char *)nFeedLine, sizeof(nFeedLine));

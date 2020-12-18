@@ -614,6 +614,9 @@ int entryprintdata() {
 	long kei_systemtax = 0; 
 	long kei_bumontax = 0;
 
+	short kei_tensuu = 0;
+	short has_keigen = 0;
+
 	if( memcmp( info.tanto,"00",2 ) != 0 ){
 
 
@@ -648,6 +651,7 @@ int entryprintdata() {
 			// * 軽減の時、軽減に使用した税率を一時保存
 			if ( ( infour.lngBumonTaxRateTax != 0 ) && ( diff_taxrate == 0 )) {
 				diff_taxrate = infour.lngFinalTaxRate;
+				has_keigen = 1;
 			}
 
 	
@@ -688,6 +692,7 @@ int entryprintdata() {
 
 				// * -- 個数
 				int counts_of_goods = atoi(infour.Num);
+				kei_tensuu += counts_of_goods;
 				// * -- --- 1ではなければ、売価出す
 				if (counts_of_goods != 1) {
 					// * -- 改行
@@ -823,10 +828,47 @@ int entryprintdata() {
 
 		// * -- 改行
 		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
+		// * -- 改行
+		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
 
 		// * -- 文字戻す
 		ret = rputs(PORT_BLUETOOTH, bSizeNor, sizeof(bSizeNor));
 
+		// * -- 軽減あり
+		if ( has_keigen != 0) {
+			snprintf(buf, 32, "%s", "                                    ");
+			snprintf(buf, sizeof("(08%)は軽減税率(08%適用商品)"), "(%d%)は軽減税率(%d%適用商品)", diff_taxrate, diff_taxrate);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("(08%)は軽減税率(08%適用商品)"));
+			ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+		}
+
+		// * -- 担当
+		memset(buf,0x0,sizeof(buf));
+		if(TantoFind("99") != -1) {
+			// * ---------------------------------------------------- DEBUG用
+			// displayStringMsg(&tamst.Name);
+			// * ---------------------------------------------------- DEBUG用
+			snprintf(buf, sizeof("担当:1234567890123456"), "担当:%16s", tamst.Name);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("担当:1234567890123456"));
+			ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+		}
+
+		// * -- ﾚｼｰﾄNO,買上点数
+		memset(buf,0x0,sizeof(buf));
+		snprintf(buf, sizeof("ﾚｼｰﾄNO:0123456_23456789_お買上12点"), "ﾚｼｰﾄNO:%06d         お買上%d点", ctrl.RecNo, kei_tensuu);
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("ﾚｼｰﾄNO:0123456_23456789_お買上12点"));
+		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+
+		// * -- 返品 1行目
+		ret = rputs(PORT_BLUETOOTH, "         << お 願 い >>         ", sizeof("         << お 願 い >>         "));
+		// * -- 改行
+		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
+		// * -- 返品 2行目
+		ret = rputs(PORT_BLUETOOTH, "返品の際は必ずレシートに値札を", sizeof("返品の際は必ずレシートに値札を"));
+		// * -- 改行
+		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
+		// * -- 返品 3行目
+		ret = rputs(PORT_BLUETOOTH, "添えてご持参ください。", sizeof("添えてご持参ください。"));
 
 	}
 
@@ -898,46 +940,7 @@ retry:
 		
 	// * ------------------------  印字構築部分開始
 
-	// * -- 日本語
-	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
-
-	// * -- 中央寄せ
-	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignCenter, sizeof(bAlignCenter));
-
-	// * -- 文字拡大
-	// ret = rputs(PORT_BLUETOOTH, bSizeTri, sizeof(bSizeTri));
-	ret = rputs(PORT_BLUETOOTH, bJPx4Set, sizeof(bJPx4Set));
-
-	// * -- タイトル
-	memset(buf,0x0, sizeof(buf));
-	sprintf(buf, "ユアーズコメヤ\n");
-	ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
-
-	// * -- 文字サイズ戻す
-	ret = rputs(PORT_BLUETOOTH, bJPx4Release, sizeof(bJPx4Release));
-
-	// * -- 左寄せ
-	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignLeft, sizeof(bAlignLeft));
-
-	// * -- YY/MM/dd
-	char now[8];
-	memset(now,0x0, sizeof(now));
-	getrtc4( now );
-
-	memset(buf,0x0,11);
-	memcpy(buf,now,4);
-	memcpy(buf+4,"/",1);
-	memcpy(buf+5,now+4,2);
-	memcpy(buf+7,"/",1);
-	memcpy(buf+8,now+6,2);
-	ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf+2, strlen(buf)-2);
-
-	// * -- 改行
-	ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
-
-	// * -- 日本語
-	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
-	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignLeft, sizeof(bAlignLeft));
+	print_receipt_header();
 
 	// * -- 明細印字
 	entryprintdata();

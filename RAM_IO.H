@@ -10,8 +10,10 @@
 #define	TDATA_MAX		5000	/* 棚卸ＭＡＸ件数	  		*/
 #define	IDATA_MAX		5000	/* 移動ＭＡＸ件数	  		*/
 #define	NDATA_MAX		5000	/* 移動ＭＡＸ件数	  		*/
-#define	BUMST_MAX		 100	/* 部門ＭＡＸ件数	  		*/
+#define	BUMST_MAX		100		/* 部門ＭＡＸ件数	  		*/
 #define	HIMST_MAX		10000	/* 品種ＭＡＸ件数	  		*/
+#define	TAMST_MAX		100		/* 担当ＭＡＸ件数	  		*/
+#define	REMST_MAX		10		/* ﾚｼｰﾄＭＡＸ件数	  		*/
 #define	URDATA_MAX		2900	/* 売上ＭＡＸ件数	  		*/
 #define	INFOUR_MAX		20	/* 売上一時ＭＡＸ件数	  		*/
 
@@ -23,6 +25,8 @@ enum{
 	NDATAF,		/* 値下データ			*/
 	BUMSTF,		/* 部門マスタ			*/
 	HIMSTF,		/* 品種マスタ			*/	
+	TAMSTF,		/* 担当マスタ			*/	
+	REMSTF,		/* ﾚｼｰﾄマスタ			*/	
 	URDATAF,	/* 売上データ			*/
 	INFOURF,	/* 売上データ			*/	
 	INFOURF2,	/* 売上データ			*/	
