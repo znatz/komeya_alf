@@ -592,6 +592,7 @@ int entryprintdata() {
 	int ret;
 	char buf[256];//転送用バッファ
 	char strNumber[MAXLEN];
+	char strNumberYobi[MAXLEN];
 	long lngNumber;
 
 	short taxrate;
@@ -644,9 +645,15 @@ int entryprintdata() {
 			// point to address of current receipt 
 			ram_read( intCnt , &infour, INFOURF );
 
-			// TODO 値下
+			// * 売変あり無し
+			int baihen_ari = 0; 
+			if(!memcmp( infour.Code3, "30", 2 )){ baihen_ari = 1; }
 			kei_zeikomi = kei_zeikomi + atoln(infour.Baika, sizeof(infour.Baika)) * atoi(infour.Num);
-			kei_zeinuki = kei_zeinuki + atoln(infour.Joudai, sizeof(infour.Joudai)) * atoi(infour.Num); 
+			if ( baihen_ari == 1 ) {
+				kei_zeinuki = kei_zeinuki + GetNesage(infour.Code3, 0) * atoi(infour.Num); 
+			} else {
+				kei_zeinuki = kei_zeinuki + atoln(infour.Joudai, sizeof(infour.Joudai)) * atoi(infour.Num); 
+			}
 
 			// * 軽減の時、軽減に使用した税率を一時保存
 			if ( ( infour.lngBumonTaxRateTax != 0 ) && ( diff_taxrate == 0 )) {
@@ -693,18 +700,34 @@ int entryprintdata() {
 				// * -- 個数
 				int counts_of_goods = atoi(infour.Num);
 				kei_tensuu += counts_of_goods;
-				// * -- --- 1ではなければ、売価出す
-				if (counts_of_goods != 1) {
+				// * -- --- 1ではなければ、売価出す 
+				// * -- --- 売変あれば、上代->売価出す 20201222
+				if ( counts_of_goods != 1 || baihen_ari == 1 ) {
 					// * -- 改行
 					ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
 
-					// * -- 売価 X 数量
-					memset(strNumber,0x0,sizeof(strNumber));
-					lngNumber = atoln(infour.Baika, sizeof(infour.Baika)) ;
-					insComma( lngNumber, strNumber );
-					snprintf(buf, sizeof("123456789012345678 X 12"), "%s", "                                                ");
-					snprintf(buf, sizeof("123456789012345678 X 12"), "%18s X %2d", strNumber, counts_of_goods);
-					ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("123456789012345678 X 12"));
+					if (baihen_ari == 1) {
+						// * -- 上代→ 売価 X 数量
+						// * ----- 上代
+						memset(strNumberYobi,0x0,sizeof(strNumberYobi));
+						lngNumber = atoln(infour.Joudai, sizeof(infour.Joudai)) ;
+						insComma( lngNumber, strNumberYobi );
+						// * ----- 売価
+						memset(strNumber,0x0,sizeof(strNumber));
+						lngNumber = atoln(infour.Baika, sizeof(infour.Baika)) ;
+						insComma( lngNumber, strNumber );
+						snprintf(buf, sizeof("12345678→123456789 X 12"), "%s", "                                                ");
+						snprintf(buf, sizeof("12345678→123456789 X 12"), "%8s→%8s X %2d", strNumberYobi, strNumber, counts_of_goods);
+						ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("12345678→123456789 X 12"));
+					} else {
+						// * -- 売価 X 数量
+						memset(strNumber,0x0,sizeof(strNumber));
+						lngNumber = atoln(infour.Baika, sizeof(infour.Baika)) ;
+						insComma( lngNumber, strNumber );
+						snprintf(buf, sizeof("123456789123456789 X 12"), "%s", "                                                ");
+						snprintf(buf, sizeof("123456789123456789 X 12"), "%18s X %2d", strNumber, counts_of_goods);
+						ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("123456789123456789 X 12"));
+					}
 
 					// * -- 金額
 					memset(strNumber,0x0,sizeof(strNumber));
@@ -855,8 +878,13 @@ int entryprintdata() {
 
 		// * -- ﾚｼｰﾄNO,買上点数
 		memset(buf,0x0,sizeof(buf));
-		snprintf(buf, sizeof("ﾚｼｰﾄNO:0123456_23456789_お買上12点"), "ﾚｼｰﾄNO:%06d         お買上%d点", ctrl.RecNo, kei_tensuu);
-		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("ﾚｼｰﾄNO:0123456_23456789_お買上12点"));
+		if (kei_tensuu < 10) {
+			snprintf(buf, sizeof("ﾚｼｰﾄNO:0123456_234567890_お買上2点"), "ﾚｼｰﾄNO:%06d          お買上%d点", ctrl.RecNo, kei_tensuu);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("ﾚｼｰﾄNO:0123456_234567890_お買上2点"));
+		} else {
+			snprintf(buf, sizeof("ﾚｼｰﾄNO:0123456_23456789_お買上12点"), "ﾚｼｰﾄNO:%06d         お買上%d点", ctrl.RecNo, kei_tensuu);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("ﾚｼｰﾄNO:0123456_23456789_お買上12点"));
+		}
 		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
 
 		// * -- 返品 1行目
