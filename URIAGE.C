@@ -1834,8 +1834,9 @@ void uriage( int flag, int firsttime )
 				//クレジットが小計を超えていないかチェック
 				if( lngGoukei >= 0 ){
 					if ( teisei == 0 ) {
-						// TODO
-						if( current_credit > lngGoukei ){	
+						// * 20210106 売掛が(小計-現金)を超えないように
+						// if( current_credit > lngGoukei ){	
+						if( current_credit > lngGoukei - current_cash ){	
 							beeb(10,2, 1);
 							memset( Credit, 0x00, sizeof( Credit ) );
 							lngOturi = 0;
@@ -1847,7 +1848,9 @@ void uriage( int flag, int firsttime )
 						lngOturi = lngOturiChk - lngGoukei ; 
 					}
 					if ( teisei == 1 ) {
-						if( current_credit > lngGoukei ){	
+						// * 20210106 売掛が(小計-現金)を超えないように
+						// if( current_credit > lngGoukei ){	
+						if( current_credit > lngGoukei - current_cash ){	
 							beeb(10,2, 1);
 							memset( Credit, 0x00, sizeof( Credit ) );
 							lngOturi = 0;
