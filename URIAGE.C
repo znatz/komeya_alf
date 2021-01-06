@@ -230,7 +230,9 @@ static void infoclrExceptTenpoTanto( void ){
 /*****************************************************************************/
 static void DisplayHeader() {
 	ckputss( 0, 0, "売　　　        ", False, CLR_UR_TITLE );
-	ckprintf(10, 0, False, CLR_UR_TITLE , "%4d件", ctrl.InfoUrCnt );
+	// * 20210105 総売上件数に変更
+	// ckprintf(10, 0, False, CLR_UR_TITLE , "%4d件", ctrl.InfoUrCnt );
+	ckprintf(10, 0, False, CLR_UR_TITLE , "%4d件", ctrl.URDataCnt );
 	ckputsn( 3, 0, info.tenpo1, sizeof( info.tenpo1 ), False, CLR_UR_TITLE );
 	ckputsn( 5, 0, info.tanto, sizeof( info.tanto ), False, CLR_UR_TITLE );
 }
@@ -708,9 +710,10 @@ int entryprintdata() {
 
 					if (baihen_ari == 1) {
 						// * -- 上代→ 売価 X 数量
-						// * ----- 上代
+						// * ----- 上代(20210105 元売価の税込にする)
 						memset(strNumberYobi,0x0,sizeof(strNumberYobi));
 						lngNumber = atoln(infour.Joudai, sizeof(infour.Joudai)) ;
+						lngNumber = calculateTax2(lngNumber, BumonTaxFindByCode1(infour.Code1)+100);
 						insComma( lngNumber, strNumberYobi );
 						// * ----- 売価
 						memset(strNumber,0x0,sizeof(strNumber));
@@ -1405,15 +1408,38 @@ void uriage( int flag, int firsttime )
 					teisei = 1;
 					item = GENKIN;
 				} else if ( ret == 98 ) {
+							// * 20210105
 							print(1);
+							// * ------------------ * 20210105
+							// item=RYOUSYU; 
+							reprint = 0;
+							teisei = 0;
 							reprint = 1;
-							item=RYOUSYU; 
+							item = CODE1;
+							ctrl.InfoUrCnt = 0;
+							lngGoukei = 0;
+							lngTensuu = 0;
+							lngOturi = 0;
+							lngOturiChk = 0;
+							lngGoukei = 0;
+							lngTensuu = 0;
+							
+							memcpy( infour2.Genkin ,0x00 , sizeof( infour2.Genkin ));
+							memcpy( infour2.Credit ,0x00 , sizeof( infour2.Credit ));
+							memcpy( infour2.Kinken ,0x00 , sizeof( infour2.Kinken ));
+							memcpy( infour2.Coupon ,0x00 , sizeof( infour2.Coupon ));
+							infour2.Oturi = 0;
+							ram_write( 0, &infour2, INFOURF2 );
+							meisaiclr();
+
+							// * ------------------ * 20210105
 
 					//infoclr();
 					//menu();
 				} else if ( ret == 99 ) {
 					// * 再発行
 					print(2);
+
 				} else if ( ret == 13) {
 					// ZNATZ RESET
 					reprint = 0;
