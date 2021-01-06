@@ -77,17 +77,24 @@ static void SndMenu( void )
 static void DelDat( void )
 {
 	short	ret, cnt;
-static char JobStr[5][5] = { "", "仕入", "棚卸", "移動", "値下" };
+	// * 20210106 売上削除追加 値下元々comment outされたので、それを復活して売上に変更
+	// static char JobStr[5][5] = { "", "仕入", "棚卸", "移動", "値下" };
+	static char JobStr[5][5] = { "", "仕入", "棚卸", "移動", "売上" };
 	
 	ClsColor();
 	while( 1 ){
+
 		ckputss( 0,  0, " <<データ削除>> ", False, CLR_DE_TITLE );
 		kputspc( 0, 5, 16, CLR_BASE );
 		kputspc( 0, 8, 16, CLR_BASE );
 		kputspc( 0, 11, 16, CLR_BASE );
 		ckputss( 0,  4, " 1:仕入  2:棚卸 ", False, CLR_BASE );
-		ckputss( 0,  6, " 3:移動  9:中止 ", False, CLR_BASE );
-		ckputss( 0,  8, "                ", False, CLR_BASE );
+		// * 20210106 売上削除追加
+		// ckputss( 0,  6, " 3:移動  9:中止 ", False, CLR_BASE );
+		// ckputss( 0,  8, "                ", False, CLR_BASE );
+		ckputss( 0,  6, " 3:移動  4:売上 ", False, CLR_BASE );
+		ckputss( 0,  8, "   　　  9:中止 ", False, CLR_BASE );
+
 		while( 2 ){
 			ret = getch();
 			if( ret == '1' ){
@@ -102,11 +109,13 @@ static char JobStr[5][5] = { "", "仕入", "棚卸", "移動", "値下" };
 				if( ctrl.IDataCnt )	cnt = ctrl.IDataCnt;
 				else				cnt = 0;
 				break;
-			}/* else if( ret == '4' ){
-				if( ctrl.NDataCnt )	cnt = ctrl.NDataCnt;
+			} else if( ret == '4' ){
+				// if( ctrl.NDataCnt )	cnt = ctrl.NDataCnt;
+				// * 20210106 売上削除追加
+				if( ctrl.URDataCnt )	cnt = ctrl.URDataCnt;
 				else				cnt = 0;
 				break;
-			}*/ else if( ret == '9' ){
+			} else if( ret == '9' ){
 				return;
 			}
 		}
@@ -138,7 +147,9 @@ static char JobStr[5][5] = { "", "仕入", "棚卸", "移動", "値下" };
 					case	'3':
 						ctrl.IDataCnt = 0;		break;
 					case	'4':
-						ctrl.NDataCnt = 0;		break;
+						// ctrl.NDataCnt = 0;		break;
+						// * 20210106 売上削除追加
+						ctrl.URDataCnt = 0;		break;
 				}
 				ram_write( 0, &ctrl, CTRLF );
 				ckputss( 0, 5, "  削除しました  ", False, CLR_BASE );
