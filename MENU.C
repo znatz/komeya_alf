@@ -12,7 +12,7 @@
 static void		SndMenu( void );
 static void		DelDat( void );
 /************************************************************************/
-/*	転送メニュー														*/
+/*	転送メニュー														  */
 /************************************************************************/
 static void SndMenu( void )
 {
@@ -365,7 +365,7 @@ void print_receipt_header() {
 
 	// * -- 顧客連番
 	memset(buf,0x0,sizeof(buf));
-	snprintf(buf, sizeof("12345678NO:1234567"), "        NO:%07ld", 0 );
+	snprintf(buf, sizeof("12345678NO:1234567"), "        NO:%07ld", 5001 );
 	ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("12345678NO:1234567"));
 
 }

@@ -79,11 +79,10 @@ static long calculateTax2(long lngPrice, short rate)
 static long getZeikomiKingaku(char *barcode, short count) { 
 	// displayMsg(BumonTaxFindByCode1(barcode));
 	long jyoudai = getJyoudai(barcode);
-	// * 上段バーコードの上代が税抜しかないため、品種の税区実際見ない、実際0しかならない
 	long zeiku = HinsyuZeikuFindByCode1(barcode);
 	long bumon_tax ;
-	// * 品種税区 0:外税 1:内税
-	if (zeiku == 1) {
+	// * 品種税区 0:外税 1:内税 2:非課税
+	if (zeiku == 2) {
 		bumon_tax = 0;
 	} else {
 		bumon_tax = calculateTax2(jyoudai, BumonTaxFindByCode1(barcode));
@@ -264,7 +263,9 @@ static void Display( short item )
 				// ckputss( 0,  6, " 店舗:          ", False, CLR_BASE );
 				// ckputss( 0, 10, " 担当:          ", False, CLR_BASE );
 				ckputss( 0, 14, "F1:ﾒﾆｭｰ ENT:確定", False, CLR_BASE );	
-				ckputss( 0, 16, "        F4 :日計", False, CLR_BASE );	
+				// * 20210105 無効化
+				// ckputss( 0, 16, "        F4 :日計", False, CLR_BASE );	
+				ckputss( 0, 16, "            　　", False, CLR_BASE );	
 			}
 			break;
 		case MONTH:
@@ -278,7 +279,9 @@ static void Display( short item )
 				// ckputss( 0,  6, " 店舗:          ", False, CLR_BASE );
 				// ckputss( 0, 10, " 担当:          ", False, CLR_BASE );
 				ckputss( 0, 14, "F1:ﾒﾆｭｰ ENT:確定", False, CLR_BASE );	
-				ckputss( 0, 16, "        F4 :日計", False, CLR_BASE );				
+				// * 20210105 無効化
+				// ckputss( 0, 16, "        F4 :日計", False, CLR_BASE );	
+				ckputss( 0, 16, "            　　", False, CLR_BASE );	
 			}
 			break;
 		case DAY:
@@ -292,7 +295,9 @@ static void Display( short item )
 				// ckputss( 0,  6, " 店舗:          ", False, CLR_BASE );
 				// ckputss( 0, 10, " 担当:          ", False, CLR_BASE );
 				ckputss( 0, 14, "F1:ﾒﾆｭｰ ENT:確定", False, CLR_BASE );	
-				ckputss( 0, 16, "        F4 :日計", False, CLR_BASE );				
+				// * 20210105 無効化
+				// ckputss( 0, 16, "        F4 :日計", False, CLR_BASE );	
+				ckputss( 0, 16, "            　　", False, CLR_BASE );	
 			}
 			break;
 		case SHOP:
@@ -306,7 +311,9 @@ static void Display( short item )
 				// ckputss( 0,  6, " 店舗:          ", False, CLR_BASE );
 				// ckputss( 0, 10, " 担当:          ", False, CLR_BASE );
 				ckputss( 0, 14, "F1:ﾒﾆｭｰ ENT:確定", False, CLR_BASE );	
-				ckputss( 0, 16, "        F4 :日計", False, CLR_BASE );		
+				// * 20210105 無効化
+				// ckputss( 0, 16, "        F4 :日計", False, CLR_BASE );	
+				ckputss( 0, 16, "            　　", False, CLR_BASE );	
 			}
 			break;
 		case TANTO:
@@ -321,7 +328,9 @@ static void Display( short item )
 				// ckputsn( 6,  6, info.tenpo1,  2, False, CLR_BASE );
 				// ckputss( 0, 10, " 担当:          ", False, CLR_BASE );
 				ckputss( 0, 14, "F1:ﾒﾆｭｰ ENT:確定", False, CLR_BASE );	
-				ckputss( 0, 16, "        F4 :日計", False, CLR_BASE );					
+				// * 20210105 無効化
+				// ckputss( 0, 16, "        F4 :日計", False, CLR_BASE );	
+				ckputss( 0, 16, "            　　", False, CLR_BASE );	
 			}
 			break;
 		case CODE1:
@@ -333,7 +342,9 @@ static void Display( short item )
 
 				ckputss( 0,  2, "▲              ", False, CLR_BASE );
 				ckputss( 0,  4, "▽              ", False, CLR_BASE );				
-				ckputss( 0,  6, "値下:           ", False, CLR_BASE );				
+				// * 20210105 値下は常に有効ではないように
+				// ckputss( 0,  6, "値下:           ", False, CLR_BASE );				
+				ckputss( 0,  6, "　　            ", False, CLR_BASE );				
 
 				// * 現在小計金額
 				ckputss( 0, 12, "計        　　", False, CLR_SI_TITLE );
@@ -357,7 +368,9 @@ static void Display( short item )
 				ckputss( 0,  2, "△              ", False, CLR_BASE );
 				ckputsn( 3,  2, info.Code1, 13, False, CLR_BASE );
 				ckputss( 0,  4, "▼              ", False, CLR_BASE );
-				ckputss( 0,  6, "値下:           ", False, CLR_BASE );				
+				// * 20210105 値下は常に有効ではないように
+				// ckputss( 0,  6, "値下:           ", False, CLR_BASE );				
+				ckputss( 0,  6, "　　            ", False, CLR_BASE );				
 
 				// * 現在小計金額
 				ckputss( 0, 12, "計        　　", False, CLR_SI_TITLE );
@@ -379,7 +392,9 @@ static void Display( short item )
 
 				ckputss( 0,  2, "△              ", False, CLR_BASE );
 				ckputss( 0,  4, "▽              ", False, CLR_BASE );
-				ckputss( 0,  6, "値下:           ", False, CLR_BASE );				
+				// * 20210105 値下表示変更
+				// ckputss( 0,  6, "値下:           ", False, CLR_BASE );				
+				ckputss( 0,  6, "□              ", False, CLR_BASE );
 				ckputsn( 3,  2, info.Code1, 13, False, CLR_BASE );
 				ckputsn( 3,  4, info.Code2, 13, False, CLR_BASE );
 				
@@ -409,10 +424,14 @@ static void Display( short item )
 
 				ckputss( 0,  2, "△              ", False, CLR_BASE );
 				ckputss( 0,  4, "▽              ", False, CLR_BASE );
-				ckputss( 0,  6, "値下:           ", False, CLR_BASE );				
+				// * 20210105 値下表示変更
+				// ckputss( 0,  6, "値下:           ", False, CLR_BASE );				
+				ckputss( 0,  6, "□              ", False, CLR_BASE );
 				ckputsn( 3,  2, info.Code1, 13, False, CLR_BASE );
 				ckputsn( 3,  4, info.Code2, 13, False, CLR_BASE );
-				ckputsn( 5,  6, info.Code3, 8, False, CLR_BASE );
+				// * 20210105 値下表示変更
+				// ckputsn( 5,  6, info.Code3, 8, False, CLR_BASE );
+				ckputsn( 3,  6, info.Code3, 8, False, CLR_BASE );
 				
 				// * 売価表示
 				// * 売変の反映はCODE3を読んだ後 20201207
@@ -429,7 +448,9 @@ static void Display( short item )
 				ckprintf(11,12, False, CLR_SI_TITLE , "%3d点", lngTensuu );
 
 				ckputss( 0, 14, "F1:戻る ENT:確定", False, CLR_BASE );	
-				ckputss( 0, 16, "         F4:精算", False, CLR_BASE );	
+				// * 20210105 値下を常に有効しないように
+				// ckputss( 0, 16, "         F4:精算", False, CLR_BASE );	
+				ckputss( 0, 16, "F3:値下  F4:精算", False, CLR_BASE );	
 			}
 			break;
 
@@ -762,9 +783,15 @@ int entryprintdata() {
 
 				// * -- 対象金額集計
 				if ( infour.lngFinalTaxRate != taxrate ) {
-					kei_bumontax = kei_bumontax + lngNumber;
+					// * 非課税ではなければ
+					if ( HinsyuZeikuFindByCode1(infour.Code1) != 2 ) {
+						kei_bumontax = kei_bumontax + lngNumber;
+					}
 				} else {
-					kei_systemtax = kei_systemtax + lngNumber;
+					// * 非課税ではなければ
+					if ( HinsyuZeikuFindByCode1(infour.Code1) != 2 ) {
+						kei_systemtax = kei_systemtax + lngNumber;
+					}
 				}
 
 			}
@@ -805,7 +832,8 @@ int entryprintdata() {
 		// * -- 改行
 		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
 
-		if ( kei_systemtax != 0 ) {
+		// * 20210105 systemtaxは必ずだす
+		// if ( kei_systemtax != 0 ) {
 
 			// * -- 10%対象
 			memset(strNumber,0x0,sizeof(strNumber));
@@ -816,7 +844,7 @@ int entryprintdata() {
 
 			// * -- 改行
 			ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
-		}
+		// }
 
 		if ( kei_bumontax != 0 ) {
 			// displayMsg(diff_taxrate);
@@ -842,15 +870,35 @@ int entryprintdata() {
 		// * -- 改行
 		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
 
-		// * -- 文字拡大
-		ret = rputs(PORT_BLUETOOTH, bSizeDbl, sizeof(bSizeDbl));
-
 		// * -- お釣り
-		memset(strNumber,0x0,sizeof(strNumber));
-		insComma( lngOturi, strNumber );
-		snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
-		snprintf(buf, sizeof("お釣り1234567890"), "お釣り%10s", strNumber);
-		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("お釣り1234567890"));
+		if( atoln(Credit, sizeof(Credit)) == 0 ) {
+			// * -- 文字拡大
+			ret = rputs(PORT_BLUETOOTH, bSizeDbl, sizeof(bSizeDbl));
+			// * -- お釣り
+			memset(strNumber,0x0,sizeof(strNumber));
+			insComma( lngOturi, strNumber );
+			snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
+			snprintf(buf, sizeof("お釣り1234567890"), "お釣り%10s", strNumber);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("お釣り1234567890"));
+		} else {
+			// * -- お釣り
+			memset(strNumber,0x0,sizeof(strNumber));
+			insComma( lngOturi, strNumber );
+			snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
+			snprintf(buf, sizeof("お釣り12345678901234567890123456"), "お釣り%26s", strNumber);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("お釣り12345678901234567890123456"));
+			// * -- 文字拡大
+			ret = rputs(PORT_BLUETOOTH, bSizeDbl, sizeof(bSizeDbl));
+			// * -- 売掛
+			memset(strNumber,0x0,sizeof(strNumber));
+			insComma( atoln(Credit, sizeof(Credit)), strNumber );
+			snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
+			snprintf(buf, sizeof("売掛金1234567890"), "売掛金%10s", strNumber);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("売掛金1234567890"));
+		}
+
+
+
 
 		// * -- 改行
 		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
@@ -1342,7 +1390,8 @@ void uriage( int flag, int firsttime )
 								 BCR_NOTDRW | BCR_WPC | KEY_FUNC );
 				break;				
 			case CODE3:
-				ret = CodeInput8orNull( 5, 6, info.Code3, sizeof( info.Code3 ), 
+				// * 20210105 値下表示変更 5 -> 3
+				ret = CodeInput8orNull( 3, 6, info.Code3, sizeof( info.Code3 ), 
 								 BCR_NOTDRW | BCR_WPC | KEY_FUNC | KEY_SKIP );
 				break;				
 			case NUM:
@@ -1580,16 +1629,18 @@ void uriage( int flag, int firsttime )
 				/* 上段コードの先頭から３桁が501～999の場合、０９９９、１、３から始まるコード以外不可 */
 				if( atoin( info.Code1, 3 ) > 500 && atoin( info.Code1, 3 ) < 999 ){
 					if( (info.Code2[0] == '0' || info.Code2[0] == '1' || info.Code2[0] == '2' || info.Code2[0] == '3') && info.Code2[12] != ' ' ){
-						item = CODE3;
+						// * 20210105 値下は常に有効ではないように
+						// item = CODE3;
+						item = NUM;
 						continue;
 					} else {
-						/* 上記に該当しない場合はエラー */
+						//*  上記に該当しない場合はエラー *//
 						memset( info.Code2, 0x00, sizeof( info.Code2 ) );
 						beep( 10, 2 );
 						continue;
 					}
 				} else {
-					/* 上記に該当しない場合はエラー */
+					//*  上記に該当しない場合はエラー *//
 					memset( info.Code2, 0x00, sizeof( info.Code2 ) );
 					beep( 10, 2 );
 					continue;
@@ -1666,6 +1717,49 @@ void uriage( int flag, int firsttime )
 					}
 				} 			
  			} else if( item == NUM ){
+
+				// * --------------------------------------------------------------------------------------------------  20210105 
+				if( !memcmp( info.Code3, "30", 2 ) && info.Code3[7] != ' ' ){
+
+					// TODO 20201207 売変の税込金額 システム税率, 外税
+					// * 売価確定
+					long lngNesageKingaku = calculateTax2(GetNesage(info.Code3, info.Joudai), taxrate);
+					lngBaika = lngNesageKingaku;
+
+					// TODO 20201208
+					// * 一品消費税確定(売変)
+					lngSingleTax = lngNesageKingaku - GetNesage(info.Code3,info.Joudai);
+
+					char _buf[10];
+					sprintf(_buf, "%010d", lngBaika);
+					memcpy(info.Baika, _buf, sizeof(info.Baika));
+
+				} else {
+
+					// * 20201207 売変ない場合はそのまま税込上代
+					// * 売価確定
+					lngBaika = getZeikomiKingaku(info.Code1, 1);
+					char _buf[10];
+					sprintf(_buf, "%010d", lngBaika);
+					memcpy(info.Baika, _buf, sizeof(info.Baika));
+
+					// * 上代確定 20201208
+					lngJoudai = getJyoudai(info.Code1);
+
+					// * 税区より一品消費税確定
+					long lngCheckZeiku = HinsyuZeikuFindByCode1(info.Code1);
+					if ( lngCheckZeiku == 0 ) {
+						// * 外税
+						lngSingleTax = lngBaika - lngJoudai;
+					} else if ( lngCheckZeiku == 1 ) {
+						// * 内税
+						lngSingleTax = calculateTax2(lngJoudai, BumonTaxFindByCode1(info.Code1));
+					} else {
+						// * 非課税
+						lngSingleTax = 0;
+					}
+				}
+				// * --------------------------------------------------------------------------------------------------  20210105 
 
 				 long current_input_num = atoln(info.Num, sizeof(info.Num));
 				// * 0は弾く
@@ -1925,7 +2019,9 @@ void uriage( int flag, int firsttime )
 
 				ckputss( 0,  2, "▲              ", False, CLR_BASE );
 				ckputss( 0,  4, "▽              ", False, CLR_BASE );				
-				ckputss( 0,  6, "値下:           ", False, CLR_BASE );				
+				// * 20210105 値下は常に有効ではないように
+				// ckputss( 0,  6, "値下:           ", False, CLR_BASE );				
+				ckputss( 0,  6, "　　            ", False, CLR_BASE );				
 
 				// * 現在小計金額
 				ckputss( 0, 12, "計        　　", False, CLR_SI_TITLE );
@@ -1992,9 +2088,9 @@ void uriage( int flag, int firsttime )
 			continue;
 		}else if( ret == F4KEY ){//日計表・現金
 			if( item ==  YEAR || item == MONTH || item == DAY || item == SHOP || item == TANTO ){
-				cls();
-				print( 0 );
-				continue;
+				// cls();
+				// print( 0 );
+				// continue;
 			}else if( item == CODE1 || item == CODE2 ){
 				if( lngTensuu != 0 ){
 					memcpy( Genkin , "000000" , sizeof( Genkin ) );
@@ -2003,6 +2099,13 @@ void uriage( int flag, int firsttime )
 					memcpy( Coupon , "000000", sizeof( Coupon ) );
 					item = GENKIN;
 				}
+				continue;
+			}
+		}else if( ret == F3KEY) {// * 20210105 数量か値下に行く
+			if( item == NUM )  {
+				memset( info.Code3, 0x00, sizeof( info.Code3 ) );
+				ckputss( 0,  6, "□              ", False, CLR_BASE );
+				item = CODE3;
 				continue;
 			}
 		}
