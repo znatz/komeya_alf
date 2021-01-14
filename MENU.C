@@ -175,37 +175,39 @@ void Setting( void ){
 	ClsColor();
 	ckputss( 0,  0, "   <<設  定>>   ", False, CLR_SE_TITLE );
 	
-	ckputss( 0,  2, "1.レジNO: ", False, CLR_BASE );
-	// drawLineCrossScreen(2);
-	
-	ckputss( 0,  4, "2.消費税率:  ％ ", False, CLR_BASE );
-	ckputsn( 11, 4, ctrl.TaxRate,  2, False, CLR_BASE );
-	// drawLineCrossScreen(4);
-	
-	ckputss( 0, 6, "3.税計算:     ", False, CLR_BASE );
-	ckputsn( 11,6, ctrl.TaxType, 1, False, CLR_BASE );
-	ckputss( 0, 8, "1四捨五入 2切捨て", False, CLR_BASE );
-	// drawLineCrossScreen(8);
-	
-	
-	ckputss( 0, 10, "4.ﾚｼｰﾄ発行:     ", False, CLR_BASE );
-	ckputsn( 11,10, ctrl.RecPrint, 1, False, CLR_BASE );
-	ckputss( 0, 12, " 1.する 2.しない", False, CLR_BASE );
-	// drawLineCrossScreen(12);
+	ckputss( 0,  2, "1.店舗NO: ", False, CLR_BASE );
+	ckputsn( 9,  2, ctrl.ShopNo,  2, False, CLR_BASE );
 
-	ckputss( 0, 15, "F1:戻る ENT:設定", False, CLR_BASE );
+	ckputss( 0,  4, "2.レジNO: ", False, CLR_BASE );
+	ckputsn( 9,  4, ctrl.RejiNo,  2, False, CLR_BASE );
+	
+	ckputss( 0,  6, "3.消費税率:  ％ ", False, CLR_BASE );
+	ckputsn( 11, 6, ctrl.TaxRate,  2, False, CLR_BASE );
+	
+	ckputss( 0, 8, "4.税計算:     ", False, CLR_BASE );
+	ckputsn( 11,8, ctrl.TaxType, 1, False, CLR_BASE );
+	ckputss( 0, 10, "1四捨五入 2切捨て", False, CLR_BASE );
+	
+	ckputss( 0, 12, "5.ﾚｼｰﾄ発行:     ", False, CLR_BASE );
+	ckputsn( 11,12, ctrl.RecPrint, 1, False, CLR_BASE );
+
+	ckputss( 0, 14, " 1.する 2.しない", False, CLR_BASE );
+	ckputss( 0, 16, "F1:戻る ENT:設定", False, CLR_BASE );
 	while( 1 ){
 		if( Flag == 0 ){
-			ret = NumInput( 9,  2, ctrl.RejiNo, sizeof( ctrl.RejiNo ), 0, 99L, 
+			ret = NumInput( 9,  2, ctrl.ShopNo, sizeof( ctrl.ShopNo ), 0, 99L, 
 						KEY_FIX | IN_NUMERIC | KEY_FUNC, TYPE_CHAR, NO_CHECK );
 		}else if( Flag == 1 ){
-			ret = NumInput( 11, 4, ctrl.TaxRate, sizeof( ctrl.TaxRate ), 0, 99L, 
+			ret = NumInput( 9,  4, ctrl.RejiNo, sizeof( ctrl.RejiNo ), 0, 99L, 
 						KEY_FIX | IN_NUMERIC | KEY_FUNC, TYPE_CHAR, NO_CHECK );
 		}else if( Flag == 2 ){
-			ret = NumInput( 11, 6, ctrl.TaxType, sizeof( ctrl.TaxType ), 0, 9L, 
+			ret = NumInput( 11, 6, ctrl.TaxRate, sizeof( ctrl.TaxRate ), 0, 99L, 
+						KEY_FIX | IN_NUMERIC | KEY_FUNC, TYPE_CHAR, NO_CHECK );
+		}else if( Flag == 3 ){
+			ret = NumInput( 11, 8, ctrl.TaxType, sizeof( ctrl.TaxType ), 0, 9L, 
 						KEY_FIX | IN_NUMERIC | KEY_FUNC, TYPE_CHAR, NO_CHECK );				
 		}else{	
-			ret = NumInput( 11, 10, ctrl.RecPrint, sizeof( ctrl.RecPrint ), 0, 9L, 
+			ret = NumInput( 11, 12, ctrl.RecPrint, sizeof( ctrl.RecPrint ), 0, 9L, 
 						KEY_FIX | IN_NUMERIC | KEY_FUNC, TYPE_CHAR, NO_CHECK );
 		}
 		if( ret  == ENTRY || ret == SENTRY ){
@@ -220,6 +222,10 @@ void Setting( void ){
 			}else if( Flag == 2 ){
 				ram_write( 0, &ctrl, CTRLF );
 				Flag = 3;
+				continue;
+			}else if( Flag == 3 ){
+				ram_write( 0, &ctrl, CTRLF );
+				Flag = 4;
 				continue;
 			}else{
 				if( memcmp( ctrl.RecPrint,"1",1 ) == 0 || memcmp( ctrl.RecPrint,"2",1 ) == 0 ){
@@ -335,7 +341,7 @@ void print_receipt_header() {
 
 	// * -- 店舗-レジ-担当
 	memset(buf,0x0,sizeof(buf));
-	snprintf(buf, sizeof("00-00-00"), "%02d-%02d-%02d", 6,atoin(ctrl.RejiNo, sizeof(ctrl.RejiNo)),99 );
+	snprintf(buf, sizeof("00-00-00"), "%02d-%02d-%02d", atoin(ctrl.ShopNo, sizeof(ctrl.ShopNo)),atoin(ctrl.RejiNo, sizeof(ctrl.RejiNo)),99 );
 	ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("00-00-00"));
 
 	ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
@@ -464,6 +470,11 @@ int test_print( short Flag ){
 			ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignLeft, sizeof(bAlignLeft));
 
 			// * -- 設定印字
+			memset(buf,0x0,sizeof(buf));
+			snprintf(buf, 10, "%s%s", "店舗NO:", ctrl.ShopNo);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));
+			ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));  // ----------- 改行
+
 			memset(buf,0x0,sizeof(buf));
 			snprintf(buf, 10, "%s%s", "レジNO:", ctrl.RejiNo);
 			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, strlen(buf));

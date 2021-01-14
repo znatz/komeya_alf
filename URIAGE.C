@@ -174,6 +174,7 @@ static void meisaiclr( void )
 	info.lngBumonTaxRateTax = 0;
 	info.lngSystemTaxRateTax = 0;
 
+	memset( Baika,	0x00, sizeof( Baika ) );
 	//20201207
 	lngJoudai = 0;
 	lngBaika = 0;
@@ -196,6 +197,7 @@ static void infoclr( void ){
 //	memset( tmst.Name,0x00, sizeof( tmst.Name ) );
 	memset( Name,0x00, sizeof( Name ) );
 	
+	memset( Baika,	0x00, sizeof( Baika ) );
 }
 
 static void infoclrExceptTenpoTanto( void ){
@@ -223,6 +225,7 @@ static void infoclrExceptTenpoTanto( void ){
 	memset( Code,	0x00, sizeof( Code ) );
 	memset( Name,	0x00, sizeof( Name ) );
 	
+	memset( Baika,	0x00, sizeof( Baika ) );
 }
 /*****************************************************************************/
 /* 			     															 */
@@ -404,8 +407,34 @@ static void Display( short item )
 				ckputss( 0, 16, "         F4:精算", False, CLR_BASE );	
 			}
 			break;
+		case BAIHEN:
+			if( SaveItem != BAIHEN){
+				ClsColor();	
 
+				DisplayHeader();
 
+				ckputss( 0,  2, "△              ", False, CLR_BASE );
+				ckputss( 0,  4, "▽              ", False, CLR_BASE );
+				ckputss( 0,  6, "○              ", False, CLR_BASE );
+				ckputsn( 3,  2, info.Code1, 13, False, CLR_BASE );
+				ckputsn( 3,  4, info.Code2, 13, False, CLR_BASE );
+				
+				// * 売価表示
+				insComma( getZeikomiKingaku(info.Code1, 1), strBaika);
+				ckprintf(0,  9, False, CLR_BASE , "￥%7s",strBaika );
+
+				// * 現在小計金額
+				ckputss( 0, 12, "計        　　", False, CLR_SI_TITLE );
+				insComma( lngGoukei, strGoukei );
+				ckprintf(2, 12, False, CLR_SI_TITLE, "%7s円", strGoukei );
+
+				// * 現在小計点数
+				ckprintf(11,12, False, CLR_SI_TITLE , "%3d点", lngTensuu );
+
+				ckputss( 0, 14, "F1:戻る ENT:確定", False, CLR_BASE );	
+				ckputss( 0, 16, "         F4:精算", False, CLR_BASE );	
+			}
+			break;
 		case NUM:
 			if( SaveItem != NUM){
 				ClsColor();	
@@ -440,7 +469,9 @@ static void Display( short item )
 				ckputss( 0, 14, "F1:戻る ENT:確定", False, CLR_BASE );	
 				// * 20210105 値下を常に有効しないように
 				// ckputss( 0, 16, "         F4:精算", False, CLR_BASE );	
-				ckputss( 0, 16, "F3:値下  F4:精算", False, CLR_BASE );	
+				// * 20210112 売変
+				// ckputss( 0, 16, "F3:値下  F4:精算", False, CLR_BASE );	
+				ckputss( 0, 16, "F3:値下  F4:売変", False, CLR_BASE );	
 			}
 			break;
 
@@ -628,6 +659,7 @@ int entryprintdaily() {
 	long kei_tensuu = 0;
 	long kei_genkin = 0;
 	long kei_credit = 0;
+	long kei_arari = 0;
 
 	if( memcmp( info.tanto,"00",2 ) != 0 ){
 
@@ -686,6 +718,7 @@ int entryprintdaily() {
 			kei_tensuu += atoln(urdata.Num, sizeof(urdata.Num));
 			kei_genkin += atoln(urdata.Genkin, sizeof(urdata.Genkin)) - urdata.lngOturi; 
 			kei_credit += atoln(urdata.Credit, sizeof(urdata.Credit));
+			kei_arari  += kei_tensuu * ( atoln(urdata.Baika, sizeof(urdata.Baika)) - getGedai(urdata.Code2));
 	
 		}
 		
@@ -716,6 +749,14 @@ int entryprintdaily() {
 		snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
 		snprintf(buf, sizeof("現金1234567890123456789012345678"), "現金%28s", strNumber);
 		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("現金1234567890123456789012345678"));
+		
+		// * -- 粗利
+		memset(strNumber,0x0,sizeof(strNumber));
+		insComma( kei_arari, strNumber );
+		snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
+		snprintf(buf, sizeof("粗利1234567890123456789012345678"), "粗利%28s", strNumber);
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("粗利1234567890123456789012345678"));
+
 
 		// * -- 改行
 		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
@@ -795,9 +836,13 @@ int entryprintdata() {
 			// point to address of current receipt 
 			ram_read( intCnt , &infour, INFOURF );
 
-			// * 売変あり無し
+			// * 売変あり無し 0:無し 1:値下シール 2:直接売変
 			int baihen_ari = 0; 
 			if(!memcmp( infour.Code3, "30", 2 )){ baihen_ari = 1; }
+			if(!memcmp( infour.Code3, "99", 2 )){ 
+				baihen_ari = 2;
+				memset( infour.Code3, 0x0, sizeof(infour.Code3));
+			}
 			kei_zeikomi = kei_zeikomi + atoln(infour.Baika, sizeof(infour.Baika)) * atoi(infour.Num);
 			if ( baihen_ari == 1 ) {
 				kei_zeinuki = kei_zeinuki + GetNesage(infour.Code3, 0) * atoi(infour.Num); 
@@ -852,11 +897,11 @@ int entryprintdata() {
 				kei_tensuu += counts_of_goods;
 				// * -- --- 1ではなければ、売価出す 
 				// * -- --- 売変あれば、上代->売価出す 20201222
-				if ( counts_of_goods != 1 || baihen_ari == 1 ) {
+				if ( counts_of_goods != 1 || baihen_ari != 0 ) {
 					// * -- 改行
 					ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
 
-					if (baihen_ari == 1) {
+					if (baihen_ari != 0) {
 						// * -- 上代→ 売価 X 数量
 						// * ----- 上代(20210105 元売価の税込にする)
 						memset(strNumberYobi,0x0,sizeof(strNumberYobi));
@@ -1237,6 +1282,10 @@ static void entryUriage(){
 	if( memcmp( info.tanto,"00",2 ) != 0 ){
 		for ( intCnt = 0; intCnt < ctrl.InfoUrCnt; intCnt++) {
 			ram_read( intCnt , &infour, INFOURF );
+
+			if(!memcmp( infour.Code3, "99", 2 )){ 
+				memset(infour.Code3, 0x0, sizeof(infour.Code3));
+			}
 			memcpy( urdata.Tanto, info.tanto , sizeof( urdata.Tanto ));
 			memcpy( urdata.Shop,  info.tenpo1, sizeof( urdata.Shop ));
 			memcpy( urdata.RejiNo, ctrl.RejiNo , sizeof( urdata.RejiNo ));
@@ -1525,6 +1574,13 @@ void uriage( int flag, int firsttime )
 				ret = CodeInput8orNull( 3, 6, info.Code3, sizeof( info.Code3 ), 
 								 BCR_NOTDRW | BCR_WPC | KEY_FUNC | KEY_SKIP );
 				break;				
+			case BAIHEN:
+				// * 20210112 
+				memcpy( Baika , 0 ,sizeof( Baika )); 
+				ret = NumInput( 3, 6, Baika, sizeof( Baika ), 0, 999999L,
+								IN_NUMERIC | KEY_MINUS | KEY_FUNC, TYPE_NUM, NO_CHECK );
+				break;
+
 			case NUM:
 				memcpy( info.Num ,"0001" ,sizeof( info.Num )); 
 				ret = NumInput( 12, 9, info.Num, sizeof( info.Num ), 0, 99999L,
@@ -1655,7 +1711,8 @@ void uriage( int flag, int firsttime )
 				if( atoln( Day, sizeof( Day ) ) > 0 && atoln( Day, sizeof( Day ) ) <= 31 ){
 					// 直接にCODE1に
 					// item = SHOP;
-					memcpy( info.tenpo1, "06", sizeof( info.tenpo1 ) );
+					// memcpy( info.tenpo1, "06", sizeof( info.tenpo1 ) );
+					memcpy( info.tenpo1, ctrl.ShopNo, sizeof( info.tenpo1 ) );
 					memcpy( info.tanto, "99", sizeof( info.tanto ) );
 					item = CODE1;
 				}else{
@@ -1665,7 +1722,8 @@ void uriage( int flag, int firsttime )
 				continue;
 			}else if( item == SHOP ){
 				if(memcmp( info.tenpo1,"00",2 ) == 0) {
-					memcpy( info.tenpo1, "06", sizeof( info.tenpo1 ) );
+					// memcpy( info.tenpo1, "06", sizeof( info.tenpo1 ) );
+					memcpy( info.tenpo1, ctrl.ShopNo, sizeof( info.tenpo1 ) );
 				}
 				item = TANTO;
 				//ckputsn( 2, 8, mmst.Name, 14, False, CLR_BASE );
@@ -1777,7 +1835,8 @@ void uriage( int flag, int firsttime )
 					continue;
 				}
 						
-			} else if( item == CODE3 ){
+			} else if( item == CODE3 || item == BAIHEN ){
+				// * 2021/01/12 売変も追加
 
 				if( ctrl.InfoUrCnt == INFOUR_MAX ){//件数を超える場合は登録不可
 					beeb(10,2, 1);
@@ -1821,8 +1880,9 @@ void uriage( int flag, int firsttime )
 					continue;
 				}
 
-				// * -------------------------------------------------------------------------------------------------　売変有り
+				// * -------------------------------------------------------------------------------------------------　値下シール有り
 				if( info.Code3[0] ){
+					
 					if( !memcmp( info.Code3, "30", 2 ) && info.Code3[7] != ' ' ){
 
 						// TODO 20201207 売変の税込金額 システム税率, 外税
@@ -1847,6 +1907,26 @@ void uriage( int flag, int firsttime )
 						continue;
 					}
 				} 			
+
+				// * -------------------------------------------------------------------------------------------------　直接売変有り
+				if( atoln(Baika, sizeof(Baika)) != 0 ){
+
+					// TODO 20201207 売変の税込金額 システム税率, 外税
+					// * 売価確定
+					long lngNesageKingaku = calculateTax2(atoln(Baika, sizeof(Baika)), taxrate);
+					lngBaika = lngNesageKingaku;
+
+					// TODO 20201208
+					// * 一品消費税確定(売変)
+					lngSingleTax = lngNesageKingaku - atoln(Baika, sizeof(Baika));
+
+					char _buf[10];
+					sprintf(_buf, "%010d", lngBaika);
+					memcpy(info.Baika, _buf, sizeof(info.Baika));
+
+					item = NUM;
+					continue;
+				}
  			} else if( item == NUM ){
 
 				// * --------------------------------------------------------------------------------------------------  20210105 
@@ -1864,6 +1944,25 @@ void uriage( int flag, int firsttime )
 					char _buf[10];
 					sprintf(_buf, "%010d", lngBaika);
 					memcpy(info.Baika, _buf, sizeof(info.Baika));
+
+				} else if( atoln(Baika, sizeof(Baika)) != 0 ){
+					// * -------------------------------------------------------------------------------------------------　直接売変有り
+
+					// TODO 20201207 売変の税込金額 システム税率, 外税
+					// * 売価確定
+					long lngNesageKingaku = calculateTax2(atoln(Baika, sizeof(Baika)), taxrate);
+					lngBaika = lngNesageKingaku;
+
+					// TODO 20201208
+					// * 一品消費税確定(売変)
+					lngSingleTax = lngNesageKingaku - atoln(Baika, sizeof(Baika));
+
+					char _buf[10];
+					sprintf(_buf, "%010d", lngBaika);
+					memcpy(info.Baika, _buf, sizeof(info.Baika));
+
+					// * 20210112 一旦Code3にセット後でクリア
+					memset(info.Code3, '9', sizeof(info.Code3));
 
 				} else {
 
@@ -2231,6 +2330,10 @@ void uriage( int flag, int firsttime )
 					item = GENKIN;
 				}
 				continue;
+			}else if( item == NUM ) {
+				// * 20210112
+				memset(Baika, 0x00, sizeof(Baika));
+				item = BAIHEN; 
 			}
 		}else if( ret == F3KEY) {// * 20210105 数量か値下に行く
 			if( item == NUM )  {
