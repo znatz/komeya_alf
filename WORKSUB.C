@@ -412,6 +412,29 @@ long	BumonTaxFindByCode1( char *code1 )
 	return 10;
 }
 
+/***************************************************/
+/*  バーコード1から部門コード抽出 	                    */
+/*  呼び出し例: 　	                                 */
+/* displayMsg(BumonCodeFindByCode1(&tdata.Code1)); */
+/***************************************************/
+long	BumonCodeFindByCode1( char *code1 )
+{
+	long	adrs;
+
+	// memset( &bumst, 0x00, sizeof( bumst ) );
+#if 0	/* ２分法 */
+	//adrs = binarySearch( key, sizeof( mmst.Code ), MMSTF, ctrl.MMstCnt, 0 );
+#else	/* 先頭から検索 */
+	adrs = beginSearch( code1+3, 1, 0, sizeof( bumst.Code ), 0, ctrl.BUMSTCnt, BUMSTF );
+#endif
+	if( adrs != -1 ){
+		ram_read( adrs, &bumst, BUMSTF );
+		return atoln(bumst.Code, sizeof(bumst.Code));
+	}
+	return 10;
+}
+
+
 /*****************************************************/
 /*  品種税区検索	                                   */
 /*  呼び出し例: 　	                                   */
