@@ -688,6 +688,8 @@ int entryprintdaily() {
 	long kei_genkin = 0;
 	long kei_credit = 0;
 	long kei_arari = 0;
+	long running_receipt_number = -1;
+	long kei_receipt_count = 0;
 
 	if( memcmp( info.tanto,"00",2 ) != 0 ){
 
@@ -754,9 +756,16 @@ int entryprintdaily() {
 		ret = rputs(PORT_BLUETOOTH, (unsigned char *)bUnderline0, sizeof(bUnderline0));
 
 		for ( int intCnt = 0; intCnt < ctrl.URDataCnt; intCnt++) {
-		
-			// * point to address of current receipt 
+
+			// * !!! point to address of current receipt 
 			ram_read( intCnt , &urdata, URDATAF );
+
+			// * ƒŒƒV[ƒg”(–{‹q”)ŒvŽZ
+			if(atoln(urdata.RecNo, sizeof(urdata.RecNo)) != running_receipt_number) {
+				kei_receipt_count += 1;
+			}
+			running_receipt_number = atoln(urdata.RecNo, sizeof(urdata.RecNo));
+			
 
 			// * •Ô•iˆÈŠO•”–å•ÊÅ”²‡Œv‹àŠzWŒv
 			// * ˆÈ‰º‘S‚Ä‚Íˆês‚¸‚Â‚Ìƒf[ƒ^
@@ -943,7 +952,8 @@ int entryprintdaily() {
 
 		// * -- ‹q”
 		memset(strNumber,0x0,sizeof(strNumber));
-		insComma( kei_kyakusuu, strNumber );
+		// insComma( kei_kyakusuu, strNumber );
+		insComma( kei_receipt_count, strNumber );
 		snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
 		snprintf(buf, sizeof("‹q”1234567890123456789012345678"), "‹q”%28s", strNumber);
 		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("‹q”1234567890123456789012345678"));
@@ -951,9 +961,11 @@ int entryprintdaily() {
 		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
 		
 		// * -- ‹q’P‰¿=kei_uriage_no_minus_no_tax/kei_kyakusuu
-		if(kei_kyakusuu !=0) {
+		// if(kei_kyakusuu !=0) {
+		if(kei_receipt_count !=0) {
 			int kyaku_tanka;
-			kyaku_tanka = round(kei_uriage_no_minus_no_tax / kei_kyakusuu);
+			// kyaku_tanka = round(kei_uriage_no_minus_no_tax / kei_kyakusuu);
+			kyaku_tanka = round(kei_uriage_no_minus_no_tax / kei_receipt_count);
 			memset(strNumber,0x0,sizeof(strNumber));
 			insComma( kyaku_tanka, strNumber );
 			snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
@@ -977,9 +989,11 @@ int entryprintdaily() {
 		}
 	
 		// * -- ‹q“_”=kei_tensuu_no_minus/kei_kyakusuu
-		if(kei_kyakusuu !=0) {
+		// if(kei_kyakusuu !=0) {
+		if(kei_receipt_count !=0) {
 			float kyakuTennsuu;
-			kyakuTennsuu = round(kei_tensuu_no_minus/kei_kyakusuu);
+			// kyakuTennsuu = round(kei_tensuu_no_minus/kei_kyakusuu);
+			kyakuTennsuu = round(kei_tensuu_no_minus/kei_receipt_count);
 			snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
 			snprintf(buf, sizeof("‹q“_”12345678901234567890123456"), "‹q“_”%26.1f", kyakuTennsuu);
 			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("‹q“_”12345678901234567890123456"));
@@ -1030,8 +1044,8 @@ int entryprintdata() {
 	short kei_tensuu = 0;
 	short has_keigen = 0;
 
-	if( memcmp( info.tanto,"00",2 ) != 0 ){
 
+	if( memcmp( info.tanto,"00",2 ) != 0 ){
 
 		// * -- “ú–{Œê
 		ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
