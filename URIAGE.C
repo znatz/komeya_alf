@@ -779,9 +779,11 @@ int entryprintdaily() {
 			urdata_zeikomikingaku = urdata_baika * urdata_num ;
 			urdata_zeinukikingaku = urdata_zeikomikingaku - urdata.lngFinalTaxRateTax;
 			urdata_bumon = BumonCodeFindByCode1(urdata.Code1);
+			bumon_zeinuki[urdata_bumon] += urdata_zeinukikingaku;
+			bumon_suu[urdata_bumon] += urdata_num;
 			if ( urdata_num > 0) {
-				bumon_zeinuki[urdata_bumon] += urdata_zeinukikingaku;
-				bumon_suu[urdata_bumon] += urdata_num;
+				// bumon_zeinuki[urdata_bumon] += urdata_zeinukikingaku;
+				// bumon_suu[urdata_bumon] += urdata_num;
 				kei_tensuu_no_minus += urdata_num;
 				kei_uriage_no_minus_no_tax += urdata_zeinukikingaku;
 				kei_tax_no_minus += urdata.lngFinalTaxRateTax;
@@ -917,13 +919,13 @@ int entryprintdaily() {
 		}
 		
 		// * -- ‘e—˜
-		memset(strNumber,0x0,sizeof(strNumber));
-		insComma( kei_arari, strNumber );
-		snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
-		snprintf(buf, sizeof("‘e—˜1234567890123456789012345678"), "‘e—˜%28s", strNumber);
-		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("‘e—˜1234567890123456789012345678"));
+		// memset(strNumber,0x0,sizeof(strNumber));
+		// insComma( kei_arari, strNumber );
+		// snprintf(buf, LEN_HINMEI+1, "%s", "                                    ");
+		// snprintf(buf, sizeof("‘e—˜1234567890123456789012345678"), "‘e—˜%28s", strNumber);
+		// ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("‘e—˜1234567890123456789012345678"));
 		// * -- ‰üs
-		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
+		// ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
 
 		// * -- ƒAƒ“ƒ_[ƒ‰ƒCƒ“
 		print_under_line();
