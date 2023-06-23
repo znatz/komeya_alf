@@ -2190,7 +2190,6 @@ void uriage(int flag, int firsttime)
 				if (info.Code1[0])
 				{
 
-					displayStringMsg("here1");
 					if (ctrl.InfoUrCnt == INFOUR_MAX)
 					{ // Œ”‚ð’´‚¦‚éê‡‚Í“o˜^•s‰Â
 						beeb(10, 2, 1);
@@ -2202,12 +2201,10 @@ void uriage(int flag, int firsttime)
 					// ITF‚Ìê‡
 					if (info.Code1[27] != ' ')
 					{
-						displayStringMsg("here2");
-						displayStringMsg(info.Code1);
 						// * •iŽíŒŸõ
 						if (HinsyuFindByCode1(info.Code1) != -1)
 						{
-							displayStringMsg("here3");
+
 							lngBaika = extractZeikomiFromITF(info.Code1);
 							displayMsg(lngBaika);
 							char _buf[10];
@@ -2223,27 +2220,39 @@ void uriage(int flag, int firsttime)
 						}
 						else
 						{
-							displayStringMsg("here4");
 							beep(10, 2);
 							meisaiclr();
 							continue;
 						}
-					} 
-					else if ( info.Code1[7] != ' '){
-						// ¤•i‘¶Ý‚µ‚È‚¢
-						if (ItemFind(info.Code1) == -1)
+					}
+
+					// 3Œ…‚ª501`999‚Ìê‡
+					if (atoin(info.Code1, 3) > 500 && atoin(info.Code1, 3) < 999)
+					{
+
+						// * •iŽíŒŸõ 20201208
+						if (HinsyuFindByCode1(info.Code1) != 0)
+						{
+							char _buf[10];
+							sprintf(_buf, "%010d", getJyoudai(info.Code1));
+							memcpy(info.Joudai, _buf, sizeof(info.Joudai));
+							lngBaika = getZeikomiKingaku(info.Code1, 1);
+							// * ---------------------------------------------------- DEBUG—p
+							// displayStringMsg(&himst.Name);
+							// * ---------------------------------------------------- DEBUG—p
+						}
+						else
 						{
 							beep(10, 2);
 							meisaiclr();
 							continue;
-						} else {
-							displayStringMsg(tsmst.Name);
 						}
 
+						item = CODE2;
+						continue;
 					}
 					else
 					{
-						displayStringMsg("here5");
 						beep(10, 2);
 						meisaiclr();
 						continue;

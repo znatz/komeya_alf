@@ -186,7 +186,8 @@ void Setting( void ){
 	
 	ckputss( 0, 8, "4.税計算:     ", False, CLR_BASE );
 	ckputsn( 11,8, ctrl.TaxType, 1, False, CLR_BASE );
-	ckputss( 0, 10, "1四捨五入 2切捨て", False, CLR_BASE );
+	// ckputss( 0, 10, "1四捨五入 2切捨て", False, CLR_BASE );
+	ckputss( 0, 10, "1切捨て 2四捨五入", False, CLR_BASE );
 	
 	ckputss( 0, 12, "5.ﾚｼｰﾄ発行:     ", False, CLR_BASE );
 	ckputsn( 11,12, ctrl.RecPrint, 1, False, CLR_BASE );
@@ -258,8 +259,10 @@ void menu( void )
 		ckputss(  0,  3, " 1:仕入  2:仕返 ", False, CLR_BASE );
 		ckputss(  0,  5, " 3:棚卸  4:移動 ", False, CLR_BASE );
 		ckputss(  0,  7, " 5:売上  6:受信 ", False, CLR_BASE );
-		ckputss(  0,  9, " 7:転送  8:検品 ", False, CLR_BASE );
-		ckputss(  0, 11, " 9:削除  0:設定 ", False, CLR_BASE );
+		// ckputss(  0,  9, " 7:転送  8:検品 ", False, CLR_BASE );
+		// ckputss(  0, 11, " 9:削除  0:設定 ", False, CLR_BASE );
+		ckputss(  0,  9, " 7:転送  8:削除 ", False, CLR_BASE );
+		ckputss(  0, 11, "   　　  0:設定 ", False, CLR_BASE );
 		ckputss(  0, 13, " F1:ﾌﾟﾘﾝﾀ ﾃｽﾄ   ", False, CLR_BASE );
 		ckputsn(  1, 16, VER2, sizeof( VER2 ), False, CLR_BASE );
 		//ckputss(  0,  8, " 5:転送  9:削除 ", False, CLR_BASE );
@@ -286,10 +289,10 @@ void menu( void )
 			} else if( ret == '7' ){	/* 転送 */
 				SndMenu();
 				break;
-			} else if( ret == '8' ){	/* 検品 */
-				Kscan();
-				break;				
-			} else if( ret == '9' ){	/* 削除 */
+			// } else if( ret == '8' ){	/* 検品 */
+			// 	Kscan();
+			// 	break;				
+			} else if( ret == '8' ){	/* 削除 */
 				DelDat();
 				break;
 			} else if( ret == '0' ){	/* 削除 */
@@ -315,6 +318,9 @@ void print_receipt_header() {
 	// * -- 日本語
 	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bJP, sizeof(bJP));
 	ret = rputs(PORT_BLUETOOTH, (unsigned char *)bAlignCenter, sizeof(bAlignCenter));
+
+	// * -- 領収書 2021/11/29 追加
+	ret = rputs(PORT_BLUETOOTH, "         << 領 収 書 >>         ", sizeof("         << 領 収 書 >>         "));
 
 	// * -- レシートマスタ(3行中央+1行左)
 	if(RemasFind("01") != -1) {

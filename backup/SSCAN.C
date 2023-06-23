@@ -14,6 +14,7 @@ enum
 	SHOP = 1,
 	DENNO,
 	CODE1,
+	CODE2,
 	NUM,
 	DENTRY,
 	DELETE
@@ -131,7 +132,7 @@ static void Display(short item, short Func)
 			}
 			ckputss(0, 3, "店舗:           ", False, CLR_BASE);
 			ckputss(0, 6, "▲              ", False, CLR_BASE);
-			ckputss(0, 8, "               ", False, CLR_BASE);
+			ckputss(0, 8, "▽              ", False, CLR_BASE);
 			ckputss(0, 11, "                ", False, CLR_BASE);
 			ckputss(0, 13, "F1:戻る F4:複数 ", False, CLR_BASE);
 			ckputss(0, 15, "        F2:削除 ", False, CLR_BASE);
@@ -157,6 +158,46 @@ static void Display(short item, short Func)
 			ckputss(0, 6, "▲              ", False, CLR_BASE);
 		}
 		break;
+	case CODE2:
+		if (SaveItem != CODE2)
+		{
+			ClsColor(); /*   0123456789012345*/
+			if (tenpo.flag == 0)
+			{
+				ckputss(0, 0, "<仕入入力>      ", False, CLR_SI_TITLE);
+			}
+			else
+			{
+				ckputss(0, 0, "<返品入力>      ", False, CLR_NE_TITLE);
+			}
+			ckputss(0, 3, "店舗:           ", False, CLR_BASE);
+			ckputss(0, 6, "△              ", False, CLR_BASE);
+			ckputss(0, 8, "▼              ", False, CLR_BASE);
+			ckputss(0, 11, "                ", False, CLR_BASE);
+			ckputss(0, 13, "F1:戻る         ", False, CLR_BASE);
+			ckputss(0, 15, "                ", False, CLR_BASE);
+
+			ckputsn(5, 3, tenpo.tenpo1, sizeof(tenpo.tenpo1), False, CLR_BASE);
+		}
+		/* 件数 */
+		if (tenpo.flag == 0)
+		{
+			ckprintf(10, 0, False, CLR_SI_TITLE, "%4d件", ctrl.SDataCnt);
+		}
+		else
+		{
+			ckprintf(10, 0, False, CLR_NE_TITLE, "%4d件", ctrl.SDataCnt);
+		}
+		/* 上段コード */
+		if (sdata.Code1[0])
+		{
+			ckputsn(3, 6, sdata.Code1, 13, False, CLR_BASE);
+		}
+		else
+		{
+			ckputss(0, 8, "▼             ", False, CLR_BASE);
+		}
+		break;
 	case NUM:
 		if (SaveItem != NUM)
 		{
@@ -171,7 +212,7 @@ static void Display(short item, short Func)
 			}
 			ckputss(0, 3, "店舗:           ", False, CLR_BASE);
 			ckputss(0, 6, "△              ", False, CLR_BASE);
-			ckputss(0, 8, "               ", False, CLR_BASE);
+			ckputss(0, 8, "▽              ", False, CLR_BASE);
 			ckputss(0, 11, "数量:           ", False, CLR_BASE);
 			ckputss(0, 13, "F1:戻る C :ｸﾘｱ  ", False, CLR_BASE);
 			ckputss(0, 15, "                ", False, CLR_BASE);
@@ -203,7 +244,7 @@ static void Display(short item, short Func)
 		}
 		else
 		{
-			ckputss(0, 8, "              ", False, CLR_BASE);
+			ckputss(0, 8, "▽             ", False, CLR_BASE);
 		}
 		break;
 	case DENTRY:
@@ -220,7 +261,7 @@ static void Display(short item, short Func)
 			}
 			ckputss(0, 3, "店舗:           ", False, CLR_BASE);
 			ckputss(0, 6, "△              ", False, CLR_BASE);
-			ckputss(0, 8, "               ", False, CLR_BASE);
+			ckputss(0, 8, "▽              ", False, CLR_BASE);
 			ckputss(0, 11, "数量:           ", False, CLR_BASE);
 			ckputss(0, 15, "                ", False, CLR_BASE);
 
@@ -266,7 +307,7 @@ static void Display(short item, short Func)
 			}
 			ckputss(0, 3, "店舗:           ", False, CLR_BASE);
 			ckputss(0, 6, "△              ", False, CLR_BASE);
-			ckputss(0, 8, "               ", False, CLR_BASE);
+			ckputss(0, 8, "▽              ", False, CLR_BASE);
 			ckputss(0, 11, "数量:           ", False, CLR_BASE);
 			ckputss(0, 15, "削除?  OK:1 NO:2", False, CLR_BASE);
 		}
@@ -362,6 +403,10 @@ void Sscan(int flag)
 			ret = CodeInput(3, 6, sdata.Code1, sizeof(sdata.Code1),
 					BCR_NOTDRW | BCR_WPC | KEY_FUNC);
 			break;
+		case CODE2:
+			ret = CodeInput(3, 8, sdata.Code2, sizeof(sdata.Code2),
+					BCR_NOTDRW | BCR_WPC | KEY_FUNC);
+			break;
 		case NUM:
 			ret = NumInput(5, 11, sdata.Num, sizeof(sdata.Num), 0, 99999L,
 				       IN_NUMERIC | KEY_MINUS | KEY_FUNC, TYPE_NUM, NO_CHECK);
@@ -435,16 +480,14 @@ void Sscan(int flag)
 					continue;
 				}
 				// ITFではない
-				if (!memcmp(sdata.Code1, "45", 2) || !memcmp(sdata.Code1, "49", 2) || !memcmp(sdata.Code1, "20", 2))
+				// 3桁が501～999の場合
+				if (atoin(sdata.Code1, 3) > 500 && atoin(sdata.Code1, 3) < 999)
 				{
-					// 商品存在しない
-					if (ItemFind(sdata.Code1) == -1)
-					{
-						beep(10, 2);
-						meisaiclr();
-						continue;
-					}
-					// displayStringMsg(tsmst.Name + '\0');
+					item = CODE2;
+					continue;
+				}
+				else if (!memcmp(sdata.Code1, "45", 2) || !memcmp(sdata.Code1, "49", 2) || !memcmp(sdata.Code1, "20", 2))
+				{
 					/* 上段コードの先頭から２桁が４５、１９、２０の場合、データ登録へ */
 					if (Func == 1)
 					{
@@ -454,6 +497,25 @@ void Sscan(int flag)
 					{
 						item = NUM;
 					}
+					continue;
+				}
+				else if ((sdata.Code1[0] == '1' || sdata.Code1[0] == '2' || sdata.Code1[0] == '3') && sdata.Code1[27] != ' ')
+				{
+					/* ITF場合、データ登録へ */
+					if (Func == 1)
+					{
+						item = DENTRY;
+					}
+					if (Func == 2)
+					{
+						item = NUM;
+					}
+					continue;
+				}
+				else if (!memcmp(sdata.Code1, "2289", 4) || !memcmp(sdata.Code1, "2299", 4))
+				{
+					/* 28桁より小さい、AT or FJ */
+					item = CODE2;
 					continue;
 				}
 				else if (ctrl.SDataCnt && !memcmp(sdata.Code1, "30", 2) && sdata.Code1[8] == ' ')
@@ -471,6 +533,71 @@ void Sscan(int flag)
 					/* 上記に該当しない場合はエラー */
 					beep(10, 2);
 					meisaiclr();
+					continue;
+				}
+			}
+			else if (item == CODE2)
+			{
+				// ITFの場合
+				if ((sdata.Code1[0] == '1' || sdata.Code1[0] == '2' || sdata.Code1[0] == '3') && sdata.Code1[27] != ' ')
+				{
+					/* 上記に該当しない場合はエラー */
+					memset(sdata.Code2, 0x00, sizeof(sdata.Code2));
+					beep(10, 2);
+					continue;
+				}
+				// ITFではない
+				/* 上段コードの先頭から３桁が501～999の場合、０９９９、１、３から始まるコード以外不可 */
+				if (atoin(sdata.Code1, 3) > 500 && atoin(sdata.Code1, 3) < 999)
+				{
+					if ((sdata.Code2[0] == '0' || sdata.Code2[0] == '1' || sdata.Code2[0] == '2' || sdata.Code2[0] == '3') && sdata.Code2[12] != ' ')
+					{
+						if (Func == 1)
+						{
+							item = DENTRY;
+						}
+						if (Func == 2)
+						{
+							item = NUM;
+						}
+						continue;
+					}
+					else
+					{
+						/* 上記に該当しない場合はエラー */
+						memset(sdata.Code2, 0x00, sizeof(sdata.Code2));
+						beep(10, 2);
+						continue;
+					}
+					/* 上段コードの先頭から4桁が2289,2299の場合、2500から始まるコード以外不可 */
+				}
+				else if (!memcmp(sdata.Code1, "2289", 4) || !memcmp(sdata.Code1, "2299", 4))
+				{
+					if (!memcmp(sdata.Code2, "2500", 4) && sdata.Code2[12] != ' ')
+					{
+						if (Func == 1)
+						{
+							item = DENTRY;
+						}
+						if (Func == 2)
+						{
+							item = NUM;
+						}
+						continue;
+					}
+					else
+					{
+						/* 上記に該当しない場合はエラー */
+						memset(sdata.Code2, 0x00, sizeof(sdata.Code2));
+						beep(10, 2);
+						continue;
+					}
+				}
+				else
+				{
+					/* 上記に該当しない場合はエラー */
+					memset(sdata.Code2, 0x00, sizeof(sdata.Code2));
+					beep(10, 2);
 					continue;
 				}
 			}
@@ -533,7 +660,7 @@ void Sscan(int flag)
 		}
 		else if (ret == F1KEY)
 		{
-			if (item == NUM)
+			if (item == CODE2 || item == NUM)
 			{
 				meisaiclr();
 				Func = 1;

@@ -96,6 +96,7 @@ typedef struct CONTROL_BUFF{
 	short	HIMSTCnt;
 	short	TAMSTCnt;
 	short	REMSTCnt;
+	short	TSMSTCnt;
 	short	URDataCnt;
 	short	InfoUrCnt;
 	long	RecNo;
@@ -156,10 +157,27 @@ typedef struct REMST_TAG {
 	char	Name[30];
 } REMST;
 
+/*****************************************************************************/
+/* 商品マスタ 13+1+20+1+2+1+2+1+10+1+10=62  */
+/*****************************************************************************/
+typedef struct TSMST_TAG {
+	char	Code[13];
+	char	FillerA;
+	char	Name[20];
+	char	FillerB;
+	char	Bumon[2];
+	char	FillerC;
+	char	Hinsyu[2];
+	char	FillerD;
+	char	Zeinuki[10];
+	char	FillerE;
+	char	Zeikomi[10];
+} TSMST;
+
 typedef struct TDATA_TAG {
 	char	Date[8];
 	char	Shop[2];
-	char	Code1[13];
+	char	Code1[28];
 	char	Code2[13];
 	char	Code3[8];
 	char	Num[5];
@@ -169,7 +187,7 @@ typedef struct IDATA_TAG {
 	char	Date[8];
 	char	Shop[2];
 	char	Shop2[2];
-	char	Code1[13];
+	char	Code1[28];
 	char	Code2[13];
 	char	Code3[8];
 	char	Num[5];
@@ -179,7 +197,7 @@ typedef struct SDATA_TAG {
 	char	Date[8];
 	char	DenNo[8];
 	char	Shop[2];
-	char	Code1[13];
+	char	Code1[28];
 	char	Code2[13];
 	char	Code3[8];
 	char	Num[5];
@@ -188,7 +206,7 @@ typedef struct SDATA_TAG {
 typedef struct NDATA_TAG {
 	char	Date[8];
 	char	Shop[1];
-	char	Code1[13];
+	char	Code1[28];
 	char	Code2[13];
 	char	Code3[8];
 	char	Code4[13];
@@ -202,7 +220,7 @@ typedef struct INFO_DATA{
 	char	tenpo2[2];
 	char	Bumon[2];
 	char	Hinsyu[4];
-	char	Code1[13];
+	char	Code1[28];
 	char 	Joudai[10];
 	char 	Baika[10];
 	char	Gedai[10];
@@ -227,7 +245,7 @@ typedef struct URDATA_TAG {
 	char	Shop[2];
 	char	RejiNo[2];
 	char	Tanto[2];
-	char	Code1[13];
+	char	Code1[28];
 	char	Code2[13];
 	char	Code3[8];
 	char	Name[20];
@@ -254,7 +272,7 @@ typedef struct URDATA_TAG {
 typedef struct INFOUR_TAG {	
 	char	Date[8];
 	char	Time[6];
-	char	Code1[13];
+	char	Code1[28];
 	char	Code2[13];
 	char	Code3[8];
 	char	Name[20];
@@ -296,6 +314,7 @@ extern	BUMST		bumst;
 extern	HIMST		himst;
 extern	TAMST		tamst;
 extern	REMST		remst;
+extern	TSMST		tsmst;
 extern  TENPO		tenpo;
 extern	char		scanBuf[30],dt[32], dspBuf[50];
 

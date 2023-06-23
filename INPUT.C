@@ -580,7 +580,7 @@ short	isBarcode( char *code, short inpType )
 		} else {
 			ret = 0;
 		}
-	} else if( len == 8 || len == 13 ){	/* WPC */
+	} else if( len == 8 || len == 13 || len == 28 ){	/* WPC or ITF28 */
 		ret = mod10( code, len );
 	}
 	return	ret;

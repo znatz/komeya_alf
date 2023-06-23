@@ -483,8 +483,7 @@ void Nscan( void )
 				} else if( !memcmp( ndata.Code1, "21", 2 ) ){
 					item = CODE2;
 					continue;
-				} else if( !memcmp( ndata.Code1, "45", 2 ) || !memcmp( ndata.Code1, "49", 2 ) ||
-						   !memcmp( ndata.Code1, "20", 2 ) ){
+				} else if( !memcmp( ndata.Code1, "45", 2 ) || !memcmp( ndata.Code1, "49", 2 ) || !memcmp( ndata.Code1, "20", 2 ) ){
 					/* ã’iƒR[ƒh‚Ìæ“ª‚©‚ç‚QŒ…‚ª‚S‚TA‚P‚XA‚Q‚O‚Ìê‡Aƒf[ƒ^“o˜^‚Ö */
 						if(Func == 1){
 							item = NESAGE1;

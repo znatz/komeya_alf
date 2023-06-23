@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "ark7000x.h"
 #include "ctrl.h"
 #include "input.h"
@@ -9,6 +10,68 @@
 #include "worksub.h"
 
 static	char	inpBuf[50];
+/*****************************************************************************/
+/* 税込み -> 税抜き                                                            */
+/*****************************************************************************/
+int gf_GetKingaku2(long wkKingaku, double Zeiritu)
+{
+	double wlngkin;
+	wlngkin = wkKingaku / (1 + Zeiritu / 100);
+
+	if (ctrl.TaxType[0] == '1')
+	{ // 切捨て
+		if (wlngkin >= 0)
+		{
+			return floor(wlngkin + 0.99999);
+		}
+		else
+		{
+			return floor(wlngkin);
+		}
+	}
+	else if (ctrl.TaxType[0] == '2')
+	{ // 四捨五入
+		return floor(wlngkin + 0.5);
+	}
+
+	return wkKingaku; // Default value if Keiku does not match any case
+}
+/*****************************************************************************/
+/* 28桁ITF上代出す(1からスタートとして、22桁目から26桁目)                            */
+/*****************************************************************************/
+long extractZeikomiFromITF(const char *str)
+{
+	char digits[5];
+	digits[0] = str[21];
+	digits[1] = str[22];
+	digits[2] = str[23];
+	digits[3] = str[24];
+	digits[4] = str[25];
+	digits[5] = '\0'; // Null-terminate the string
+
+	long value = atol(digits);
+	return value;
+}
+/**************************************************/
+/*  商品マスタ検索	                              */
+/**************************************************/
+short ItemFind(char *key)
+{
+	long adrs;
+
+	memset(&tsmst, 0x00, sizeof(tsmst));
+	// #if 0	// ２分法
+	//	adrs = binarySearch( key, sizeof( tsmst.Code ), TSMSTF, ctrl.TSMSTCnt, 0 );
+	// #else	// 先頭から検索
+	//	adrs = beginSearch( key, 1, 0, sizeof( tsmst.Code ), 0, ctrl.TSMSTCnt, TSMSTF );
+	// #endif
+	adrs = binarySearch(key, sizeof(tsmst.Code), TSMSTF, ctrl.TSMSTCnt, 0);
+	if (adrs != -1)
+	{
+		ram_read(adrs, &tsmst, TSMSTF);
+	}
+	return adrs;
+}
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
@@ -23,6 +86,7 @@ short CodeInput( short x, short y, char *s, short length, unsigned long prm )
 	}
 	while( 1 ){
 		/*if( ctrl.BcrType == '1' ) prm |= BCR_PEN;*/
+		// if(length == 28) { prm |= BCR_NOTCD; }
 		ret = input( x, y, inpBuf, length, prm | TRIG_ENT );
 		if( !(prm & BCR_NOTCD) && ( prm & BCRFLAGMASK ) && ( ret == SENTRY || ret == ENTRY ) ){
 			if( !atol( inpBuf ) || !isBarcode( inpBuf, False ) ){
@@ -403,7 +467,12 @@ long	BumonTaxFindByCode1( char *code1 )
 #if 0	/* ２分法 */
 	//adrs = binarySearch( key, sizeof( mmst.Code ), MMSTF, ctrl.MMstCnt, 0 );
 #else	/* 先頭から検索 */
-	adrs = beginSearch( code1+3, 1, 0, sizeof( bumst.Code ), 0, ctrl.BUMSTCnt, BUMSTF );
+
+	if ( code1[27] != ' ') {
+		adrs = beginSearch( code1+4, 1, 0, sizeof( bumst.Code ), 0, ctrl.BUMSTCnt, BUMSTF );
+	} else {
+		adrs = beginSearch( code1+3, 1, 0, sizeof( bumst.Code ), 0, ctrl.BUMSTCnt, BUMSTF );
+	}
 #endif
 	if( adrs != -1 ){
 		ram_read( adrs, &bumst, BUMSTF );
@@ -425,7 +494,11 @@ long	BumonCodeFindByCode1( char *code1 )
 #if 0	/* ２分法 */
 	//adrs = binarySearch( key, sizeof( mmst.Code ), MMSTF, ctrl.MMstCnt, 0 );
 #else	/* 先頭から検索 */
-	adrs = beginSearch( code1+3, 1, 0, sizeof( bumst.Code ), 0, ctrl.BUMSTCnt, BUMSTF );
+	if ( code1[27] != ' ') {
+		adrs = beginSearch( code1+4, 1, 0, sizeof( bumst.Code ), 0, ctrl.BUMSTCnt, BUMSTF );
+	} else {
+		adrs = beginSearch( code1+3, 1, 0, sizeof( bumst.Code ), 0, ctrl.BUMSTCnt, BUMSTF );
+	}
 #endif
 	if( adrs != -1 ){
 		ram_read( adrs, &bumst, BUMSTF );
@@ -452,7 +525,11 @@ long	HinsyuZeikuFindByCode1( char *code1 )
 #if 0	/* ２分法 */
 	//adrs = binarySearch( key, sizeof( mmst.Code ), MMSTF, ctrl.MMstCnt, 0 );
 #else	/* 先頭から検索 */
-	adrs = beginSearch( code1+3, 1, 0, sizeof( himst.Code ), 0, ctrl.HIMSTCnt, HIMSTF );
+	if ( code1[27] != ' ') {
+		adrs = beginSearch( code1+4, 1, 0, sizeof( himst.Code ), 0, ctrl.HIMSTCnt, HIMSTF );
+	} else {
+		adrs = beginSearch( code1+3, 1, 0, sizeof( himst.Code ), 0, ctrl.HIMSTCnt, HIMSTF );
+	}
 #endif
 	if( adrs != -1 ){
 		ram_read( adrs, &himst, HIMSTF );
@@ -474,7 +551,11 @@ long	HinsyuFindByCode1( char *code1 )
 #if 0	/* ２分法 */
 	//adrs = binarySearch( key, sizeof( mmst.Code ), MMSTF, ctrl.MMstCnt, 0 );
 #else	/* 先頭から検索 */
-	adrs = beginSearch( code1+3, 1, 0, sizeof( himst.Code ), 0, ctrl.HIMSTCnt, HIMSTF );
+	if ( code1[27] != ' ') {
+		adrs = beginSearch( code1+4, 1, 0, sizeof( himst.Code ), 0, ctrl.HIMSTCnt, HIMSTF );
+	} else {
+		adrs = beginSearch( code1+3, 1, 0, sizeof( himst.Code ), 0, ctrl.HIMSTCnt, HIMSTF );
+	}
 #endif
 	if( adrs != -1 ){
 		ram_read( adrs, &himst, HIMSTF );

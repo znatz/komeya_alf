@@ -12,6 +12,7 @@ enum
 {
 	SHOP = 1,
 	CODE1,
+	CODE2,
 	NUM,
 	DENTRY,
 	DELETE
@@ -71,7 +72,7 @@ static void Display(short item, short Func)
 			ckputss(0, 0, "<íIâµì¸óÕ>      ", False, CLR_ZA_TITLE);
 			ckputss(0, 3, "ìXï‹:           ", False, CLR_BASE);
 			ckputss(0, 6, "Å£              ", False, CLR_BASE);
-			ckputss(0, 8, "               ", False, CLR_BASE);
+			ckputss(0, 8, "Å§              ", False, CLR_BASE);
 			ckputss(0, 11, "                ", False, CLR_BASE);
 			ckputss(0, 13, "F1:ñﬂÇÈ F4:ï°êî ", False, CLR_BASE);
 			ckputss(0, 15, "        F2:çÌèú ", False, CLR_BASE);
@@ -90,6 +91,41 @@ static void Display(short item, short Func)
 			ckputss(0, 6, "Å£              ", False, CLR_BASE);
 		}
 		break;
+	case CODE2:
+		if (SaveItem != CODE2)
+		{
+			ClsColor(); /*   0123456789012345*/
+			ckputss(0, 0, "<íIâµì¸óÕ>      ", False, CLR_ZA_TITLE);
+			ckputss(0, 3, "ìXï‹:           ", False, CLR_BASE);
+			ckputss(0, 6, "Å¢              ", False, CLR_BASE);
+			ckputss(0, 8, "Å•              ", False, CLR_BASE);
+			ckputss(0, 11, "                ", False, CLR_BASE);
+			ckputss(0, 13, "F1:ñﬂÇÈ         ", False, CLR_BASE);
+			ckputss(0, 15, "                ", False, CLR_BASE);
+
+			ckputsn(5, 3, tenpo.tenpo1, sizeof(tenpo.tenpo1), False, CLR_BASE);
+		}
+		/* åèêî */
+		ckprintf(10, 0, False, CLR_ZA_TITLE, "%4dåè", ctrl.TDataCnt);
+		/* è„íiÉRÅ[Éh */
+		if (tdata.Code1[0])
+		{
+			ckputsn(3, 6, tdata.Code1, 13, False, CLR_BASE);
+		}
+		else
+		{
+			ckputss(0, 6, "Å¢              ", False, CLR_BASE);
+		}
+		/* â∫íiÉRÅ[Éh */
+		if (tdata.Code2[0])
+		{
+			ckputsn(3, 8, tdata.Code2, 13, False, CLR_BASE);
+		}
+		else
+		{
+			ckputss(0, 8, "Å•              ", False, CLR_BASE);
+		}
+		break;
 	case NUM:
 		if (SaveItem != NUM)
 		{
@@ -97,7 +133,7 @@ static void Display(short item, short Func)
 			ckputss(0, 0, "<íIâµì¸óÕ>      ", False, CLR_ZA_TITLE);
 			ckputss(0, 3, "ìXï‹:           ", False, CLR_BASE);
 			ckputss(0, 6, "Å¢              ", False, CLR_BASE);
-			ckputss(0, 8, "               ", False, CLR_BASE);
+			ckputss(0, 8, "Å§              ", False, CLR_BASE);
 			ckputss(0, 11, "êîó :           ", False, CLR_BASE);
 			ckputss(0, 13, "F1:ñﬂÇÈ C :∏ÿ±  ", False, CLR_BASE);
 			ckputss(0, 15, "                ", False, CLR_BASE);
@@ -122,7 +158,7 @@ static void Display(short item, short Func)
 		}
 		else
 		{
-			ckputss(0, 8, "              ", False, CLR_BASE);
+			ckputss(0, 8, "Å§             ", False, CLR_BASE);
 		}
 		/* êîó  */
 		if (!tdata.Num[0])
@@ -137,7 +173,7 @@ static void Display(short item, short Func)
 			ckputss(0, 0, "<íIâµì¸óÕ>      ", False, CLR_ZA_TITLE);
 			ckputss(0, 3, "ìXï‹:           ", False, CLR_BASE);
 			ckputss(0, 6, "Å¢              ", False, CLR_BASE);
-			ckputss(0, 8, "               ", False, CLR_BASE);
+			ckputss(0, 8, "Å§              ", False, CLR_BASE);
 			ckputss(0, 11, "êîó :           ", False, CLR_BASE);
 			ckputss(0, 15, "                ", False, CLR_BASE);
 
@@ -169,7 +205,7 @@ static void Display(short item, short Func)
 			ckputss(0, 0, "<çÌèú>          ", False, CLR_ZA_TITLE);
 			ckputss(0, 3, "ìXï‹:           ", False, CLR_BASE);
 			ckputss(0, 6, "Å¢              ", False, CLR_BASE);
-			ckputss(0, 8, "               ", False, CLR_BASE);
+			ckputss(0, 8, "Å§              ", False, CLR_BASE);
 			ckputss(0, 11, "êîó :           ", False, CLR_BASE);
 			ckputss(0, 15, "çÌèú?  OK:1 NO:2", False, CLR_BASE);
 		}
@@ -250,6 +286,10 @@ void Tscan(void)
 			ret = CodeInput(3, 6, tdata.Code1, sizeof(tdata.Code1),
 					BCR_NOTDRW | BCR_WPC | KEY_FUNC);
 			break;
+		case CODE2:
+			ret = CodeInput(3, 8, tdata.Code2, sizeof(tdata.Code2),
+					BCR_NOTDRW | BCR_WPC | KEY_FUNC);
+			break;
 		case NUM:
 			ret = NumInput(5, 11, tdata.Num, sizeof(tdata.Num), 0, 99999L,
 				       IN_NUMERIC | KEY_MINUS | KEY_FUNC, TYPE_NUM, NO_CHECK);
@@ -318,16 +358,15 @@ void Tscan(void)
 					continue;
 				}
 				// ITFÇ≈ÇÕÇ»Ç¢
-				if (!memcmp(tdata.Code1, "45", 2) || !memcmp(tdata.Code1, "49", 2) || !memcmp(tdata.Code1, "20", 2))
+				// 3åÖÇ™501Å`999ÇÃèÍçá
+				if (atoin(tdata.Code1, 3) > 500 && atoin(tdata.Code1, 3) < 999)
 				{
-					// è§ïië∂ç›ÇµÇ»Ç¢
-					if (ItemFind(tdata.Code1) == -1)
-					{
-						beep(10, 2);
-						meisaiclr();
-						continue;
-					}
-					// displayStringMsg(tsmst.Name + '\0');
+					item = CODE2;
+					continue;
+				}
+				else if (!memcmp(tdata.Code1, "45", 2) || !memcmp(tdata.Code1, "49", 2) ||
+					 !memcmp(tdata.Code1, "20", 2))
+				{
 					// è„íiÉRÅ[ÉhÇÃêÊì™Ç©ÇÁÇQåÖÇ™ÇSÇTÅAÇPÇXÅAÇQÇOÇÃèÍçáÅAÉfÅ[É^ìoò^Ç÷
 					if (Func == 1)
 					{
@@ -337,6 +376,11 @@ void Tscan(void)
 					{
 						item = NUM;
 					}
+					continue;
+				}
+				else if (!memcmp(tdata.Code1, "2289", 4) || !memcmp(tdata.Code1, "2299", 4))
+				{
+					item = CODE2;
 					continue;
 				}
 				else if (ctrl.TDataCnt && !memcmp(tdata.Code1, "30", 2) && tdata.Code1[8] == ' ')
@@ -354,6 +398,70 @@ void Tscan(void)
 					/* è„ãLÇ…äYìñÇµÇ»Ç¢èÍçáÇÕÉGÉâÅ[ */
 					beep(10, 2);
 					meisaiclr();
+					continue;
+				}
+			}
+			else if (item == CODE2)
+			{
+				// ITFÇÃèÍçá
+				if ((tdata.Code1[0] == '1' || tdata.Code1[0] == '2' || tdata.Code1[0] == '3') && tdata.Code1[27] != ' ')
+				{
+					/* è„ãLÇ…äYìñÇµÇ»Ç¢èÍçáÇÕÉGÉâÅ[ */
+					memset(tdata.Code2, 0x00, sizeof(tdata.Code2));
+					beep(10, 2);
+					continue;
+				}
+				// ITFÇ≈ÇÕÇ»Ç¢
+				/* è„íiÉRÅ[ÉhÇÃêÊì™Ç©ÇÁÇRåÖÇ™501Å`999ÇÃèÍçáÅA0999ÅA1ÅA3Ç©ÇÁénÇ‹ÇÈÉRÅ[Éhà»äOïsâ¬ */
+				if (atoin(tdata.Code1, 3) > 500 && atoin(tdata.Code1, 3) < 999)
+				{
+					if ((tdata.Code2[0] == '0' || tdata.Code2[0] == '1' || tdata.Code2[0] == '2' || tdata.Code2[0] == '3') && tdata.Code2[12] != ' ')
+					{
+						if (Func == 1)
+						{
+							item = DENTRY;
+						}
+						if (Func == 2)
+						{
+							item = NUM;
+						}
+						continue;
+					}
+					else
+					{
+						/* è„ãLÇ…äYìñÇµÇ»Ç¢èÍçáÇÕÉGÉâÅ[ */
+						memset(tdata.Code2, 0x00, sizeof(tdata.Code2));
+						beep(10, 2);
+						continue;
+					}
+				}
+				else if (!memcmp(tdata.Code1, "2289", 4) || !memcmp(tdata.Code1, "2299", 4))
+				{
+					if (!memcmp(tdata.Code2, "2500", 4))
+					{
+						if (Func == 1)
+						{
+							item = DENTRY;
+						}
+						if (Func == 2)
+						{
+							item = NUM;
+						}
+						continue;
+					}
+					else
+					{
+						/* è„ãLÇ…äYìñÇµÇ»Ç¢èÍçáÇÕÉGÉâÅ[ */
+						memset(tdata.Code2, 0x00, sizeof(tdata.Code2));
+						beep(10, 2);
+						continue;
+					}
+				}
+				else
+				{
+					/* è„ãLÇ…äYìñÇµÇ»Ç¢èÍçáÇÕÉGÉâÅ[ */
+					memset(tdata.Code2, 0x00, sizeof(tdata.Code2));
+					beep(10, 2);
 					continue;
 				}
 			}
@@ -417,7 +525,7 @@ void Tscan(void)
 		}
 		else if (ret == F1KEY)
 		{
-			if (item == NUM)
+			if (item == CODE2 || item == NUM)
 			{
 				meisaiclr();
 				Func = 1;

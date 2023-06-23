@@ -1,4 +1,4 @@
--library=DefaultBuild\komeya.lib
+-library=DefaultBuild\omisuper.lib
 -input=DefaultBuild\1st\main.obj
 -input=DefaultBuild\1st\sbrk.obj
 -input=DefaultBuild\1st\apl_start.obj
@@ -23,16 +23,16 @@
 -noprelink
 -nodebug
 -rom=D=R,D_1=R_1,D_2=R_2
--output=DefaultBuild\1st\komeya.abs
--map=DefaultBuild\1st\komeya.bls
--list=DefaultBuild\1st\komeya.map
+-output=DefaultBuild\1st\omisuper.abs
+-map=DefaultBuild\1st\omisuper.bls
+-list=DefaultBuild\1st\omisuper.map
 -optimize=safe
 -start=PAplProgStart,C_1,C_2,C,C$*,D_1,D_2,D,P,W*,L/08300000,BAplProgEnd/083FFFF8,B_1,R_1,B_2,R_2,B,R/08400000,BAplWorkEnd/08500000
 -nologo
 -end
--input=DefaultBuild\1st\komeya.abs
+-input=DefaultBuild\1st\omisuper.abs
 -form=stype
--output=DefaultBuild\1st\komeya.mot
+-output=DefaultBuild\1st\omisuper.mot
 -s9
 -exit
 

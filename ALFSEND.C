@@ -472,13 +472,13 @@ TopFunc:
 	_AlfInf.sendLen	 = 68+2;	/* 改行コード付き	*/
 	switch( job ){
 		case 	JOB_URI:
-			_AlfInf.sendLen	 = 145+19+2; break;
+			_AlfInf.sendLen	 = 145+19+2+15; break;
 		case	JOB_SIIRE:
-			_AlfInf.sendLen	 = 68+2; break;
+			_AlfInf.sendLen	 = 68+2+15; break;
 		case	JOB_TANA:
-			_AlfInf.sendLen	 = 68+2; break;
+			_AlfInf.sendLen	 = 68+2+15; break;
 		case	JOB_IDO:
-			_AlfInf.sendLen	 = 68+2; break;
+			_AlfInf.sendLen	 = 68+2+15; break;
 	}	
 	_AlfInf.recvLen	 = 0;
 	_AlfInf.abort	 = KN_CLR;	/* CLR */

@@ -27,6 +27,7 @@ static struct {
 	{ sizeof( HIMST )		, HIMST_MAX,	True },		/* 品種マスタ		 */
 	{ sizeof( TAMST )		, TAMST_MAX,	True },		/* 担当マスタ		 */
 	{ sizeof( REMST )		, REMST_MAX,	True },		/* ﾚｼｰﾄマスタ		 */
+	{ sizeof( TSMST )		, TSMST_MAX,	True },		/* ﾚｼｰﾄマスタ		 */
 	{ sizeof( URDATA )		, URDATA_MAX,	True },		/* 売上データ		 */
 	{ sizeof( INFOUR )		, INFOUR_MAX,	True },		/* 売上一時データ	 */
 	{ sizeof( INFOUR2 )		, 1,		True }		/* 売上一時データ	 */

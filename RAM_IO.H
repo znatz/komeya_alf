@@ -10,12 +10,13 @@
 #define	TDATA_MAX		5000	/* ’I‰µ‚l‚`‚wŒ”	  		*/
 #define	IDATA_MAX		5000	/* ˆÚ“®‚l‚`‚wŒ”	  		*/
 #define	NDATA_MAX		5000	/* ˆÚ“®‚l‚`‚wŒ”	  		*/
-#define	BUMST_MAX		100		/* •”–å‚l‚`‚wŒ”	  		*/
+#define	BUMST_MAX		100	/* •”–å‚l‚`‚wŒ”	  		*/
 #define	HIMST_MAX		10000	/* •iŽí‚l‚`‚wŒ”	  		*/
-#define	TAMST_MAX		100		/* ’S“–‚l‚`‚wŒ”	  		*/
-#define	REMST_MAX		10		/* Ú¼°Ä‚l‚`‚wŒ”	  		*/
+#define	TAMST_MAX		100	/* ’S“–‚l‚`‚wŒ”	  		*/
+#define	REMST_MAX		10	/* Ú¼°Ä‚l‚`‚wŒ”	  		*/
+#define	TSMST_MAX		1000	/* ¤•i‚l‚`‚wŒ”	  		*/
 #define	URDATA_MAX		2900	/* ”„ã‚l‚`‚wŒ”	  		*/
-#define	INFOUR_MAX		20	/* ”„ãˆêŽž‚l‚`‚wŒ”	  		*/
+#define	INFOUR_MAX		50	/* ”„ãˆêŽž‚l‚`‚wŒ”	  		2021/08/02 20->50 */ 
 
 enum{
 	CTRLF = 0,
@@ -27,6 +28,7 @@ enum{
 	HIMSTF,		/* •iŽíƒ}ƒXƒ^			*/	
 	TAMSTF,		/* ’S“–ƒ}ƒXƒ^			*/	
 	REMSTF,		/* Ú¼°Äƒ}ƒXƒ^			*/	
+	TSMSTF,		/* ¤•iƒ}ƒXƒ^			*/	
 	URDATAF,	/* ”„ãƒf[ƒ^			*/
 	INFOURF,	/* ”„ãƒf[ƒ^			*/	
 	INFOURF2,	/* ”„ãƒf[ƒ^			*/	
