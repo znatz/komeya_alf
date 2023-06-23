@@ -1,4 +1,4 @@
-Optimizing Linkage Editor (W.10.02.00.000)        23-Jun-2023 15:53:00
+Optimizing Linkage Editor (W.10.02.00.000)        23-Jun-2023 16:49:58
 
 *** Options ***
 
@@ -61,15 +61,15 @@ D_2
 D
                                   08300acc  08300de3       318   4
 P
-                                  08300de4  08312f5b     12178   4
+                                  08300de4  08312dab     11fc8   4
 W_1
-                                  08312f5c  08312f73        18   4
+                                  08312dac  08312dc3        18   4
 W_2
-                                  08312f74  08312fbb        48   2
+                                  08312dc4  08312e07        44   2
 W
-                                  08312fbc  08312fbc         0   4
+                                  08312e08  08312e08         0   4
 L
-                                  08312fbc  083145f0      1635   4
+                                  08312e08  0831440c      1605   4
 BAplProgEnd
                                   083ffff8  083ffffb         4   4
 B_1

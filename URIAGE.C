@@ -22,7 +22,6 @@ enum
 	SHOP,
 	TANTO,
 	CODE1,
-	CODE2,
 	CODE3, // 値下
 	NUM,
 	BAIHEN,
@@ -84,22 +83,31 @@ static long getZeikomiKingaku(char *barcode, short count)
 	// ITFの場合
 	if (barcode[27] != ' ')
 	{
+		// displayStringMsg("getITF");
 		return extractZeikomiFromITF(barcode) * count;
 	}
+	// displayStringMsg(barcode);
+	if (ItemFind(barcode) != -1)
+	{
+		// displayStringMsg("GetJAN");
+		// displayMsg(atoln(tsmst.Zeikomi, sizeof(tsmst.Zeikomi)));
+		return atoln(tsmst.Zeikomi, sizeof(tsmst.Zeikomi)) * count;
+	}
+
 	// 二段の場合
-	long jyoudai = getJyoudai(barcode);
-	long zeiku = HinsyuZeikuFindByCode1(barcode);
-	long bumon_tax;
-	// * 品種税区 0:外税 1:内税 2:非課税
-	if (zeiku == 2)
-	{
-		bumon_tax = 0;
-	}
-	else
-	{
-		bumon_tax = calculateTax2(jyoudai, BumonTaxFindByCode1(barcode));
-	}
-	return (jyoudai + bumon_tax) * count;
+	// long jyoudai = getJyoudai(barcode);
+	// long zeiku = HinsyuZeikuFindByCode1(barcode);
+	// long bumon_tax;
+	// // * 品種税区 0:外税 1:内税 2:非課税
+	// if (zeiku == 2)
+	// {
+	// 	bumon_tax = 0;
+	// }
+	// else
+	// {
+	// 	bumon_tax = calculateTax2(jyoudai, BumonTaxFindByCode1(barcode));
+	// }
+	// return (jyoudai + bumon_tax) * count;
 }
 
 // * 上段バーコードから税込金額計算、値下が上代より少ないなら、値下する
@@ -372,35 +380,7 @@ static void Display(short item)
 			DisplayHeader();
 
 			ckputss(0, 2, "▲              ", False, CLR_BASE);
-			ckputss(0, 4, "▽              ", False, CLR_BASE);
-			// * 20210105 値下は常に有効ではないように
-			// ckputss( 0,  6, "値下:           ", False, CLR_BASE );
-			ckputss(0, 6, "　　            ", False, CLR_BASE);
-
-			// * 現在小計金額
-			ckputss(0, 12, "計        　　", False, CLR_SI_TITLE);
-			insComma(lngGoukei, strGoukei);
-			ckprintf(2, 12, False, CLR_SI_TITLE, "%7s円", strGoukei);
-
-			// * 現在小計点数
-			ckprintf(11, 12, False, CLR_SI_TITLE, "%3d点", lngTensuu);
-
-			ckputss(0, 14, "F1:戻る  F2:全消", False, CLR_BASE);
-			ckputss(0, 16, "         F4:精算", False, CLR_BASE);
-		}
-		break;
-	case CODE2:
-		reprint = 0;
-		teisei = 0;
-		if (SaveItem != CODE2)
-		{
-			ClsColor();
-
-			DisplayHeader();
-
-			ckputss(0, 2, "△              ", False, CLR_BASE);
-			ckputsn(3, 2, info.Code1, 13, False, CLR_BASE);
-			ckputss(0, 4, "▼              ", False, CLR_BASE);
+			ckputss(0, 4, "               ", False, CLR_BASE);
 			// * 20210105 値下は常に有効ではないように
 			// ckputss( 0,  6, "値下:           ", False, CLR_BASE );
 			ckputss(0, 6, "　　            ", False, CLR_BASE);
@@ -425,7 +405,7 @@ static void Display(short item)
 			DisplayHeader();
 
 			ckputss(0, 2, "△              ", False, CLR_BASE);
-			ckputss(0, 4, "▽              ", False, CLR_BASE);
+			ckputss(0, 4, "               ", False, CLR_BASE);
 			// * 20210105 値下表示変更
 			// ckputss( 0,  6, "値下:           ", False, CLR_BASE );
 			ckputss(0, 6, "□              ", False, CLR_BASE);
@@ -456,7 +436,7 @@ static void Display(short item)
 			DisplayHeader();
 
 			ckputss(0, 2, "△              ", False, CLR_BASE);
-			ckputss(0, 4, "▽              ", False, CLR_BASE);
+			ckputss(0, 4, "               ", False, CLR_BASE);
 			ckputss(0, 6, "○              ", False, CLR_BASE);
 			ckputsn(3, 2, info.Code1, 13, False, CLR_BASE);
 			ckputsn(3, 4, info.Code2, 13, False, CLR_BASE);
@@ -485,7 +465,7 @@ static void Display(short item)
 			DisplayHeader();
 
 			ckputss(0, 2, "△              ", False, CLR_BASE);
-			ckputss(0, 4, "▽              ", False, CLR_BASE);
+			ckputss(0, 4, "               ", False, CLR_BASE);
 			// * 20210105 値下表示変更
 			// ckputss( 0,  6, "値下:           ", False, CLR_BASE );
 			ckputss(0, 6, "□              ", False, CLR_BASE);
@@ -526,7 +506,7 @@ static void Display(short item)
 			DisplayHeader();
 
 			ckputss(0, 2, "△              ", False, CLR_BASE);
-			ckputss(0, 4, "▽              ", False, CLR_BASE);
+			ckputss(0, 4, "               ", False, CLR_BASE);
 			ckputss(0, 6, "値下:           ", False, CLR_BASE);
 			ckputsn(3, 2, info.Code1, 13, False, CLR_BASE);
 			ckputsn(3, 4, info.Code2, 13, False, CLR_BASE);
@@ -676,7 +656,7 @@ void print_ASCI_underline(int length)
 	{
 		rputs(PORT_BLUETOOTH, "a", sizeof("a"));
 	}
-	displayMsg(length);
+	// displayMsg(length);
 }
 
 void print_under_line()
@@ -1944,10 +1924,6 @@ void uriage(int flag, int firsttime)
 			ret = CodeInput(3, 2, info.Code1, sizeof(info.Code1),
 					BCR_NOTDRW | BCR_WPC | KEY_FUNC);
 			break;
-		case CODE2:
-			ret = CodeInput(3, 4, info.Code2, sizeof(info.Code2),
-					BCR_NOTDRW | BCR_WPC | KEY_FUNC);
-			break;
 		case CODE3:
 			// * 20210105 値下表示変更 5 -> 3
 			ret = CodeInput8orNull(3, 6, info.Code3, sizeof(info.Code3),
@@ -2190,7 +2166,6 @@ void uriage(int flag, int firsttime)
 				if (info.Code1[0])
 				{
 
-					displayStringMsg("here1");
 					if (ctrl.InfoUrCnt == INFOUR_MAX)
 					{ // 件数を超える場合は登録不可
 						beeb(10, 2, 1);
@@ -2202,91 +2177,54 @@ void uriage(int flag, int firsttime)
 					// ITFの場合
 					if (info.Code1[27] != ' ')
 					{
-						displayStringMsg("here2");
-						displayStringMsg(info.Code1);
 						// * 品種検索
 						if (HinsyuFindByCode1(info.Code1) != -1)
 						{
-							displayStringMsg("here3");
 							lngBaika = extractZeikomiFromITF(info.Code1);
-							displayMsg(lngBaika);
 							char _buf[10];
 							sprintf(_buf, "%010d", gf_GetKingaku2(lngBaika, 10));
 							memcpy(info.Joudai, _buf, sizeof(info.Joudai));
 
 							// * ---------------------------------------------------- DEBUG用
-							displayStringMsg(&himst.Code);
-							displayStringMsg(&himst.Name);
+							// displayStringMsg(&himst.Code);
+							// displayStringMsg(&himst.Name);
 							// * ---------------------------------------------------- DEBUG用
 							item = NUM;
 							continue;
 						}
 						else
 						{
-							displayStringMsg("here4");
 							beep(10, 2);
 							meisaiclr();
 							continue;
 						}
-					} 
-					else if ( info.Code1[7] != ' '){
+					}
+					else if (info.Code1[7] != ' ')
+					{
 						// 商品存在しない
 						if (ItemFind(info.Code1) == -1)
 						{
 							beep(10, 2);
 							meisaiclr();
 							continue;
-						} else {
-							displayStringMsg(tsmst.Name);
 						}
-
+						else
+						{
+							lngBaika = atoln(tsmst.Zeikomi, sizeof(tsmst.Zeikomi));
+							char _buf[10];
+							sprintf(_buf, "%010d", gf_GetKingaku2(lngBaika, 10));
+							memcpy(info.Joudai, _buf, sizeof(info.Joudai));
+							// displayStringMsg("Get JAN");
+							item = NUM;
+							continue;
+						}
 					}
 					else
 					{
-						displayStringMsg("here5");
 						beep(10, 2);
 						meisaiclr();
 						continue;
 					}
-				}
-			}
-			else if (item == CODE2)
-			{
-
-				if (MaxCheck(ctrl.URDataCnt, URDATA_MAX))
-					return; //@01
-
-				if (ctrl.InfoUrCnt == INFOUR_MAX)
-				{ // 件数を超える場合は登録不可
-					beeb(10, 2, 1);
-					memset(info.Code1, 0x00, sizeof(info.Code1));
-					lngBaika = 0;
-					continue;
-				}
-				/* 上段コードの先頭から３桁が501～999の場合、０９９９、１、３から始まるコード以外不可 */
-				if (atoin(info.Code1, 3) > 500 && atoin(info.Code1, 3) < 999)
-				{
-					if ((info.Code2[0] == '0' || info.Code2[0] == '1' || info.Code2[0] == '2' || info.Code2[0] == '3') && info.Code2[12] != ' ')
-					{
-						// * 20210105 値下は常に有効ではないように
-						// item = CODE3;
-						item = NUM;
-						continue;
-					}
-					else
-					{
-						//*  上記に該当しない場合はエラー *//
-						memset(info.Code2, 0x00, sizeof(info.Code2));
-						beep(10, 2);
-						continue;
-					}
-				}
-				else
-				{
-					//*  上記に該当しない場合はエラー *//
-					memset(info.Code2, 0x00, sizeof(info.Code2));
-					beep(10, 2);
-					continue;
 				}
 			}
 			else if (item == CODE3 || item == BAIHEN)
@@ -2419,6 +2357,7 @@ void uriage(int flag, int firsttime)
 				{
 					// * -------------------------------------------------------------------------------------------------　直接売変有り
 
+					// displayStringMsg("yyyyyy");
 					// TODO 20201207 売変の税込金額 システム税率, 外税
 					// * 売価確定
 					long lngNesageKingaku = calculateTax2(atoln(Baika, sizeof(Baika)), taxrate);
@@ -2440,6 +2379,7 @@ void uriage(int flag, int firsttime)
 
 					// * 20201207 売変ない場合はそのまま税込上代
 					// * 売価確定
+					// displayStringMsg("zzzzzz");
 					lngBaika = getZeikomiKingaku(info.Code1, 1);
 					char _buf[10];
 					sprintf(_buf, "%010d", lngBaika);
@@ -2778,7 +2718,7 @@ void uriage(int flag, int firsttime)
 				DisplayHeader();
 
 				ckputss(0, 2, "▲              ", False, CLR_BASE);
-				ckputss(0, 4, "▽              ", False, CLR_BASE);
+				ckputss(0, 4, "               ", False, CLR_BASE);
 				// * 20210105 値下は常に有効ではないように
 				// ckputss( 0,  6, "値下:           ", False, CLR_BASE );
 				ckputss(0, 6, "　　            ", False, CLR_BASE);
@@ -2808,7 +2748,7 @@ void uriage(int flag, int firsttime)
 				item = CODE1;
 				continue;
 			}
-			else if (item == CODE2)
+			else if (item == CODE3)
 			{
 				memset(infour.Code1, 0x00, sizeof(infour.Code1));
 				memset(infour.Code2, 0x00, sizeof(infour.Code2));
@@ -2820,18 +2760,6 @@ void uriage(int flag, int firsttime)
 				memset(info.Code3, 0x00, sizeof(info.Code3));
 				memset(info.Num, 0x00, sizeof(info.Num));
 				item = CODE1;
-				continue;
-			}
-			else if (item == CODE3)
-			{
-				memset(infour.Code2, 0x00, sizeof(infour.Code2));
-				memset(infour.Code3, 0x00, sizeof(infour.Code3));
-				memset(infour.Num, 0x00, sizeof(infour.Num));
-
-				memset(info.Code2, 0x00, sizeof(info.Code2));
-				memset(info.Code3, 0x00, sizeof(info.Code3));
-				memset(info.Num, 0x00, sizeof(info.Num));
-				item = CODE2;
 				continue;
 			}
 			else if (item == YEAR)
@@ -2868,7 +2796,7 @@ void uriage(int flag, int firsttime)
 				print(0);
 				continue;
 			}
-			else if (item == CODE1 || item == CODE2)
+			else if (item == CODE1)
 			{
 				if (lngTensuu != 0)
 				{
