@@ -27,8 +27,8 @@ enum
 	BAIHEN,
 	GENKIN,
 	CREDIT,
-	KINKEN,
-	COUPON,
+	KINKEN, // 金券
+	COUPON, // サービス券
 	SEISAN,
 	DENTRY,
 	KAKUNIN,
@@ -64,16 +64,13 @@ static int reprint;
 static int teisei;
 
 // * 税額取得
-static long calculateTax2(long lngPrice, short rate)
+static long calculateTax2(long lngPrice, long rate)
 {
-	// ZZZZ
-	float t = (float)rate;
-	// 2:四捨五入
-	float result = round(lngPrice * rate / 100.0);
-	// 1:切捨て
-	if (ctrl.TaxType[0] == '1')
-		result = lngPrice * rate / 100.0;
-	return (long)result;
+	// displayStringMsg("税率");
+	// displayMsg(rate);
+	long bumon_tax;
+	bumon_tax = lngPrice - gf_GetKingaku2(lngPrice, rate);
+	return bumon_tax;
 }
 
 // * 上段バーコードから税込金額計算
@@ -93,21 +90,6 @@ static long getZeikomiKingaku(char *barcode, short count)
 		// displayMsg(atoln(tsmst.Zeikomi, sizeof(tsmst.Zeikomi)));
 		return atoln(tsmst.Zeikomi, sizeof(tsmst.Zeikomi)) * count;
 	}
-
-	// 二段の場合
-	// long jyoudai = getJyoudai(barcode);
-	// long zeiku = HinsyuZeikuFindByCode1(barcode);
-	// long bumon_tax;
-	// // * 品種税区 0:外税 1:内税 2:非課税
-	// if (zeiku == 2)
-	// {
-	// 	bumon_tax = 0;
-	// }
-	// else
-	// {
-	// 	bumon_tax = calculateTax2(jyoudai, BumonTaxFindByCode1(barcode));
-	// }
-	// return (jyoudai + bumon_tax) * count;
 }
 
 // * 上段バーコードから税込金額計算、値下が上代より少ないなら、値下する
@@ -281,6 +263,8 @@ static void Display(short item)
 	// ZNATZ
 	long lngGenkin = 0;
 	long lngCredit = 0;
+	long lngKinken = 0;
+	long lngCoupon = 0;
 
 	long jyoudaiWithTax;
 
@@ -529,6 +513,7 @@ static void Display(short item)
 			ckputss(0, 16, "         F4:精算", False, CLR_BASE);
 		}
 		break;
+
 	case GENKIN:
 		if (SaveItem != GENKIN)
 		{
@@ -543,14 +528,26 @@ static void Display(short item)
 			insComma(lngGoukei, strGoukei);
 			ckprintf(9, 4, False, CLR_BASE, "%7s", strGoukei);
 
+			//-----------
 			ckputss(0, 6, " 現  金 ", False, CLR_SI_TITLE);
 			ckputss(8, 6, ":", False, CLR_BASE);
-			ckputss(0, 8, " 売  掛 :       ", False, CLR_BASE);
+			//-----------
+			ckputss(0, 8, " 信  販 :       ", False, CLR_BASE);
 			insComma(atoln(Credit, sizeof(Credit)), strGoukei);
 			ckprintf(9, 8, False, CLR_BASE, "%7s", strGoukei);
-			ckputss(0, 10, " お釣り :       ", False, CLR_BASE);
-			insComma(lngOturi, strGoukei);
+			//-----------
+			ckputss(0, 10, " 金  券 :       ", False, CLR_BASE);
+			insComma(atoln(Kinken, sizeof(Kinken)), strGoukei);
 			ckprintf(9, 10, False, CLR_BASE, "%7s", strGoukei);
+			//-----------
+			ckputss(0, 12, " ｻｰﾋﾞｽ券:       ", False, CLR_BASE);
+			insComma(atoln(Coupon, sizeof(Coupon)), strGoukei);
+			ckprintf(9, 12, False, CLR_BASE, "%7s", strGoukei);
+			//-----------
+
+			ckputss(0, 14, " お釣り :       ", False, CLR_BASE);
+			insComma(lngOturi, strGoukei);
+			ckprintf(9, 14, False, CLR_BASE, "%7s", strGoukei);
 			ckputss(0, 16, "F1:戻る ENT:確定", False, CLR_BASE);
 		}
 		break;
@@ -568,14 +565,100 @@ static void Display(short item)
 			insComma(lngGoukei, strGoukei);
 			ckprintf(9, 4, False, CLR_BASE, "%7s", strGoukei);
 
+			//-----------
 			ckputss(0, 6, " 現  金 :       ", False, CLR_BASE);
 			insComma(atoln(Genkin, sizeof(Genkin)), strGoukei);
 			ckprintf(9, 6, False, CLR_BASE, "%7s", strGoukei);
-			ckputss(0, 8, " 売  掛 ", False, CLR_BASE);
+			//-----------
+			ckputss(0, 8, " 信  販 ", False, CLR_BASE);
 			ckputss(8, 8, ":", False, CLR_BASE);
-			ckputss(0, 10, " お釣り :       ", False, CLR_BASE);
-			insComma(lngOturi, strGoukei);
+			//-----------
+			ckputss(0, 10, " 金  券 :       ", False, CLR_BASE);
+			insComma(atoln(Kinken, sizeof(Kinken)), strGoukei);
 			ckprintf(9, 10, False, CLR_BASE, "%7s", strGoukei);
+			//-----------
+			ckputss(0, 12, " ｻｰﾋﾞｽ券:       ", False, CLR_BASE);
+			insComma(atoln(Coupon, sizeof(Coupon)), strGoukei);
+			ckprintf(9, 12, False, CLR_BASE, "%7s", strGoukei);
+			//-----------
+
+			ckputss(0, 14, " お釣り :       ", False, CLR_BASE);
+			insComma(lngOturi, strGoukei);
+			ckprintf(9, 14, False, CLR_BASE, "%7s", strGoukei);
+			ckputss(0, 16, "F1:戻る ENT:確定", False, CLR_BASE);
+		}
+		break;
+	case KINKEN:
+		if (SaveItem != KINKEN)
+		{
+			ClsColor();
+			ckputss(0, 0, "<売上入力>      ", False, CLR_UR_TITLE);
+			ckprintf(10, 0, False, CLR_UR_TITLE, "%4d件", ctrl.InfoUrCnt);
+			ckputss(0, 2, "店舗:   担当:   ", False, CLR_BASE);
+			ckputsn(5, 2, info.tenpo1, sizeof(info.tenpo1), False, CLR_BASE);
+			ckputsn(13, 2, info.tanto, sizeof(info.tanto), False, CLR_BASE);
+
+			ckputss(0, 4, " 小  計 :       ", False, CLR_BASE);
+			insComma(lngGoukei, strGoukei);
+			ckprintf(9, 4, False, CLR_BASE, "%7s", strGoukei);
+
+			//-----------
+			ckputss(0, 6, " 現  金 :       ", False, CLR_BASE);
+			insComma(atoln(Genkin, sizeof(Genkin)), strGoukei);
+			ckprintf(9, 6, False, CLR_BASE, "%7s", strGoukei);
+			//-----------
+			ckputss(0, 8, " 信  販 :       ", False, CLR_BASE);
+			insComma(atoln(Credit, sizeof(Credit)), strGoukei);
+			ckprintf(9, 8, False, CLR_BASE, "%7s", strGoukei);
+			//-----------
+			ckputss(0, 10, " 金  券 ", False, CLR_BASE);
+			ckputss(8, 10, ":", False, CLR_BASE);
+			//-----------
+			ckputss(0, 12, " ｻｰﾋﾞｽ券:       ", False, CLR_BASE);
+			insComma(atoln(Coupon, sizeof(Coupon)), strGoukei);
+			ckprintf(9, 12, False, CLR_BASE, "%7s", strGoukei);
+			//-----------
+
+			ckputss(0, 14, " お釣り :       ", False, CLR_BASE);
+			insComma(lngOturi, strGoukei);
+			ckprintf(9, 14, False, CLR_BASE, "%7s", strGoukei);
+			ckputss(0, 16, "F1:戻る ENT:確定", False, CLR_BASE);
+		}
+		break;
+	case COUPON:
+		if (SaveItem != COUPON)
+		{
+			ClsColor();
+			ckputss(0, 0, "<売上入力>      ", False, CLR_UR_TITLE);
+			ckprintf(10, 0, False, CLR_UR_TITLE, "%4d件", ctrl.InfoUrCnt);
+			ckputss(0, 2, "店舗:   担当:   ", False, CLR_BASE);
+			ckputsn(5, 2, info.tenpo1, sizeof(info.tenpo1), False, CLR_BASE);
+			ckputsn(13, 2, info.tanto, sizeof(info.tanto), False, CLR_BASE);
+
+			ckputss(0, 4, " 小  計 :       ", False, CLR_BASE);
+			insComma(lngGoukei, strGoukei);
+			ckprintf(9, 4, False, CLR_BASE, "%7s", strGoukei);
+
+			//-----------
+			ckputss(0, 6, " 現  金 :       ", False, CLR_BASE);
+			insComma(atoln(Genkin, sizeof(Genkin)), strGoukei);
+			ckprintf(9, 6, False, CLR_BASE, "%7s", strGoukei);
+			//-----------
+			ckputss(0, 8, " 信  販 :       ", False, CLR_BASE);
+			insComma(atoln(Credit, sizeof(Credit)), strGoukei);
+			ckprintf(9, 8, False, CLR_BASE, "%7s", strGoukei);
+			//-----------
+			ckputss(0, 10, " 金  券 ", False, CLR_BASE);
+			insComma(atoln(Kinken, sizeof(Credit)), strGoukei);
+			ckprintf(9, 10, False, CLR_BASE, "%7s", strGoukei);
+			//-----------
+			ckputss(0, 12, " ｻｰﾋﾞｽ券:       ", False, CLR_BASE);
+			ckputss(8, 12, ":", False, CLR_BASE);
+			//-----------
+
+			ckputss(0, 14, " お釣り :       ", False, CLR_BASE);
+			insComma(lngOturi, strGoukei);
+			ckprintf(9, 14, False, CLR_BASE, "%7s", strGoukei);
 			ckputss(0, 16, "F1:戻る ENT:確定", False, CLR_BASE);
 		}
 		break;
@@ -593,16 +676,27 @@ static void Display(short item)
 			insComma(lngGoukei, strGoukei);
 			ckprintf(9, 4, False, CLR_BASE, "%7s", strGoukei);
 
+			//-----------
 			ckputss(0, 6, " 現  金 :       ", False, CLR_BASE);
 			insComma(atoln(Genkin, sizeof(Genkin)), strGoukei);
 			ckprintf(9, 6, False, CLR_BASE, "%7s", strGoukei);
-
-			ckputss(0, 8, " 売  掛 :       ", False, CLR_BASE);
+			//-----------
+			ckputss(0, 8, " 信  販 :       ", False, CLR_BASE);
 			insComma(atoln(Credit, sizeof(Credit)), strGoukei);
 			ckprintf(9, 8, False, CLR_BASE, "%7s", strGoukei);
-			ckputss(0, 10, " お釣り : ", False, CLR_BASE);
-			insComma(lngOturi, strGoukei);
+			//-----------
+			ckputss(0, 10, " 金  券 ", False, CLR_BASE);
+			insComma(atoln(Kinken, sizeof(Credit)), strGoukei);
 			ckprintf(9, 10, False, CLR_BASE, "%7s", strGoukei);
+			//-----------
+			ckputss(0, 12, " ｻｰﾋﾞｽ券:       ", False, CLR_BASE);
+			insComma(atoln(Coupon, sizeof(Coupon)), strGoukei);
+			ckprintf(9, 12, False, CLR_BASE, "%7s", strGoukei);
+			//-----------
+
+			ckputss(0, 14, " お釣り : ", False, CLR_BASE);
+			insComma(lngOturi, strGoukei);
+			ckprintf(9, 14, False, CLR_BASE, "%7s", strGoukei);
 
 			ckputss(0, 16, "F1:戻る ENT:終了", False, CLR_BASE);
 		}
@@ -612,6 +706,8 @@ static void Display(short item)
 		lngKingaku = 0;
 		lngGenkin = 0;
 		lngCredit = 0;
+		lngKinken = 0;
+		lngCoupon = 0;
 		break;
 	case RYOUSYU: // ZNATZ_RYOUSYU
 		if (SaveItem != RYOUSYU)
@@ -626,20 +722,47 @@ static void Display(short item)
 			ckputss(0, 4, " 小  計 :       ", False, CLR_BASE);
 			insComma(lngGoukei, strGoukei);
 			ckprintf(9, 4, False, CLR_BASE, "%7s", strGoukei);
+			//-----------
+			// ckputss(0, 6, " 現  金 :       ", False, CLR_BASE);
+			// insComma(atoln(Genkin, sizeof(Genkin)), strGoukei);
+			// ckprintf(9, 6, False, CLR_BASE, "%7s", strGoukei);
+			// //-----------
+			// ckputss(0, 8, " 売  掛 :       ", False, CLR_BASE);
+			// insComma(atoln(Credit, sizeof(Credit)), strGoukei);
+			// ckprintf(9, 8, False, CLR_BASE, "%7s", strGoukei);
+			// //-----------
+			// ckputss(0, 8, " 売  掛 :       ", False, CLR_BASE);
+			// insComma(atoln(Credit, sizeof(Credit)), strGoukei);
+			// ckprintf(9, 8, False, CLR_BASE, "%7s", strGoukei);
+			// ckputss(0, 8, " 売  掛 :       ", False, CLR_BASE);
+			// insComma(atoln(Credit, sizeof(Credit)), strGoukei);
+			// ckprintf(9, 8, False, CLR_BASE, "%7s", strGoukei);
+
+			//-----------
 			ckputss(0, 6, " 現  金 :       ", False, CLR_BASE);
 			insComma(atoln(Genkin, sizeof(Genkin)), strGoukei);
 			ckprintf(9, 6, False, CLR_BASE, "%7s", strGoukei);
-			ckputss(0, 8, " 売  掛 :       ", False, CLR_BASE);
+			//-----------
+			ckputss(0, 8, " 信  販 :       ", False, CLR_BASE);
 			insComma(atoln(Credit, sizeof(Credit)), strGoukei);
 			ckprintf(9, 8, False, CLR_BASE, "%7s", strGoukei);
-
-			ckputss(0, 10, " お釣り :       ", False, CLR_BASE);
-			insComma(lngOturi, strGoukei);
+			//-----------
+			ckputss(0, 10, " 金  券 ", False, CLR_BASE);
+			insComma(atoln(Kinken, sizeof(Credit)), strGoukei);
 			ckprintf(9, 10, False, CLR_BASE, "%7s", strGoukei);
+			//-----------
+			ckputss(0, 12, " ｻｰﾋﾞｽ券:       ", False, CLR_BASE);
+			insComma(atoln(Coupon, sizeof(Coupon)), strGoukei);
+			ckprintf(9, 12, False, CLR_BASE, "%7s", strGoukei);
+			//-----------
 
-			ckputss(0, 14, "F1:訂正F2:再発行", False, CLR_BASE);
-			// ckputss( 0, 16, "F3:領収書ENT:終", False, CLR_BASE );
-			ckputss(0, 16, "  　　ENT:終了 ", False, CLR_BASE);
+			ckputss(0, 14, " お釣り :       ", False, CLR_BASE);
+			insComma(lngOturi, strGoukei);
+			ckprintf(9, 14, False, CLR_BASE, "%7s", strGoukei);
+
+			// ckputss(0,14,"F1:訂正F2:再発行", False, CLR_BASE);
+			ckputss(0, 16, "F1:訂F2:再ENT:終", False, CLR_BASE);
+			// ckputss(0, 16, "  　　ENT:終了 ", False, CLR_BASE);
 		}
 		break;
 	}
@@ -972,12 +1095,12 @@ int entryprintdaily()
 		// * -- アンダーライン
 		print_under_line();
 
-		// * -- 売掛金
+		// * -- 信販金
 		memset(strNumber, 0x0, sizeof(strNumber));
 		insComma(kei_credit, strNumber);
 		snprintf(buf, LEN_HINMEI + 1, "%s", "                                    ");
-		snprintf(buf, sizeof("売掛金12345678901234567890123456"), "売掛金%26s", strNumber);
-		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("売掛金12345678901234567890123456"));
+		snprintf(buf, sizeof("信販金12345678901234567890123456"), "信販金%26s", strNumber);
+		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("信販金12345678901234567890123456"));
 		// * -- 改行
 		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
 
@@ -1081,7 +1204,7 @@ int entryprintdata()
 	memset(underline, '-', sizeof(underline));
 
 	long kei_zeikomi = 0;
-	long kei_zeinuki = 0;
+	// long kei_zeinuki = 0;
 	long kei_systemtax = 0;
 	long kei_bumontax = 0;
 
@@ -1128,14 +1251,14 @@ int entryprintdata()
 				memset(infour.Code3, 0x0, sizeof(infour.Code3));
 			}
 			kei_zeikomi = kei_zeikomi + atoln(infour.Baika, sizeof(infour.Baika)) * atoi(infour.Num);
-			if (baihen_ari == 1)
-			{
-				kei_zeinuki = kei_zeinuki + GetNesage(infour.Code3, 0) * atoi(infour.Num);
-			}
-			else
-			{
-				kei_zeinuki = kei_zeinuki + atoln(infour.Joudai, sizeof(infour.Joudai)) * atoi(infour.Num);
-			}
+			// if (baihen_ari == 1)
+			// {
+			// 	kei_zeinuki = kei_zeinuki + GetNesage(infour.Code3, 0) * atoi(infour.Num);
+			// }
+			// else
+			// {
+			// 	kei_zeinuki = kei_zeinuki + atoln(infour.Joudai, sizeof(infour.Joudai)) * atoi(infour.Num);
+			// }
 
 			// * 軽減の時、軽減に使用した税率を一時保存
 			if ((infour.lngBumonTaxRateTax != 0) && (diff_taxrate == 0))
@@ -1196,10 +1319,12 @@ int entryprintdata()
 					if (baihen_ari != 0)
 					{
 						// * -- 上代→ 売価 X 数量
-						// * ----- 上代(20210105 元売価の税込にする)
+						// * -- 上代(20210105 元売価の税込にする)
+						//*TODO 20230626
 						memset(strNumberYobi, 0x0, sizeof(strNumberYobi));
-						lngNumber = atoln(infour.Joudai, sizeof(infour.Joudai));
-						lngNumber = calculateTax2(lngNumber, BumonTaxFindByCode1(infour.Code1) + 100);
+						// lngNumber = atoln(infour.Joudai, sizeof(infour.Joudai));
+						// lngNumber = calculateTax2(lngNumber, BumonTaxFindByCode1(infour.Code1));
+						lngNumber = getZeikomiKingaku(infour.Code1, 1);
 						insComma(lngNumber, strNumberYobi);
 						// * ----- 売価
 						memset(strNumber, 0x0, sizeof(strNumber));
@@ -1294,10 +1419,10 @@ int entryprintdata()
 
 		// * -- 税抜
 		memset(strNumber, 0x0, sizeof(strNumber));
-		insComma(kei_zeinuki, strNumber);
-		snprintf(buf, LEN_HINMEI + LEN_COUNT + 1, "%s", "                                        ");
-		snprintf(buf, sizeof("[税抜計123456789012345678901234]"), "[税抜計%24s]", strNumber);
-		ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("[税抜計123456789012345678901234]"));
+		// insComma(kei_zeinuki, strNumber);
+		// snprintf(buf, LEN_HINMEI + LEN_COUNT + 1, "%s", "                                        ");
+		// snprintf(buf, sizeof("[税抜計123456789012345678901234]"), "[税抜計%24s]", strNumber);
+		// ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("[税抜計123456789012345678901234]"));
 
 		// * -- 改行
 		ret = rputs(PORT_BLUETOOTH, "\n", sizeof("\n"));
@@ -1363,12 +1488,12 @@ int entryprintdata()
 			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("お釣り12345678901234567890123456"));
 			// * -- 文字拡大
 			ret = rputs(PORT_BLUETOOTH, bSizeDbl, sizeof(bSizeDbl));
-			// * -- 売掛
+			// * -- 信販
 			memset(strNumber, 0x0, sizeof(strNumber));
 			insComma(atoln(Credit, sizeof(Credit)), strNumber);
 			snprintf(buf, LEN_HINMEI + 1, "%s", "                                    ");
-			snprintf(buf, sizeof("売掛金1234567890"), "売掛金%10s", strNumber);
-			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("売掛金1234567890"));
+			snprintf(buf, sizeof("信販金1234567890"), "信販金%10s", strNumber);
+			ret = rputs(PORT_BLUETOOTH, (unsigned char *)buf, sizeof("信販金1234567890"));
 		}
 
 		// * -- 改行
@@ -1926,8 +2051,8 @@ void uriage(int flag, int firsttime)
 			break;
 		case CODE3:
 			// * 20210105 値下表示変更 5 -> 3
-			ret = CodeInput8orNull(3, 6, info.Code3, sizeof(info.Code3),
-					       BCR_NOTDRW | BCR_WPC | KEY_FUNC | KEY_SKIP);
+			// ret = CodeInput8orNull(3, 6, info.Code3, sizeof(info.Code3), BCR_NOTDRW | BCR_WPC | KEY_FUNC | KEY_SKIP);
+			ret = CodeInput(3, 6, info.Code3, sizeof(info.Code3), BCR_NOTDRW | BCR_WPC | KEY_FUNC | KEY_SKIP);
 			break;
 		case BAIHEN:
 			// * 20210112
@@ -1951,6 +2076,14 @@ void uriage(int flag, int firsttime)
 			break;
 		case CREDIT:
 			ret = NumInput(10, 8, Credit, 6, 0, 999999L,
+				       IN_NUMERIC | KEY_MINUS | KEY_FUNC, TYPE_NUM, NO_CHECK);
+			break;
+		case KINKEN:
+			ret = NumInput(10, 10, Kinken, 6, 0, 999999L,
+				       IN_NUMERIC | KEY_MINUS | KEY_FUNC, TYPE_NUM, NO_CHECK);
+			break;
+		case COUPON:
+			ret = NumInput(10, 12, Coupon, 6, 0, 999999L,
 				       IN_NUMERIC | KEY_MINUS | KEY_FUNC, TYPE_NUM, NO_CHECK);
 			break;
 		case SEISAN:
@@ -2061,6 +2194,44 @@ void uriage(int flag, int firsttime)
 			}
 			break;
 		}
+
+		// if (ret == UPKEY)
+		// {
+		// 	if (item == CREDIT)
+		// 	{
+		// 		item = GENKIN;
+		// 		continue;
+		// 	}
+		// 	if (item == KINKEN)
+		// 	{
+		// 		item = CREDIT;
+		// 		continue;
+		// 	}
+		// 	if (item == COUPON)
+		// 	{
+		// 		item = KINKEN;
+		// 		continue;
+		// 	}
+		// }
+		// if (ret == DOWNKEY)
+		// {
+		// 	if (item == GENKIN)
+		// 	{
+		// 		item = CREDIT;
+		// 		continue;
+		// 	}
+		// 	if (item == CREDIT)
+		// 	{
+		// 		item = KINKEN;
+		// 		continue;
+		// 	}
+		// 	if (item == KINKEN)
+		// 	{
+		// 		item = COUPON;
+		// 		continue;
+		// 	}
+		// }
+
 		if (ret == ENTRY || ret == SENTRY || ret == SKIP || ret == BARENT)
 		{
 			if (item == YEAR)
@@ -2243,39 +2414,20 @@ void uriage(int flag, int firsttime)
 					continue;
 				}
 
-				// * -------------------------------------------------------------------------------------------------　売変無し
+				// * -------------------------------------------------------------------------------------------------　売変無し 値下場面でENTER
 				if (ret == SKIP)
 				{
 
-					// * 20201207 売変ない場合はそのまま税込上代
 					// * 売価確定
 					lngBaika = getZeikomiKingaku(info.Code1, 1);
 					char _buf[10];
 					sprintf(_buf, "%010d", lngBaika);
 					memcpy(info.Baika, _buf, sizeof(info.Baika));
 
-					// * 上代確定 20201208
-					lngJoudai = getJyoudai(info.Code1);
+					lngSingleTax = calculateTax2(lngBaika, BumonTaxFindByCode1(info.Code1));
+					// displayStringMsg("nesage skip");
+					// displayMsg(lngSingleTax);
 
-					// * 税区より一品消費税確定
-					long lngCheckZeiku = HinsyuZeikuFindByCode1(info.Code1);
-					if (lngCheckZeiku == 0)
-					{
-						// * 外税
-						lngSingleTax = lngBaika - lngJoudai;
-					}
-					else if (lngCheckZeiku == 1)
-					{
-						// * 内税
-						lngSingleTax = calculateTax2(lngJoudai, BumonTaxFindByCode1(info.Code1));
-					}
-					else
-					{
-						// * 非課税
-						lngSingleTax = 0;
-					}
-
-					// displayMsg(lngBaika);
 					item = NUM;
 					continue;
 				}
@@ -2284,21 +2436,27 @@ void uriage(int flag, int firsttime)
 				if (info.Code3[0])
 				{
 
-					if (!memcmp(info.Code3, "30", 2) && info.Code3[7] != ' ')
+					// percentage discount or amount discount
+					if (info.Code3[0] == '3' && info.Code3[1] == '0' && info.Code3[7] != ' ')
 					{
 
-						// TODO 20201207 売変の税込金額 システム税率, 外税
 						// * 売価確定
-						long lngNesageKingaku = calculateTax2(GetNesage(info.Code3, info.Joudai), taxrate);
-						lngBaika = lngNesageKingaku;
-
-						// TODO 20201208
-						// * 一品消費税確定(売変)
-						lngSingleTax = lngNesageKingaku - GetNesage(info.Code3, info.Joudai);
-
+						lngBaika = getZeikomiKingaku(info.Code1, 1);
 						char _buf[10];
 						sprintf(_buf, "%010d", lngBaika);
 						memcpy(info.Baika, _buf, sizeof(info.Baika));
+
+						// %引:上代と掛けた結果が帰ってくる
+						// 円引:税込みが帰ってくる
+						long lngNesageKingaku = GetNesage(info.Code3, lngBaika);
+						lngBaika = lngNesageKingaku;
+
+						// * 一品消費税確定(売変)
+						lngSingleTax = lngNesageKingaku - gf_GetKingaku2(lngNesageKingaku, BumonCodeFindByCode1(info.Code1));
+
+						char _buf_n[10];
+						sprintf(_buf_n, "%010d", lngBaika);
+						memcpy(info.Baika, _buf_n, sizeof(info.Baika));
 
 						item = NUM;
 						continue;
@@ -2316,14 +2474,14 @@ void uriage(int flag, int firsttime)
 				if (atoln(Baika, sizeof(Baika)) != 0)
 				{
 
-					// TODO 20201207 売変の税込金額 システム税率, 外税
 					// * 売価確定
-					long lngNesageKingaku = calculateTax2(atoln(Baika, sizeof(Baika)), taxrate);
-					lngBaika = lngNesageKingaku;
+					lngBaika = atoln(Baika, sizeof(Baika));
 
-					// TODO 20201208
 					// * 一品消費税確定(売変)
-					lngSingleTax = lngNesageKingaku - atoln(Baika, sizeof(Baika));
+					lngSingleTax = calculateTax2(lngBaika, atoln(ctrl.TaxRate, sizeof(ctrl.TaxRate))); // lngNesageKingaku - atoln(Baika, sizeof(Baika));
+					displayStringMsg("直接に売変");
+					displayMsg(lngSingleTax);
+					displayStringMsg("税率");
 
 					char _buf[10];
 					sprintf(_buf, "%010d", lngBaika);
@@ -2340,32 +2498,35 @@ void uriage(int flag, int firsttime)
 				if (!memcmp(info.Code3, "30", 2) && info.Code3[7] != ' ')
 				{
 
-					// TODO 20201207 売変の税込金額 システム税率, 外税
 					// * 売価確定
-					long lngNesageKingaku = calculateTax2(GetNesage(info.Code3, info.Joudai), taxrate);
-					lngBaika = lngNesageKingaku;
-
-					// TODO 20201208
-					// * 一品消費税確定(売変)
-					lngSingleTax = lngNesageKingaku - GetNesage(info.Code3, info.Joudai);
-
+					lngBaika = getZeikomiKingaku(info.Code1, 1);
 					char _buf[10];
 					sprintf(_buf, "%010d", lngBaika);
 					memcpy(info.Baika, _buf, sizeof(info.Baika));
+
+					// %引:上代と掛けた結果が帰ってくる
+					// 円引:税込みが帰ってくる
+					long lngNesageKingaku = GetNesage(info.Code3, lngBaika);
+					lngBaika = lngNesageKingaku;
+
+					// * 一品消費税確定(売変)
+					lngSingleTax = lngNesageKingaku - gf_GetKingaku2(lngNesageKingaku, BumonCodeFindByCode1(info.Code1));
+
+					char _buf_n[10];
+					sprintf(_buf_n, "%010d", lngBaika);
+					memcpy(info.Baika, _buf_n, sizeof(info.Baika));
 				}
 				else if (atoln(Baika, sizeof(Baika)) != 0)
 				{
 					// * -------------------------------------------------------------------------------------------------　直接売変有り
-
-					// displayStringMsg("yyyyyy");
-					// TODO 20201207 売変の税込金額 システム税率, 外税
 					// * 売価確定
-					long lngNesageKingaku = calculateTax2(atoln(Baika, sizeof(Baika)), taxrate);
-					lngBaika = lngNesageKingaku;
+					lngBaika = atoln(Baika, sizeof(Baika));
 
-					// TODO 20201208
 					// * 一品消費税確定(売変)
-					lngSingleTax = lngNesageKingaku - atoln(Baika, sizeof(Baika));
+					lngSingleTax = calculateTax2(lngBaika, atoln(ctrl.TaxRate, sizeof(ctrl.TaxRate))); // lngNesageKingaku - atoln(Baika, sizeof(Baika));
+					displayStringMsg("直接に売変");
+					displayMsg(lngSingleTax);
+					displayStringMsg("税率");
 
 					char _buf[10];
 					sprintf(_buf, "%010d", lngBaika);
@@ -2377,34 +2538,15 @@ void uriage(int flag, int firsttime)
 				else
 				{
 
-					// * 20201207 売変ない場合はそのまま税込上代
 					// * 売価確定
-					// displayStringMsg("zzzzzz");
 					lngBaika = getZeikomiKingaku(info.Code1, 1);
 					char _buf[10];
 					sprintf(_buf, "%010d", lngBaika);
 					memcpy(info.Baika, _buf, sizeof(info.Baika));
 
-					// * 上代確定 20201208
-					lngJoudai = getJyoudai(info.Code1);
-
-					// * 税区より一品消費税確定
-					long lngCheckZeiku = HinsyuZeikuFindByCode1(info.Code1);
-					if (lngCheckZeiku == 0)
-					{
-						// * 外税
-						lngSingleTax = lngBaika - lngJoudai;
-					}
-					else if (lngCheckZeiku == 1)
-					{
-						// * 内税
-						lngSingleTax = calculateTax2(lngJoudai, BumonTaxFindByCode1(info.Code1));
-					}
-					else
-					{
-						// * 非課税
-						lngSingleTax = 0;
-					}
+					lngSingleTax = calculateTax2(lngBaika, BumonTaxFindByCode1(info.Code1));
+					// displayStringMsg("nesage skip");
+					// displayMsg(lngSingleTax);
 				}
 				// * --------------------------------------------------------------------------------------------------  20210105
 
@@ -2469,7 +2611,7 @@ void uriage(int flag, int firsttime)
 				{
 					// * 値下
 					// * 税区確定
-					info.lngZeiku = 0;
+					info.lngZeiku = 1;
 					// * 税率確定
 					info.lngFinalTaxRate = taxrate - 100;
 					// * 税額確定
@@ -2504,10 +2646,10 @@ void uriage(int flag, int firsttime)
 				}
 
 				// * --------------------------------------------------- Debug用
-				// displayMsg(info.lngFinalTaxRate);
-				// displayMsg(info.lngFinalTaxRateTax);
-				// displayMsg(info.lngBumonTaxRateTax);
-				// displayMsg(info.lngSystemTaxRateTax);
+				displayMsg(info.lngFinalTaxRate);
+				displayMsg(info.lngFinalTaxRateTax);
+				displayMsg(info.lngBumonTaxRateTax);
+				displayMsg(info.lngSystemTaxRateTax);
 				// * --------------------------------------------------- Debug用
 
 				item = DENTRY;
@@ -2523,7 +2665,7 @@ void uriage(int flag, int firsttime)
 					continue;
 				}
 
-				// * 0円で入力した場合、売掛に移す
+				// * 0円で入力した場合、信販に移す
 				long current_cash = atoln(Genkin, sizeof(Genkin));
 				if (current_cash == 0)
 				{
@@ -2531,7 +2673,7 @@ void uriage(int flag, int firsttime)
 					continue;
 				}
 
-				// * 売掛既に入力した場合、現金を0にセット
+				// * 信販既に入力した場合、現金を0にセット
 				long current_credit = atoln(Credit, sizeof(Credit));
 				if (current_credit > 0)
 				{
@@ -2554,9 +2696,9 @@ void uriage(int flag, int firsttime)
 						continue;
 					}
 
-					ckputss(0, 10, " お釣り :          ", False, CLR_BASE);
+					ckputss(0, 14, " お釣り :          ", False, CLR_BASE);
 					insComma(lngOturi, strGoukei);
-					ckprintf(9, 10, False, CLR_BASE, "%7s", strGoukei);
+					ckprintf(9, 14, False, CLR_BASE, "%7s", strGoukei);
 
 					if (memcmp(info.tanto, "00", 2) != 0 && reprint == 0 && teisei == 0)
 					{
@@ -2598,16 +2740,18 @@ void uriage(int flag, int firsttime)
 
 				long current_cash = atoln(Genkin, sizeof(Genkin));
 				long current_credit = atoln(Credit, sizeof(Credit));
-				lngOturiChk = current_cash + current_credit;
+				long current_kinken = atoln(Kinken, sizeof(Kinken));
+				long current_coupon = atoln(Coupon, sizeof(Coupon));
+				lngOturiChk = current_cash + current_credit + current_kinken + current_coupon;
 
 				// クレジットが小計を超えていないかチェック
 				if (lngGoukei >= 0)
 				{
 					if (teisei == 0)
 					{
-						// * 20210106 売掛が(小計-現金)を超えないように
+						// * 20210106 信販が(小計-現金)を超えないように
 						// if( current_credit > lngGoukei ){
-						if (current_credit > lngGoukei - current_cash)
+						if (current_credit > lngGoukei - current_cash - current_kinken - current_coupon)
 						{
 							beeb(10, 2, 1);
 							memset(Credit, 0x00, sizeof(Credit));
@@ -2617,7 +2761,7 @@ void uriage(int flag, int firsttime)
 						}
 						if (lngOturiChk < lngGoukei)
 						{
-							item = GENKIN;
+							item = KINKEN;
 							continue;
 						}
 
@@ -2625,9 +2769,9 @@ void uriage(int flag, int firsttime)
 					}
 					if (teisei == 1)
 					{
-						// * 20210106 売掛が(小計-現金)を超えないように
+						// * 20210106 信販が(小計-現金)を超えないように
 						// if( current_credit > lngGoukei ){
-						if (current_credit > lngGoukei - current_cash)
+						if (current_credit > lngGoukei - current_cash - current_kinken - current_coupon)
 						{
 							beeb(10, 2, 1);
 							memset(Credit, 0x00, sizeof(Credit));
@@ -2637,7 +2781,7 @@ void uriage(int flag, int firsttime)
 						}
 						if (lngOturiChk < lngGoukei)
 						{
-							item = GENKIN;
+							item = KINKEN;
 							continue;
 						}
 						lngOturi = lngOturiChk - lngGoukei;
@@ -2648,9 +2792,9 @@ void uriage(int flag, int firsttime)
 					lngOturi = lngOturiChk - lngGoukei;
 				}
 
-				ckputss(0, 10, " お釣り :          ", False, CLR_BASE);
+				ckputss(0, 14, " お釣り :          ", False, CLR_BASE);
 				insComma(lngOturi, strGoukei);
-				ckprintf(9, 10, False, CLR_BASE, "%7s", strGoukei);
+				ckprintf(9, 14, False, CLR_BASE, "%7s", strGoukei);
 
 				if (memcmp(info.tanto, "00", 2) != 0 && reprint == 0 && teisei == 0)
 				{
@@ -2682,26 +2826,180 @@ void uriage(int flag, int firsttime)
 			}
 			else if (item == KINKEN)
 			{
+
+				long current_cash = atoln(Genkin, sizeof(Genkin));
+				long current_credit = atoln(Credit, sizeof(Credit));
+				long current_kinken = atoln(Kinken, sizeof(Kinken));
+				long current_coupon = atoln(Coupon, sizeof(Coupon));
+				lngOturiChk = current_cash + current_credit + current_kinken + current_coupon;
+
+				// クレジットが小計を超えていないかチェック
 				if (lngGoukei >= 0)
 				{
-					lngOturiChk = atoln(Kinken, sizeof(Kinken)); // #02
-					if (lngOturiChk > lngGoukei)
+					if (teisei == 0)
 					{
-						lngOturi = 0;
-						memcpy(Kinken, "000000", sizeof(Kinken));
-						beeb(10, 2, 1);
-						continue;
+						// * 20210106 信販が(小計-現金)を超えないように
+						// if( current_credit > lngGoukei ){
+						if (current_kinken > lngGoukei - current_cash - current_credit - current_coupon)
+						{
+							beeb(10, 2, 1);
+							memset(Kinken, 0x00, sizeof(Kinken));
+							lngOturi = 0;
+							item = KINKEN;
+							continue;
+						}
+						if (lngOturiChk < lngGoukei)
+						{
+							item = COUPON;
+							continue;
+						}
+
+						lngOturi = lngOturiChk - lngGoukei;
 					}
-					lngOturi = 0;
-					item = GENKIN; // #02
+					if (teisei == 1)
+					{
+						// * 20210106 信販が(小計-現金)を超えないように
+						// if( current_credit > lngGoukei ){
+						if (current_kinken > lngGoukei - current_cash - current_credit - current_coupon)
+						{
+							beeb(10, 2, 1);
+							memset(Kinken, 0x00, sizeof(Kinken));
+							lngOturi = 0;
+							item = KINKEN;
+							continue;
+						}
+						if (lngOturiChk < lngGoukei)
+						{
+							item = COUPON;
+							continue;
+						}
+						lngOturi = lngOturiChk - lngGoukei;
+					}
 				}
+				else
+				{
+					lngOturi = lngOturiChk - lngGoukei;
+				}
+
+				ckputss(0, 14, " お釣り :          ", False, CLR_BASE);
+				insComma(lngOturi, strGoukei);
+				ckprintf(9, 14, False, CLR_BASE, "%7s", strGoukei);
+
+				if (memcmp(info.tanto, "00", 2) != 0 && reprint == 0 && teisei == 0)
+				{
+					++ctrl.RecNo;
+					if (ctrl.RecNo > 999999)
+						ctrl.RecNo = 1;
+				}
+
+				if (memcmp(ctrl.RecPrint, "1", 1) == 0)
+				{
+					if (print(1) == 0)
+					{
+						reprint = 1;
+						item = RYOUSYU; // GENKIN
+					}
+					continue;
+				}
+				else
+				{
+					memcpy(infour2.Genkin, Genkin, sizeof(infour2.Genkin));
+					memcpy(infour2.Credit, Credit, sizeof(infour2.Credit));
+					memcpy(infour2.Kinken, Kinken, sizeof(infour2.Kinken));
+					memcpy(infour2.Coupon, Coupon, sizeof(infour2.Coupon));
+					ram_write(0, &infour2, INFOURF2);
+				}
+				item = SEISAN;
 
 				continue;
 			}
 			else if (item == COUPON)
 			{
-				lngOturi = 0;
-				item = GENKIN;
+
+				long current_cash = atoln(Genkin, sizeof(Genkin));
+				long current_credit = atoln(Credit, sizeof(Credit));
+				long current_kinken = atoln(Kinken, sizeof(Kinken));
+				long current_coupon = atoln(Coupon, sizeof(Coupon));
+				lngOturiChk = current_cash + current_credit + current_kinken + current_coupon;
+
+				// クレジットが小計を超えていないかチェック
+				if (lngGoukei >= 0)
+				{
+					if (teisei == 0)
+					{
+						// * 20210106 信販が(小計-現金)を超えないように
+						// if( current_credit > lngGoukei ){
+						if (current_coupon > lngGoukei - current_cash - current_credit - current_kinken)
+						{
+							beeb(10, 2, 1);
+							memset(Coupon, 0x00, sizeof(Coupon));
+							lngOturi = 0;
+							item = COUPON;
+							continue;
+						}
+						if (lngOturiChk < lngGoukei)
+						{
+							item = GENKIN;
+							continue;
+						}
+
+						lngOturi = lngOturiChk - lngGoukei;
+					}
+					if (teisei == 1)
+					{
+						// * 20210106 信販が(小計-現金)を超えないように
+						// if( current_credit > lngGoukei ){
+						if (current_coupon > lngGoukei - current_cash - current_credit - current_kinken)
+						{
+							beeb(10, 2, 1);
+							memset(Coupon, 0x00, sizeof(Coupon));
+							lngOturi = 0;
+							item = COUPON;
+							continue;
+						}
+						if (lngOturiChk < lngGoukei)
+						{
+							item = GENKIN;
+							continue;
+						}
+						lngOturi = lngOturiChk - lngGoukei;
+					}
+				}
+				else
+				{
+					lngOturi = lngOturiChk - lngGoukei;
+				}
+
+				ckputss(0, 14, " お釣り :          ", False, CLR_BASE);
+				insComma(lngOturi, strGoukei);
+				ckprintf(9, 14, False, CLR_BASE, "%7s", strGoukei);
+
+				if (memcmp(info.tanto, "00", 2) != 0 && reprint == 0 && teisei == 0)
+				{
+					++ctrl.RecNo;
+					if (ctrl.RecNo > 999999)
+						ctrl.RecNo = 1;
+				}
+
+				if (memcmp(ctrl.RecPrint, "1", 1) == 0)
+				{
+					if (print(1) == 0)
+					{
+						reprint = 1;
+						item = RYOUSYU; // GENKIN
+					}
+					continue;
+				}
+				else
+				{
+					memcpy(infour2.Genkin, Genkin, sizeof(infour2.Genkin));
+					memcpy(infour2.Credit, Credit, sizeof(infour2.Credit));
+					memcpy(infour2.Kinken, Kinken, sizeof(infour2.Kinken));
+					memcpy(infour2.Coupon, Coupon, sizeof(infour2.Coupon));
+					ram_write(0, &infour2, INFOURF2);
+				}
+				item = SEISAN;
+
 				continue;
 			}
 		}

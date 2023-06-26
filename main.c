@@ -172,22 +172,32 @@ long getGedai(const char *barcode)
 long GetNesage(const char *barcode, long jyoudai)
 {
 
-	/* VB Code VBには重複処理しないように
-	'売価
-	If StrComp(Mid(dat$(5), 1, 2), "30") = 0 Then
-		'%値引シール?
-		If StrComp(Mid(dat$(5), 1, 3), "309") = 0 And StrComp(Mid(dat$(5), 6, 2), "99") = 0 Then
-			Bai$ = Trim(Str(Val(Jyo$) - Val(Jyo$) * Val(Mid(dat$(5), 4, 2)) / 100))
-		Else
-			Bai$ = Mid$(dat$(5), 3, 5)
-		End If
-	Else
-		Bai$ = Jyo$
-	End If
-	*/
-
 	if (atoin(barcode, 3) == 309)
 	{
+		char wk[10];
+		strncpy(wk, barcode + 3, 2);
+		wk[3] = 0x00;
+		double discount;
+		discount = jyoudai * (100- atol(wk)) / 100;
+		// displayStringMsg("jyoudai");
+		// displayMsg(jyoudai);
+		// displayMsg(discount);
+		if (ctrl.TaxType[0] != '2') // 2以外設定漏れ防止
+		{			    // 切捨て
+			if (discount >= 0)
+			{
+				return floor(discount + 0.99999);
+			}
+			else
+			{
+				return floor(discount);
+			}
+		}
+		else if (ctrl.TaxType[0] == '2')
+		{ // 四捨五入
+			return floor(discount + 0.5);
+		}
+
 	}
 	else
 	{

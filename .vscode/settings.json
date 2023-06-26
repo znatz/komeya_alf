@@ -21,6 +21,7 @@
         "SUB.C": "cpp",
         "INPUT.C": "cpp",
         "ALFRECV.C": "cpp",
-        "SSCAN.C": "cpp"
+        "SSCAN.C": "cpp",
+        "ALFSEND.C": "cpp"
     }
 }
